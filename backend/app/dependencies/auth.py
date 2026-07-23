@@ -1,0 +1,105 @@
+# ============================================================
+# AgriLens Backend — Auth Dependencies
+# ============================================================
+# FastAPI dependency injection for authentication & authorization.
+#
+# Supports two auth methods:
+#   1. Authorization: Bearer <access_token>  (header)
+#   2. HttpOnly cookie named "access_token"  (cookie)
+#
+# Reusable dependencies:
+#   get_current_user   — extracts + validates JWT, returns user dict
+#   require_admin      — ensures user.role == "admin"
+#
+# Usage in routes:
+#   @router.get("/protected")
+#   async def protected(user: dict = Depends(get_current_user)):
+#       ...
+#
+#   @router.get("/admin-only")
+#   async def admin_only(user: dict = Depends(require_admin)):
+#       ...
+# ============================================================
+
+from fastapi import Depends, Request
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from app.services.user_service import get_user_by_id
+from app.utils.exceptions import ForbiddenException, UnauthorizedException
+from app.utils.security import decode_access_token
+
+# HTTPBearer with auto_error=False so we can fall back to cookies
+# instead of immediately returning 403 when the header is missing.
+_bearer_scheme = HTTPBearer(auto_error=False)
+
+
+async def get_current_user(
+    request: Request,
+    credentials: HTTPAuthorizationCredentials | None = Depends(_bearer_scheme),
+) -> dict:
+    """
+    Extract and validate JWT from either the Authorization header
+    or an HttpOnly cookie. Returns the full user document from MongoDB.
+
+    Resolution order:
+        1. Authorization: Bearer <token>  (header)
+        2. access_token cookie            (HttpOnly)
+
+    Raises:
+        UnauthorizedException: If no token found, token is invalid/expired,
+                               or user doesn't exist / is inactive.
+    """
+    token = None
+
+    # 1. Try Authorization header
+    if credentials:
+        token = credentials.credentials
+
+    # 2. Fall back to HttpOnly cookie
+    if not token:
+        token = request.cookies.get("access_token")
+
+    if not token:
+        raise UnauthorizedException("Authentication required. Provide a Bearer token or cookie.")
+
+    # Decode JWT
+    payload = decode_access_token(token)
+    if not payload:
+        raise UnauthorizedException("Invalid or expired access token")
+
+    # Block refresh tokens from being used as access tokens
+    if payload.get("type") == "refresh":
+        raise UnauthorizedException("Cannot use a refresh token for authentication")
+
+    # Extract user ID from token payload
+    user_id = payload.get("sub")
+    if not user_id:
+        raise UnauthorizedException("Invalid token payload — missing user ID")
+
+    # Fetch user from database
+    user = await get_user_by_id(user_id)
+    if not user:
+        raise UnauthorizedException("User not found — account may have been deleted")
+
+    # Check account is active
+    if user.get("account_status") != "active":
+        raise UnauthorizedException("Account is inactive. Please contact support.")
+
+    return user
+
+
+async def require_admin(
+    user: dict = Depends(get_current_user),
+) -> dict:
+    """
+    Ensure the authenticated user has the 'admin' role.
+
+    Use this dependency on admin-only routes like dashboard,
+    user management, and system configuration.
+
+    Raises:
+        ForbiddenException: If the user is not an admin.
+    """
+    if user.get("role") != "admin":
+        raise ForbiddenException("Admin access required")
+    return user

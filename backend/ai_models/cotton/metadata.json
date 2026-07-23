@@ -1,0 +1,12 @@
+{
+    "crop": "cotton",
+    "model_name": "cotton_disease_mobilenetv2",
+    "model_architecture": "MobileNetV2",
+    "framework": "TensorFlow/Keras",
+    "input_shape": [224, 224, 3],
+    "output_classes": 4,
+    "version": "0.0.0",
+    "accuracy": null,
+    "trained_at": null,
+    "note": "This file will be updated by the training pipeline after model training."
+}

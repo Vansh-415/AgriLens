@@ -1,0 +1,25 @@
+# ============================================================
+# AgriLens Backend — Python Dependencies
+# ============================================================
+
+# ----- Web Framework -----
+fastapi>=0.115.0,<1.0.0
+uvicorn[standard]>=0.30.0,<1.0.0
+
+# ----- MongoDB (async driver) -----
+motor>=3.6.0,<4.0.0
+
+# ----- Configuration & Validation -----
+pydantic>=2.9.0,<3.0.0
+pydantic-settings>=2.6.0,<3.0.0
+python-dotenv>=1.0.0,<2.0.0
+email-validator>=2.2.0,<3.0.0
+
+# ----- Authentication -----
+python-jose[cryptography]>=3.3.0,<4.0.0
+passlib[bcrypt]>=1.7.4,<2.0.0
+bcrypt>=4.0.0,<5.0.0
+python-multipart>=0.0.12,<1.0.0
+
+# ----- HTTP Client & Testing -----
+httpx>=0.27.0,<1.0.0

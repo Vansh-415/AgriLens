@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --earth-50: #fdf8f6;
+  --earth-100: #f2e8e5;
+  --earth-200: #eaddd7;
+  --earth-300: #e0cec7;
+  --earth-400: #d2bab0;
+  --earth-500: #a18072;
+  --earth-600: #977669;
+  --earth-700: #846358;
+  --earth-800: #43302b;
+  --earth-900: #271a17;
+  color-scheme: light;
+}
+
+.dark {
+  --earth-50: #0b1120;
+  --earth-100: #172136;
+  --earth-200: #1e293b;
+  --earth-300: #334155;
+  --earth-400: #64748b;
+  --earth-500: #94a3b8;
+  --earth-600: #cbd5e1;
+  --earth-700: #e2e8f0;
+  --earth-800: #f1f5f9;
+  --earth-900: #f8fafc;
+  color-scheme: dark;
+}
+
+@theme {
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #4ade80;
+  --color-primary-500: #22c55e;
+  --color-primary-600: #16a34a;
+  --color-primary-700: #15803d;
+  --color-primary-800: #166534;
+  --color-primary-900: #14532d;
+  --color-primary-950: #052e16;
+
+  --color-earth-50: var(--earth-50);
+  --color-earth-100: var(--earth-100);
+  --color-earth-200: var(--earth-200);
+  --color-earth-300: var(--earth-300);
+  --color-earth-400: var(--earth-400);
+  --color-earth-500: var(--earth-500);
+  --color-earth-600: var(--earth-600);
+  --color-earth-700: var(--earth-700);
+  --color-earth-800: var(--earth-800);
+  --color-earth-900: var(--earth-900);
+
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--earth-50);
+    color: var(--earth-900);
+    font-family: var(--font-sans);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* Custom dark overrides for containers, modals, cards, navbar, & elements */
+.dark .bg-white {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-earth-50\/50 {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+}
+
+.dark .bg-primary-50 {
+  background-color: rgba(20, 83, 45, 0.35) !important;
+}
+
+.dark .bg-primary-100 {
+  background-color: rgba(22, 101, 52, 0.45) !important;
+}
+
+.dark .text-primary-700 {
+  color: #4ade80 !important;
+}
+
+.dark .text-primary-600 {
+  color: #22c55e !important;
+}
+
+.dark select {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+.dark input {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+.dark textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-xl {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Tooltip & Recharts dark adjustments */
+.dark .recharts-default-tooltip {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}

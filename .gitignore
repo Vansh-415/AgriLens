@@ -1,0 +1,67 @@
+# ============================================================
+# AgriLens — .gitignore
+# ============================================================
+
+# ----- Python / Backend -----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+build/
+.Python
+env/
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+.pytest_cache/
+.mypy_cache/
+
+# ----- Frontend -----
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+.vite/
+frontend/.vite/
+.next/
+out/
+
+# ----- Environment Variables & Secrets -----
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+
+# ----- IDE & Editors -----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ----- Storage & Uploads -----
+backend/storage/uploads/*
+!backend/storage/uploads/.gitkeep
+
+# ----- AI Models & Training -----
+backend/ai_models/cotton/model.keras
+ai_training/data/*
+!ai_training/data/.gitkeep
+ai_training/models/*
+!ai_training/models/.gitkeep
+
+# ----- OS Files -----
+.DS_Store
+Thumbs.db
+
+# ----- Logs -----
+*.log
+
+# ----- Coverage & Testing & Cache -----
+htmlcov/
+.coverage
+coverage/
+.cache/
