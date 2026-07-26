@@ -4,6 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Leaf, Shield, Smartphone, Activity } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
+import { Footer } from '../layouts/Footer';
 
 export function Landing() {
   useDocumentTitle('AI Cotton Disease Advisory');
@@ -118,15 +119,7 @@ export function Landing() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-earth-900 text-earth-200 py-12 px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="flex items-center gap-2 mb-4 md:mb-0">
-            <Leaf className="h-6 w-6 text-primary-500" />
-            <span className="font-bold text-xl tracking-tight text-white">AgriLens</span>
-          </div>
-          <p className="text-sm">© {new Date().getFullYear()} AgriLens. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
