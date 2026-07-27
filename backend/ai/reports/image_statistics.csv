@@ -1,0 +1,12 @@
+Metric,Value
+Total Images,2137
+Number of Classes,7
+Minimum Width (px),800
+Maximum Width (px),800
+Average Width (px),800.0
+Minimum Height (px),800
+Maximum Height (px),800
+Average Height (px),800.0
+Average Image Size (KB),137.18
+Formats Distribution,{'JPEG': 2137}
+Color Channels Distribution,{'RGB': 2137}
