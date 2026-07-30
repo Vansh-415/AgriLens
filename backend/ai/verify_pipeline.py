@@ -8,12 +8,13 @@ import os
 import glob
 import py_compile
 import traceback
+from typing import Dict, Any, List
 import numpy as np
 import tensorflow as tf
 from pathlib import Path
 
 # Force UTF-8 stdout / stderr encoding for Windows terminal safety
-if sys.stdout.encoding.lower() != 'utf-8':
+if hasattr(sys.stdout, 'reconfigure') and sys.stdout.encoding.lower() != 'utf-8':
     try:
         sys.stdout.reconfigure(encoding='utf-8')
         sys.stderr.reconfigure(encoding='utf-8')
@@ -47,7 +48,7 @@ def print_flush(text: str = ""):
         print(safe_text, flush=True)
 
 
-def run_checks():
+def run_checks() -> Dict[str, Any]:
     results = {}
     print_flush("=" * 70)
     print_flush("AgriLens AI Pipeline Pre-Colab Final Verification")
@@ -131,8 +132,8 @@ def run_checks():
             learning_rate=config.INITIAL_LR
         )
         total_params = model.count_params()
-        trainable_params = sum([tf.keras.backend.count_params(w) for w in model.trainable_weights])
-        non_trainable_params = sum([tf.keras.backend.count_params(w) for w in model.non_trainable_weights])
+        trainable_params = sum([int(np.prod(w.shape)) for w in model.trainable_weights])
+        non_trainable_params = sum([int(np.prod(w.shape)) for w in model.non_trainable_weights])
 
         assert model.output_shape == (None, 7), f"Unexpected output shape: {model.output_shape}"
         assert non_trainable_params > trainable_params, "Backbone should be frozen initially"
@@ -300,7 +301,7 @@ def run_checks():
     return results
 
 
-def generate_markdown_report(report_path: Path, results: dict):
+def generate_markdown_report(report_path: Path, results: Dict[str, Any]):
     report_path.parent.mkdir(parents=True, exist_ok=True)
     all_passed = all(v['status'] == '✔ Passed' for v in results.values())
     final_status = "100% READY FOR GOOGLE COLAB TRAINING" if all_passed else "ATTENTION REQUIRED"

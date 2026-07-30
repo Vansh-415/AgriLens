@@ -5,7 +5,7 @@ Validation and Test pipelines MUST NEVER use augmentation.
 """
 
 import tensorflow as tf
-from tensorflow.keras import Sequential
+from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import (
     RandomFlip,
     RandomRotation,
@@ -15,13 +15,13 @@ from tensorflow.keras.layers import (
 )
 
 
-def get_training_augmentation(seed: int = 42) -> tf.keras.Sequential:
+def get_training_augmentation(seed: int = 42) -> Sequential:
     """
     Constructs a tf.keras.Sequential model containing image augmentation layers.
     Includes: RandomFlip, RandomRotation, RandomZoom, RandomContrast, and RandomBrightness.
     
     Returns:
-        tf.keras.Sequential data augmentation pipeline for training only.
+        Sequential data augmentation pipeline for training only.
     """
     augmentation = Sequential([
         RandomFlip("horizontal_and_vertical", seed=seed),
