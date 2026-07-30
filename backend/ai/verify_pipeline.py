@@ -104,9 +104,10 @@ def run_checks():
             augmentation_fn=aug_fn
         )
 
+        expected_shape = (config.BATCH_SIZE, config.IMAGE_SIZE[0], config.IMAGE_SIZE[1], 3)
         for img_b, label_b in train_ds.take(1):
             img_batch, label_batch = img_b, label_b
-            assert img_batch.shape == (config.BATCH_SIZE, 224, 224, 3), f"Invalid batch shape: {img_batch.shape}"
+            assert img_batch.shape == expected_shape, f"Invalid batch shape: {img_batch.shape}, expected: {expected_shape}"
             assert label_batch.shape == (config.BATCH_SIZE,), f"Invalid label batch shape: {label_batch.shape}"
 
         msg = (
@@ -312,7 +313,7 @@ def generate_markdown_report(report_path: Path, results: dict):
 
     content = f"""# AgriLens AI Pre-Training Verification Checklist
 
-**Date**: 2026-07-27  
+**Date**: 2026-07-30  
 **Module**: Module 4 (AI Model Training Pipeline Final Verification)  
 **Overall Readiness**: **{final_status}**
 

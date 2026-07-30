@@ -25,7 +25,7 @@ class CottonDiseasePredictor:
         self.model: Optional[tf.keras.Model] = None
         self.labels_metadata: Dict[str, Any] = {}
         self.class_names: List[str] = []
-        self.target_size = (224, 224)
+        self.target_size = (256, 256)
 
     def set_model_and_labels(self, model: tf.keras.Model, class_names: List[str]) -> None:
         """Directly inject in-memory model instance and class names for testing/inference."""
@@ -49,7 +49,7 @@ class CottonDiseasePredictor:
     def preprocess_image_input(self, image_input: Union[str, Path, bytes, Image.Image, np.ndarray]) -> np.ndarray:
         """
         Standardizes various input types (file path, raw bytes, PIL Image, or numpy array)
-        into a preprocessed 4D batch tensor of shape (1, 224, 224, 3).
+        into a preprocessed 4D batch tensor of shape (1, 256, 256, 3).
         """
         if isinstance(image_input, (str, Path)):
             img = Image.open(str(image_input)).convert("RGB")

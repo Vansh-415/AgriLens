@@ -18,7 +18,7 @@ from tensorflow.keras.layers import (
 
 
 def build_mobilenetv2_model(
-    input_shape: Tuple[int, int, int] = (224, 224, 3),
+    input_shape: Tuple[int, int, int] = (256, 256, 3),
     num_classes: int = 7,
     learning_rate: float = 1e-3,
     dropout_rate: float = 0.4
@@ -75,7 +75,7 @@ def build_mobilenetv2_model(
 
 def unfreeze_model_for_finetuning(
     model: Model,
-    unfreeze_layers_count: int = 30,
+    unfreeze_layers_count: int = 80,
     learning_rate: float = 1e-5
 ) -> Model:
     """
@@ -83,7 +83,7 @@ def unfreeze_model_for_finetuning(
 
     Args:
         model: Compiled Keras model instance.
-        unfreeze_layers_count: Number of top layers to unfreeze.
+        unfreeze_layers_count: Number of top layers to unfreeze (default: 80).
         learning_rate: Reduced learning rate for fine-tuning.
 
     Returns:

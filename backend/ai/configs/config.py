@@ -26,9 +26,9 @@ class Config:
 
     # Model & Input Configuration
     MODEL_NAME: str = "cotton_mobilenetv2"
-    IMAGE_SIZE: Tuple[int, int] = (224, 224)
+    IMAGE_SIZE: Tuple[int, int] = (256, 256)
     COLOR_CHANNELS: int = 3
-    INPUT_SHAPE: Tuple[int, int, int] = (224, 224, 3)
+    INPUT_SHAPE: Tuple[int, int, int] = (256, 256, 3)
 
     # Data Split & Training Hyperparameters
     BATCH_SIZE: int = 32
@@ -38,13 +38,13 @@ class Config:
     TEST_SPLIT: float = 0.15
 
     # Phase 1: Transfer Learning (Frozen Backbone)
-    EPOCHS: int = 30
+    EPOCHS: int = 15
     INITIAL_LR: float = 1e-3
 
     # Phase 2: Fine-Tuning (Unfrozen Top Layers)
-    FINE_TUNE_EPOCHS: int = 15
+    FINE_TUNE_EPOCHS: int = 25
     FINE_TUNE_LR: float = 1e-5
-    UNFREEZE_LAYERS: int = 30
+    UNFREEZE_LAYERS: int = 80
 
     # Output & Export Directories
     BASE_DIR: Path = field(default_factory=lambda: Path(__file__).resolve().parent.parent)

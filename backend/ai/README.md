@@ -14,16 +14,16 @@ backend/ai/
 │   └── config.py               # Central configuration (hyperparameters, paths, seeds)
 ├── datasets/
 │   ├── dataset_loader.py       # Auto-discovers dataset, splits (70/15/15), stratifies & shuffles
-│   ├── preprocessing.py        # tf.data pipeline with resize, normalization, caching, prefetch
+│   ├── preprocessing.py        # tf.data pipeline with 256x256 resize, normalization, caching, prefetch
 │   ├── augmentations.py        # Training-only GPU augmentations (Flip, Rotate, Zoom, Contrast)
 │   └── class_weights.py        # Balanced class weights calculation via scikit-learn
 ├── models/
-│   └── model_builder.py        # MobileNetV2 backbone, top head, & unfreezing for fine-tuning
+│   └── model_builder.py        # MobileNetV2 backbone, top head, & unfreezing (80 layers) for fine-tuning
 ├── training/
-│   ├── callbacks.py            # EarlyStopping, ReduceLROnPlateau, Checkpoint, TensorBoard, CSVLogger
-│   └── train.py                # Main orchestration pipeline (2-phase training execution)
+│   ├── callbacks.py            # EarlyStopping (patience=5), ReduceLROnPlateau (patience=2, min_lr=1e-7), Checkpoint (val_acc), TensorBoard, CSVLogger
+│   └── train.py                # Main orchestration pipeline (2-phase training execution: 15 + 25 = 40 total epochs)
 ├── inference/
-│   └── predict.py              # CottonDiseasePredictor for single-image diagnosis & confidence
+│   └── predict.py              # CottonDiseasePredictor for single-image diagnosis & confidence (256x256)
 ├── utils/
 │   ├── metrics.py              # Precision, Recall, F1, Confusion Matrix, ROC, & Loss/Acc curves
 │   ├── evaluate.py             # Test-set evaluation module
@@ -82,16 +82,17 @@ run_training_pipeline()
 
 1. **Phase 1: Transfer Learning (Frozen Backbone)**
    - Backbone: MobileNetV2 (`weights="imagenet"`, `include_top=False`).
+   - Image Input Dimensions: `256x256x3`.
    - All base backbone layers are frozen (`trainable = False`).
    - Top head: `GlobalAveragePooling2D` -> `BatchNormalization` -> `Dropout(0.2)` -> `Dense(256, relu)` -> `Dropout(0.4)` -> `Dense(7, softmax)`.
    - Initial Learning Rate: `1e-3` with Adam optimizer.
-   - Epochs: 30 (with EarlyStopping patience=7).
+   - Epochs: 15 (with EarlyStopping patience=5, ReduceLROnPlateau factor=0.2, patience=2, min_lr=1e-7).
 
 2. **Phase 2: Fine-Tuning (Unfrozen Top Backbone Layers)**
-   - Top 30 layers of MobileNetV2 backbone are unfrozen (`trainable = True`).
+   - Top ~80 layers of MobileNetV2 backbone are unfrozen (`trainable = True`).
    - BatchNormalization layers remain locked in evaluation mode for stability.
    - Reduced Learning Rate: `1e-5` with Adam optimizer.
-   - Fine-tuning Epochs: 15.
+   - Fine-tuning Epochs: 25 (Total Epochs: 40).
 
 ---
 

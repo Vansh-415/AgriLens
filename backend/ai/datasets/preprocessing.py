@@ -10,7 +10,7 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 def load_and_preprocess_image(
     image_path: tf.Tensor,
-    target_size: Tuple[int, int] = (224, 224)
+    target_size: Tuple[int, int] = (256, 256)
 ) -> tf.Tensor:
     """Reads image file from disk, decodes, resizes, and applies MobileNetV2 preprocessing."""
     raw = tf.io.read_file(image_path)
@@ -24,7 +24,7 @@ def prepare_tf_dataset(
     image_paths: List[str],
     labels: List[int],
     batch_size: int = 32,
-    target_size: Tuple[int, int] = (224, 224),
+    target_size: Tuple[int, int] = (256, 256),
     is_training: bool = False,
     augmentation_fn: Optional[Callable] = None,
     shuffle_buffer_size: int = 1000

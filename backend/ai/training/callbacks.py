@@ -46,7 +46,7 @@ def create_training_callbacks(
         # Early Stopping to prevent overfitting
         EarlyStopping(
             monitor="val_loss",
-            patience=7,
+            patience=5,
             restore_best_weights=True,
             verbose=1
         ),
@@ -54,8 +54,8 @@ def create_training_callbacks(
         ReduceLROnPlateau(
             monitor="val_loss",
             factor=0.2,
-            patience=3,
-            min_lr=1e-6,
+            patience=2,
+            min_lr=1e-7,
             verbose=1
         ),
         # Save best model checkpoint based on validation accuracy
