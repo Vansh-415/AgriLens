@@ -1,6 +1,8 @@
 """
 Inference Module for AgriLens Cotton Leaf Disease Classifier.
-Loads trained MobileNetV2 model and labels.json for single-image diagnosis and confidence scoring.
+Loads trained model (EfficientNetV2/MobileNetV2) and labels.json for single-image diagnosis,
+confidence scoring, and Test-Time Augmentation (TTA).
+Dynamically adjusts image target dimensions based on model input shape.
 """
 
 import io
@@ -10,13 +12,12 @@ from typing import Dict, Union, Any, List, Optional
 import numpy as np
 from PIL import Image
 import tensorflow as tf
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 OptionalPath = Optional[Union[str, Path]]
 
 
 class CottonDiseasePredictor:
-    def __init__(self, model_path: OptionalPath = None, labels_path: OptionalPath = None):
+    def __init__(self, model_path: OptionalPath = None, labels_path: OptionalPath = None, use_tta: bool = True):
         base_ai_models = Path(__file__).resolve().parent.parent.parent / "ai_models" / "cotton"
         
         self.model_path = Path(model_path) if model_path else base_ai_models / "best_model.keras"
@@ -25,12 +26,18 @@ class CottonDiseasePredictor:
         self.model: Optional[tf.keras.Model] = None
         self.labels_metadata: Dict[str, Any] = {}
         self.class_names: List[str] = []
-        self.target_size = (256, 256)
+        self.target_size = (288, 288)
+        self.use_tta = use_tta
 
     def set_model_and_labels(self, model: tf.keras.Model, class_names: List[str]) -> None:
         """Directly inject in-memory model instance and class names for testing/inference."""
         self.model = model
         self.class_names = class_names
+        if hasattr(model, 'input_shape') and model.input_shape:
+            shape = model.input_shape
+            h = shape[1] if shape[1] is not None else 288
+            w = shape[2] if shape[2] is not None else 288
+            self.target_size = (int(h), int(w))
 
     def load_resources(self) -> None:
         """Loads model binary and label metadata into memory."""
@@ -45,11 +52,18 @@ class CottonDiseasePredictor:
             raise FileNotFoundError(f"Trained model file missing at: {self.model_path}")
 
         self.model = tf.keras.models.load_model(str(self.model_path), compile=False)
+        
+        # Dynamically infer target size from model input shape
+        if hasattr(self.model, 'input_shape') and self.model.input_shape:
+            shape = self.model.input_shape
+            h = shape[1] if shape[1] is not None else 288
+            w = shape[2] if shape[2] is not None else 288
+            self.target_size = (int(h), int(w))
 
     def preprocess_image_input(self, image_input: Union[str, Path, bytes, Image.Image, np.ndarray]) -> np.ndarray:
         """
         Standardizes various input types (file path, raw bytes, PIL Image, or numpy array)
-        into a preprocessed 4D batch tensor of shape (1, 256, 256, 3).
+        into a preprocessed 4D batch tensor of shape (1, H, W, 3).
         """
         if isinstance(image_input, (str, Path)):
             img = Image.open(str(image_input)).convert("RGB")
@@ -68,12 +82,30 @@ class CottonDiseasePredictor:
         img = img.resize(self.target_size, Image.Resampling.BILINEAR)
         img_array = np.array(img, dtype=np.float32)
         
-        # Apply MobileNetV2 preprocessing
-        img_preprocessed = preprocess_input(img_array)
-        batch_tensor = np.expand_dims(img_preprocessed, axis=0)
+        # Raw [0, 255] float32 tensor
+        batch_tensor = np.expand_dims(img_array, axis=0)
         return batch_tensor
 
-    def predict(self, image_input: Union[str, Path, bytes, Image.Image, np.ndarray]) -> Dict[str, Any]:
+    def _apply_tta(self, batch_tensor: np.ndarray) -> np.ndarray:
+        """
+        Applies Test-Time Augmentation (TTA) across original, horizontal flip,
+        and vertical flip views to compute ensemble probability distribution.
+        """
+        orig_pred = self.model.predict(batch_tensor, verbose=0)[0]
+
+        # Horizontal flip view
+        hflip_tensor = np.flip(batch_tensor, axis=2)
+        hflip_pred = self.model.predict(hflip_tensor, verbose=0)[0]
+
+        # Vertical flip view
+        vflip_tensor = np.flip(batch_tensor, axis=1)
+        vflip_pred = self.model.predict(vflip_tensor, verbose=0)[0]
+
+        # Ensemble average
+        mean_pred = (orig_pred + hflip_pred + vflip_pred) / 3.0
+        return mean_pred
+
+    def predict(self, image_input: Union[str, Path, bytes, Image.Image, np.ndarray], use_tta: Optional[bool] = None) -> Dict[str, Any]:
         """
         Performs inference on a single image.
 
@@ -87,7 +119,13 @@ class CottonDiseasePredictor:
             self.load_resources()
 
         batch_tensor = self.preprocess_image_input(image_input)
-        predictions = self.model.predict(batch_tensor, verbose=0)[0]
+
+        run_tta = self.use_tta if use_tta is None else use_tta
+
+        if run_tta:
+            predictions = self._apply_tta(batch_tensor)
+        else:
+            predictions = self.model.predict(batch_tensor, verbose=0)[0]
 
         top_idx = int(np.argmax(predictions))
         predicted_class = self.class_names[top_idx]

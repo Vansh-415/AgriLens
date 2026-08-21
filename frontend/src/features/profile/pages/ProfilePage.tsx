@@ -1,5 +1,6 @@
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { useState } from 'react';
+import { useLanguage } from '../../../context/LanguageContext';
 import { PageHeader } from '../../../components/ui/PageHeader';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
@@ -11,6 +12,8 @@ import { User, Lock, Save } from 'lucide-react';
 
 export default function ProfilePage() {
   useDocumentTitle('User Profile');
+  const { t } = useLanguage();
+  const prfT = t.profile;
 
   const { user } = useAuth();
   const toast = useToast();
@@ -41,88 +44,79 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-4xl mx-auto pb-12">
       <PageHeader
-        title="User Account & Profile"
-        description="Manage personal credentials, role permissions, and security parameters."
+        title={prfT.title}
+        description={prfT.description}
       />
 
       <div className="grid gap-6 md:grid-cols-3">
-        <Card className="md:col-span-1 text-center p-6 flex flex-col items-center justify-center">
-          <div className="w-20 h-20 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-2xl font-bold mb-4">
+        <Card className="md:col-span-1 text-center p-6 flex flex-col items-center justify-center border-earth-200">
+          <div className="w-20 h-20 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-2xl font-extrabold mb-4 border-2 border-primary-200 shadow-xs">
             {user?.full_name?.charAt(0).toUpperCase() || 'U'}
           </div>
-          <h3 className="font-semibold text-earth-900 text-lg">{user?.full_name}</h3>
-          <p className="text-sm text-earth-500">{user?.email}</p>
+          <h3 className="font-bold text-earth-900 text-lg">{user?.full_name}</h3>
+          <p className="text-xs text-earth-500">{user?.email}</p>
           <div className="mt-4">
             <Badge variant={user?.role === 'admin' ? 'danger' : 'success'} className="capitalize">
-              {user?.role || 'farmer'}
+              {user?.role || 'Farmer'}
             </Badge>
           </div>
         </Card>
 
-        <div className="md:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <User className="w-4 h-4 text-primary-600" />
-                Personal Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleUpdateProfile} className="space-y-4">
-                <Input
-                  label="Full Name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                />
-                <Input
-                  label="Email Address"
-                  value={user?.email || ''}
-                  disabled
-                  helperText="Email address cannot be changed."
-                />
-                <div className="flex justify-end">
-                  <Button type="submit" isLoading={isSaving}>
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Details
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+        <Card className="md:col-span-2 border-earth-200">
+          <CardHeader>
+            <CardTitle className="text-base font-bold text-earth-900 flex items-center gap-2">
+              <User className="w-5 h-5 text-primary-600" /> Personal Credentials
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleUpdateProfile} className="space-y-4">
+              <Input
+                label={prfT.fullName}
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
+              <Input label={prfT.email} value={user?.email || ''} disabled />
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Lock className="w-4 h-4 text-primary-600" />
-                Change Password
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handlePasswordChange} className="space-y-4">
-                <Input
-                  type="password"
-                  label="Current Password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                />
-                <Input
-                  type="password"
-                  label="New Password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <div className="flex justify-end">
-                  <Button type="submit" variant="outline">
-                    Update Password
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
+              <div className="pt-2">
+                <Button type="submit" isLoading={isSaving} className="bg-primary-600 hover:bg-primary-700 text-white font-bold text-xs">
+                  <Save className="w-4 h-4 mr-2" /> {prfT.saveChanges}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
+
+      <Card className="border-earth-200">
+        <CardHeader>
+          <CardTitle className="text-base font-bold text-earth-900 flex items-center gap-2">
+            <Lock className="w-5 h-5 text-amber-600" /> Account Security
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
+            <Input
+              type="password"
+              label="Current Password"
+              placeholder="••••••••"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+            <Input
+              type="password"
+              label="New Password"
+              placeholder="••••••••"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <Button type="submit" variant="outline" className="border-earth-300 font-bold text-xs">
+              Update Password
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

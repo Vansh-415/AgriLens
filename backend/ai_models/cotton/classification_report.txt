@@ -1,0 +1,13 @@
+                         precision    recall  f1-score   support
+
+       Bacterial Blight       0.85      0.92      0.89        38
+             Curl Virus       0.95      0.95      0.95        64
+           Healthy Leaf       0.95      0.97      0.96        39
+Herbicide Growth Damage       1.00      0.98      0.99        42
+    Leaf Hopper Jassids       0.89      1.00      0.94        34
+           Leaf Redding       0.99      0.91      0.95        87
+       Leaf Variegation       1.00      1.00      1.00        17
+
+               accuracy                           0.95       321
+              macro avg       0.95      0.96      0.95       321
+           weighted avg       0.95      0.95      0.95       321

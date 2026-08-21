@@ -1,0 +1,20 @@
+Original Image,Duplicate Image,Similarity Score
+Curl Virus\CV00018.jpg,Healthy Leaf\HL00085.jpg,100.00%
+Curl Virus\CV00019.jpg,Healthy Leaf\HL00101.jpg,100.00%
+Curl Virus\CV00020.jpg,Healthy Leaf\HL00102.jpg,100.00%
+Curl Virus\CV00021.jpg,Healthy Leaf\HL00103.jpg,100.00%
+Curl Virus\CV00022.jpg,Healthy Leaf\HL00104.jpg,100.00%
+Curl Virus\CV00026.jpg,Curl Virus\CV00027.jpg,93.75%
+Curl Virus\CV00344.jpg,Curl Virus\CV00368.jpg,93.75%
+Healthy Leaf\HL00096.jpg,Healthy Leaf\HL00097.jpg,93.75%
+Healthy Leaf\HL00105.jpg,Healthy Leaf\HL00106.jpg,98.44%
+Healthy Leaf\HL00126.jpg,Healthy Leaf\HL00127.jpg,96.88%
+Healthy Leaf\HL00151.jpg,Healthy Leaf\HL00234.jpg,93.75%
+Healthy Leaf\HL00234.jpg,Healthy Leaf\HL00243.jpg,93.75%
+Healthy Leaf\HL00241.jpg,Leaf Redding\LR00415.jpg,93.75%
+Herbicide Growth Damage\HGD00008.jpg,Herbicide Growth Damage\HGD00028.jpg,93.75%
+Leaf Hopper Jassids\LHJ00188.jpg,Leaf Hopper Jassids\LHJ00195.jpg,95.31%
+Leaf Redding\LR00029.jpg,Leaf Redding\LR00090.jpg,96.88%
+Leaf Redding\LR00064.jpg,Leaf Variegation\LV00116.jpg,93.75%
+Leaf Redding\LR00414.jpg,Leaf Redding\LR00443.jpg,93.75%
+Leaf Redding\LR00453.jpg,Leaf Redding\LR00454.jpg,95.31%

@@ -54,7 +54,8 @@
   --color-earth-800: var(--earth-800);
   --color-earth-900: var(--earth-900);
 
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: "Outfit", "Inter", sans-serif;
 }
 
 @layer base {
@@ -62,8 +63,53 @@
     background-color: var(--earth-50);
     color: var(--earth-900);
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.2s ease, color 0.2s ease;
   }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.015em;
+  }
+}
+
+/* Devanagari Typography Polish (Hindi & Marathi) */
+html[lang="hi"],
+html[lang="mr"],
+[data-lang="hi"],
+[data-lang="mr"] {
+  font-family: "Noto Sans Devanagari", "Inter", sans-serif !important;
+}
+
+html[lang="hi"] h1,
+html[lang="hi"] h2,
+html[lang="hi"] h3,
+html[lang="hi"] h4,
+html[lang="hi"] h5,
+html[lang="hi"] h6,
+html[lang="mr"] h1,
+html[lang="mr"] h2,
+html[lang="mr"] h3,
+html[lang="mr"] h4,
+html[lang="mr"] h5,
+html[lang="mr"] h6,
+[data-lang="hi"] h1,
+[data-lang="hi"] h2,
+[data-lang="hi"] h3,
+[data-lang="hi"] h4,
+[data-lang="mr"] h1,
+[data-lang="mr"] h2,
+[data-lang="mr"] h3,
+[data-lang="mr"] h4 {
+  font-family: "Noto Sans Devanagari", "Outfit", sans-serif !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.45 !important;
 }
 
 /* Custom dark overrides for containers, modals, cards, navbar, & elements */
@@ -91,33 +137,23 @@
   color: #22c55e !important;
 }
 
-.dark select {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
-  border-color: #334155 !important;
-}
+/* Print Rules - Suppress non-report elements during print */
+@media print {
+  body>*:not(#agrilens-print-root) {
+    display: none !important;
+  }
 
-.dark input {
-  background-color: #0f172a !important;
-  color: #f8fafc !important;
-  border-color: #334155 !important;
-}
+  #agrilens-print-root {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
 
-.dark textarea {
-  background-color: #0f172a !important;
-  color: #f8fafc !important;
-  border-color: #334155 !important;
-}
-
-.dark .shadow-sm,
-.dark .shadow-md,
-.dark .shadow-xl {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4) !important;
-}
-
-/* Tooltip & Recharts dark adjustments */
-.dark .recharts-default-tooltip {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
-  color: #f8fafc !important;
+  .no-print {
+    display: none !important;
+  }
 }

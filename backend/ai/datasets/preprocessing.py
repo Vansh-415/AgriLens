@@ -1,22 +1,26 @@
 """
 Preprocessing Module for AgriLens AI Training Pipeline.
-Converts file paths and labels into optimized TensorFlow tf.data.Dataset pipelines with caching, prefetching, and normalization.
+Converts file paths and labels into optimized TensorFlow tf.data.Dataset pipelines
+with caching, prefetching, and batching.
+
+Images are returned as raw float32 tensors in [0, 255] range.
+EfficientNetV2 has built-in Rescaling/Normalization layers that handle scaling internally.
 """
 
 from typing import List, Tuple, Optional, Callable
 import tensorflow as tf
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 
 def load_and_preprocess_image(
     image_path: tf.Tensor,
     target_size: Tuple[int, int] = (256, 256)
 ) -> tf.Tensor:
-    """Reads image file from disk, decodes, resizes, and applies MobileNetV2 preprocessing."""
+    """Reads image file from disk, decodes, and resizes to target dimensions.
+    Returns raw float32 image in [0, 255] range — no preprocess_input scaling."""
     raw = tf.io.read_file(image_path)
     img = tf.image.decode_jpeg(raw, channels=3)
     img = tf.image.resize(img, target_size)
-    img = preprocess_input(img)
+    # EfficientNetV2 has built-in rescaling; do NOT apply preprocess_input here.
     return img
 
 
@@ -27,7 +31,7 @@ def prepare_tf_dataset(
     target_size: Tuple[int, int] = (256, 256),
     is_training: bool = False,
     augmentation_fn: Optional[Callable] = None,
-    shuffle_buffer_size: int = 1000
+    shuffle_buffer_size: int = 2048
 ) -> tf.data.Dataset:
     """
     Creates an optimized tf.data.Dataset instance from image paths and integer labels.
@@ -56,7 +60,14 @@ def prepare_tf_dataset(
 
     ds = ds.map(_parse_fn, num_parallel_calls=tf.data.AUTOTUNE)
 
-    # Batch before augmentation to leverage vectorization
+    # Cache decoded images in RAM — dataset is small enough (~4 GB at 256×256)
+    ds = ds.cache()
+
+    # Re-shuffle after cache on every epoch for training
+    if is_training:
+        ds = ds.shuffle(buffer_size=min(len(image_paths), shuffle_buffer_size))
+
+    # Batch before augmentation to leverage vectorized GPU ops
     ds = ds.batch(batch_size)
 
     # Apply training augmentation ONLY if requested and during training

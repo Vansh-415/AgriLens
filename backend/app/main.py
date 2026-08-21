@@ -23,6 +23,7 @@ from app.routes.auth import router as auth_router
 from app.routes.crops import router as crops_router
 from app.routes.diseases import router as diseases_router
 from app.routes.health import router as health_router
+from app.routes.predict import router as predict_router
 from app.routes.scans import router as scans_router
 from app.routes.treatments import router as treatments_router
 from app.utils.exceptions import (
@@ -99,6 +100,7 @@ app.add_exception_handler(Exception, generic_exception_handler)
 
 app.include_router(health_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1")
+app.include_router(predict_router, prefix="/api/v1")
 app.include_router(crops_router, prefix="/api/v1")
 app.include_router(diseases_router, prefix="/api/v1")
 app.include_router(treatments_router, prefix="/api/v1")

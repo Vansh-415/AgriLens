@@ -1,65 +1,38 @@
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useLanguage } from '../../../context/LanguageContext';
+import { getLocalizedDiseases } from '../../../i18n/localizedData';
+import type { DiseaseProfile } from '../../../i18n/localizedData';
 import { PageHeader } from '../../../components/ui/PageHeader';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
 import { SearchInput } from '../../../components/ui/SearchInput';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { EmptyState } from '../../../components/ui/EmptyState';
 import { Modal } from '../../../components/ui/Modal';
-import { useToast } from '../../../hooks/useToast';
-import { diseasesService } from '../../../services/diseasesService';
-import { AlertTriangle, Shield, CheckCircle2 } from 'lucide-react';
+import {
+  ShieldCheck,
+  Bug,
+  Droplets,
+  Layers
+} from 'lucide-react';
 
-interface Disease {
-  _id: string;
-  id?: string;
-  crop_id: string;
-  name: string;
-  scientific_name?: string;
-  description: string;
-  symptoms: string[];
-  treatment_ids: string[];
-  prevention: string[];
-  severity: 'low' | 'high' | 'critical';
-  is_active: boolean;
-}
+export type { DiseaseProfile };
 
 export default function DiseasesPage() {
-  useDocumentTitle('Disease Index');
+  useDocumentTitle('Cotton Disease Index & Agronomic Library');
+  const { language, t } = useLanguage();
+  const disT = t.diseases;
 
-  const [searchParams] = useSearchParams();
-  const cropIdParam = searchParams.get('crop_id') || undefined;
+  const diseaseLibrary = getLocalizedDiseases(language);
 
-  const [diseases, setDiseases] = useState<Disease[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [severityFilter, setSeverityFilter] = useState<string>('all');
-  const [selectedDisease, setSelectedDisease] = useState<Disease | null>(null);
+  const [selectedDisease, setSelectedDisease] = useState<DiseaseProfile | null>(null);
 
-  const toast = useToast();
-
-  useEffect(() => {
-    let isMounted = true;
-    const loadDiseases = async () => {
-      try {
-        const res = await diseasesService.getAll(cropIdParam, false);
-        if (isMounted) setDiseases(res.data || []);
-      } catch (err: any) {
-        if (isMounted) toast.error('Failed to load diseases', err.response?.data?.message || 'Server error');
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-    loadDiseases();
-    return () => { isMounted = false; };
-  }, [cropIdParam]);
-
-  const filteredDiseases = diseases.filter((d) => {
+  const filteredDiseases = diseaseLibrary.filter((d) => {
     const matchesSearch =
       d.name.toLowerCase().includes(search.toLowerCase()) ||
-      d.scientific_name?.toLowerCase().includes(search.toLowerCase());
+      d.scientific_name.toLowerCase().includes(search.toLowerCase()) ||
+      d.description.toLowerCase().includes(search.toLowerCase());
     const matchesSeverity = severityFilter === 'all' || d.severity === severityFilter;
     return matchesSearch && matchesSeverity;
   });
@@ -67,33 +40,36 @@ export default function DiseasesPage() {
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
       case 'critical':
-        return <Badge variant="danger">Critical</Badge>;
+        return <Badge variant="danger">{disT.criticalThreat}</Badge>;
       case 'high':
-        return <Badge variant="warning">High Severity</Badge>;
+        return <Badge variant="warning">{disT.highSeverity}</Badge>;
+      case 'moderate':
+        return <Badge variant="info">{disT.moderateStress}</Badge>;
       default:
-        return <Badge variant="success">Low / Healthy</Badge>;
+        return <Badge variant="success">{disT.normalHealthy}</Badge>;
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-6xl mx-auto pb-12">
       <PageHeader
-        title="Disease Library"
-        description="Comprehensive catalog of crop pathologies, symptom vectors, and severity indexes."
+        title={disT.title}
+        description={disT.subtitle}
         actions={
           <div className="flex flex-col sm:flex-row gap-3">
             <select
               value={severityFilter}
               onChange={(e) => setSeverityFilter(e.target.value)}
-              className="h-10 px-3 text-sm bg-white border border-earth-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="h-10 px-3 text-xs font-semibold bg-white dark:bg-slate-800 border border-earth-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <option value="all">All Severities</option>
-              <option value="critical">Critical</option>
-              <option value="high">High</option>
-              <option value="low">Low / Healthy</option>
+              <option value="all">{disT.allThreats}</option>
+              <option value="critical">{disT.criticalThreat}</option>
+              <option value="high">{disT.highSeverity}</option>
+              <option value="moderate">{disT.moderateStress}</option>
+              <option value="low">{disT.normalHealthy}</option>
             </select>
             <SearchInput
-              placeholder="Search diseases..."
+              placeholder={t.common.searchPlaceholder}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onClear={() => setSearch('')}
@@ -102,65 +78,62 @@ export default function DiseasesPage() {
         }
       />
 
-      {loading ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-56 w-full rounded-xl" />
-          ))}
-        </div>
-      ) : filteredDiseases.length === 0 ? (
-        <EmptyState
-          icon={AlertTriangle}
-          title="No diseases found"
-          description={search ? 'No pathologies matching your search parameters.' : 'No disease profiles registered yet.'}
-        />
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredDiseases.map((disease) => (
-            <Card
-              key={disease._id || disease.id}
-              className="hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between"
-              onClick={() => setSelectedDisease(disease)}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <CardTitle className="text-lg">{disease.name}</CardTitle>
-                    {disease.scientific_name && (
-                      <p className="text-xs italic text-earth-500 mt-0.5">{disease.scientific_name}</p>
-                    )}
-                  </div>
-                  {getSeverityBadge(disease.severity)}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {filteredDiseases.map((disease) => (
+          <Card
+            key={disease.id}
+            className="hover:shadow-lg transition-all border-earth-200 cursor-pointer flex flex-col justify-between"
+            onClick={() => setSelectedDisease(disease)}
+          >
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <CardTitle className="text-base font-extrabold text-earth-950 dark:text-white">{disease.name}</CardTitle>
+                  <p className="text-xs italic text-primary-800 dark:text-primary-400 mt-0.5 font-medium">{disease.scientific_name}</p>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-earth-600 line-clamp-2">{disease.description}</p>
-                {disease.symptoms && disease.symptoms.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 pt-2">
-                    {disease.symptoms.slice(0, 3).map((sym, idx) => (
-                      <span key={idx} className="px-2 py-0.5 text-xs bg-earth-100 text-earth-700 rounded-md">
-                        {sym}
-                      </span>
-                    ))}
-                    {disease.symptoms.length > 3 && (
-                      <span className="px-2 py-0.5 text-xs bg-earth-100 text-earth-500 rounded-md">
-                        +{disease.symptoms.length - 3} more
-                      </span>
-                    )}
+                {getSeverityBadge(disease.severity)}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3 flex-1 flex flex-col justify-between">
+              <div className="space-y-2">
+                <p className="text-xs text-earth-700 dark:text-slate-300 line-clamp-2 leading-relaxed">{disease.description}</p>
+
+                <div className="p-2.5 bg-earth-50 dark:bg-slate-800/80 rounded-lg space-y-1 text-[11px] border border-earth-200/80 dark:border-slate-700">
+                  <div className="flex justify-between">
+                    <span className="text-earth-500 dark:text-slate-400 font-medium">{disT.diseaseIndexScore}:</span>
+                    <span className="font-bold text-earth-900 dark:text-white">{disease.disease_index_score}</span>
                   </div>
-                )}
-                <div className="pt-3 border-t border-earth-100 flex items-center justify-between text-xs text-earth-500">
-                  <span className="flex items-center gap-1">
-                    <Shield className="w-3.5 h-3.5 text-primary-600" />
-                    {disease.treatment_ids?.length || 0} Recommended Treatments
-                  </span>
-                  <span className="text-primary-600 font-medium hover:underline">Details &rarr;</span>
+                  <div className="flex justify-between">
+                    <span className="text-earth-500 dark:text-slate-400 font-medium">Stage:</span>
+                    <span className="font-semibold text-earth-800 dark:text-slate-200 truncate max-w-[150px]">{disease.vulnerable_stage}</span>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+
+                <div className="flex flex-wrap gap-1 pt-1">
+                  {disease.symptoms.slice(0, 2).map((sym, idx) => (
+                    <span key={idx} className="px-2 py-0.5 text-[11px] bg-primary-50 dark:bg-primary-950/40 text-primary-900 dark:text-primary-300 rounded font-medium border border-primary-200 dark:border-primary-800">
+                      {sym}
+                    </span>
+                  ))}
+                  {disease.symptoms.length > 2 && (
+                    <span className="px-2 py-0.5 text-[11px] bg-earth-100 text-earth-600 rounded">
+                      +{disease.symptoms.length - 2} more
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-earth-100 flex items-center justify-between text-xs text-primary-700 font-bold">
+                <span className="flex items-center gap-1">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  {disT.viewProtocol}
+                </span>
+                <span>{t.common.viewDetails} &rarr;</span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
       {/* Disease Detail Modal */}
       {selectedDisease && (
@@ -169,44 +142,54 @@ export default function DiseasesPage() {
           onClose={() => setSelectedDisease(null)}
           title={selectedDisease.name}
         >
-          <div className="space-y-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs italic text-earth-500">{selectedDisease.scientific_name}</span>
+          <div className="space-y-4 text-xs">
+            <div className="flex items-center justify-between p-3 bg-earth-50 rounded-lg border border-earth-200">
+              <div>
+                <span className="text-xs italic font-semibold text-primary-900 block">{selectedDisease.scientific_name}</span>
+                <span className="text-[11px] text-earth-600">Causal Agent: {selectedDisease.causal_agent}</span>
+              </div>
               {getSeverityBadge(selectedDisease.severity)}
             </div>
 
-            <div>
-              <h4 className="text-sm font-semibold text-earth-900 mb-1">Description</h4>
-              <p className="text-sm text-earth-600">{selectedDisease.description}</p>
+            <div className="grid grid-cols-2 gap-3 p-3 bg-primary-50/60 rounded-lg border border-primary-200">
+              <div>
+                <span className="text-earth-500 block text-[11px]">{disT.etl}:</span>
+                <strong className="text-earth-900">{selectedDisease.economic_threshold_level}</strong>
+              </div>
+              <div>
+                <span className="text-earth-500 block text-[11px]">{disT.vulnerableStage}:</span>
+                <strong className="text-earth-900">{selectedDisease.vulnerable_stage}</strong>
+              </div>
             </div>
 
-            {selectedDisease.symptoms?.length > 0 && (
-              <div>
-                <h4 className="text-sm font-semibold text-earth-900 mb-2">Identified Symptoms</h4>
-                <ul className="space-y-1">
-                  {selectedDisease.symptoms.map((symptom, i) => (
-                    <li key={i} className="text-sm text-earth-600 flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                      {symptom}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <div>
+              <h4 className="font-bold text-earth-900 mb-1 flex items-center gap-1.5">
+                <Layers className="w-4 h-4 text-primary-600" /> Description & Pathology
+              </h4>
+              <p className="text-earth-700 leading-relaxed">{selectedDisease.description}</p>
+            </div>
 
-            {selectedDisease.prevention?.length > 0 && (
-              <div>
-                <h4 className="text-sm font-semibold text-earth-900 mb-2">Prevention & Best Practices</h4>
-                <ul className="space-y-1">
-                  {selectedDisease.prevention.map((prev, i) => (
-                    <li key={i} className="text-sm text-earth-600 flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" />
-                      {prev}
-                    </li>
-                  ))}
-                </ul>
+            <div>
+              <h4 className="font-bold text-earth-900 mb-1.5 flex items-center gap-1.5">
+                <Bug className="w-4 h-4 text-amber-600" /> {disT.keySymptoms}
+              </h4>
+              <ul className="space-y-1 pl-4 list-disc text-earth-700">
+                {selectedDisease.symptoms.map((symptom, i) => (
+                  <li key={i}>{symptom}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200 space-y-2">
+              <h4 className="font-bold text-emerald-950 flex items-center gap-1.5">
+                <Droplets className="w-4 h-4 text-emerald-600" /> Curative Protocol Recommendation
+              </h4>
+              <div className="space-y-1 text-emerald-900">
+                <p><strong>Chemical Product:</strong> {selectedDisease.recommended_treatments.chemical}</p>
+                <p><strong>Standard Dosage:</strong> {selectedDisease.recommended_treatments.dosage}</p>
+                <p><strong>Bio-Organic Alternative:</strong> {selectedDisease.recommended_treatments.organic}</p>
               </div>
-            )}
+            </div>
           </div>
         </Modal>
       )}

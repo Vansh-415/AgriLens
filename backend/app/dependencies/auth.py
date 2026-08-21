@@ -8,19 +8,12 @@
 #   2. HttpOnly cookie named "access_token"  (cookie)
 #
 # Reusable dependencies:
-#   get_current_user   — extracts + validates JWT, returns user dict
-#   require_admin      — ensures user.role == "admin"
-#
-# Usage in routes:
-#   @router.get("/protected")
-#   async def protected(user: dict = Depends(get_current_user)):
-#       ...
-#
-#   @router.get("/admin-only")
-#   async def admin_only(user: dict = Depends(require_admin)):
-#       ...
+#   get_current_user          — extracts + validates JWT, returns user dict
+#   get_optional_current_user — optional auth (returns user dict or None)
+#   require_admin             — ensures user.role == "admin"
 # ============================================================
 
+from typing import Optional
 from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
@@ -29,7 +22,6 @@ from app.utils.exceptions import ForbiddenException, UnauthorizedException
 from app.utils.security import decode_access_token
 
 # HTTPBearer with auto_error=False so we can fall back to cookies
-# instead of immediately returning 403 when the header is missing.
 _bearer_scheme = HTTPBearer(auto_error=False)
 
 
@@ -40,14 +32,6 @@ async def get_current_user(
     """
     Extract and validate JWT from either the Authorization header
     or an HttpOnly cookie. Returns the full user document from MongoDB.
-
-    Resolution order:
-        1. Authorization: Bearer <token>  (header)
-        2. access_token cookie            (HttpOnly)
-
-    Raises:
-        UnauthorizedException: If no token found, token is invalid/expired,
-                               or user doesn't exist / is inactive.
     """
     token = None
 
@@ -88,17 +72,26 @@ async def get_current_user(
     return user
 
 
+async def get_optional_current_user(
+    request: Request,
+    credentials: HTTPAuthorizationCredentials | None = Depends(_bearer_scheme),
+) -> Optional[dict]:
+    """
+    Optional authentication dependency.
+    Returns user dict if valid JWT is present, or None if unauthenticated.
+    Allows guest users to perform predictions without blocking.
+    """
+    try:
+        return await get_current_user(request, credentials)
+    except Exception:
+        return None
+
+
 async def require_admin(
     user: dict = Depends(get_current_user),
 ) -> dict:
     """
     Ensure the authenticated user has the 'admin' role.
-
-    Use this dependency on admin-only routes like dashboard,
-    user management, and system configuration.
-
-    Raises:
-        ForbiddenException: If the user is not an admin.
     """
     if user.get("role") != "admin":
         raise ForbiddenException("Admin access required")

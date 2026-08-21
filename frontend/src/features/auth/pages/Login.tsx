@@ -8,7 +8,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Card, CardContent } from '../../../components/ui/Card';
-import { Leaf } from 'lucide-react';
+import { AgriLensLogo } from '../../../components/ui/AgriLensLogo';
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -44,11 +44,9 @@ export function Login() {
     <div className="min-h-screen bg-earth-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <div className="bg-primary-600 p-2 rounded-xl shadow-sm">
-            <Leaf className="h-8 w-8 text-white" />
-          </div>
+          <AgriLensLogo size="lg" />
         </div>
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-earth-900">
+        <h2 className="mt-6 text-center text-2xl font-bold tracking-tight text-earth-900">
           Sign in to your account
         </h2>
         <p className="mt-2 text-center text-sm text-earth-600">
@@ -70,7 +68,7 @@ export function Login() {
                 error={errors.email?.message}
                 {...register('email')}
               />
-              
+
               <Input
                 label="Password"
                 type="password"
@@ -85,7 +83,7 @@ export function Login() {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 rounded border-earth-300 text-primary-600 focus:ring-primary-500"
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-earth-300 rounded"
                   />
                   <label htmlFor="remember-me" className="ml-2 block text-sm text-earth-900">
                     Remember me
@@ -94,18 +92,22 @@ export function Login() {
 
                 <div className="text-sm">
                   <Link to="/forgot-password" className="font-medium text-primary-600 hover:text-primary-500">
-                    Forgot your password?
+                    Forgot password?
                   </Link>
                 </div>
               </div>
 
               {serverError && (
-                <div className="p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-md">
+                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
                   {serverError}
                 </div>
               )}
 
-              <Button type="submit" className="w-full" isLoading={isSubmitting}>
+              <Button
+                type="submit"
+                className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold"
+                isLoading={isSubmitting}
+              >
                 Sign in
               </Button>
             </form>

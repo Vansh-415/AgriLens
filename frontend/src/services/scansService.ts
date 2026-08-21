@@ -15,4 +15,14 @@ export const scansService = {
     const response = await api.post('/scans/', data);
     return response.data;
   },
+
+  predictDisease: async (file: File, landAcres = 1.0, useTta = true) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await api.post('/predict/', formData, {
+      params: { land_acres: landAcres, use_tta: useTta },
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
 };

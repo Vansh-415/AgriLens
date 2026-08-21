@@ -1,63 +1,59 @@
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useLanguage } from '../../../context/LanguageContext';
 import { PageHeader } from '../../../components/ui/PageHeader';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/Card';
-import { Badge } from '../../../components/ui/Badge';
 import { SearchInput } from '../../../components/ui/SearchInput';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { useToast } from '../../../hooks/useToast';
-import { cropsService } from '../../../services/cropsService';
-import { Leaf, Sprout } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
-interface Crop {
-  _id: string;
-  id?: string;
+interface CropInfo {
+  id: string;
   name: string;
-  scientific_name?: string;
-  description?: string;
-  is_active: boolean;
-  disease_count?: number;
+  scientificName: string;
+  season: string;
+  durationDays: string;
+  idealTemp: string;
+  waterRequirement: string;
+  soilType: string;
+  keyPests: string[];
+  description: string;
 }
 
+const COTTON_CROP_DATA: CropInfo[] = [
+  {
+    id: 'cotton_bt',
+    name: 'Cotton (Gossypium hirsutum)',
+    scientificName: 'Gossypium hirsutum L.',
+    season: 'Kharif Season (May - Nov)',
+    durationDays: '150 - 180 Days',
+    idealTemp: '21°C - 35°C',
+    waterRequirement: '500 - 800 mm',
+    soilType: 'Deep Black Cotton Soil (Regur) / Well-drained Loam',
+    keyPests: ['Whitefly (Begomovirus vector)', 'Leaf Hopper Jassids', 'Bacterial Blight', 'Bollworm'],
+    description: 'Cotton is India\'s prime commercial fiber crop. High temperature, moderate rainfall, and well-drained deep black soil are ideal for maximum boll yield.'
+  }
+];
+
 export default function CropsPage() {
-  useDocumentTitle('Crop Library');
+  useDocumentTitle('Cotton Crop Library');
+  const { t } = useLanguage();
+  const crpT = t.crops;
 
-  const [crops, setCrops] = useState<Crop[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const toast = useToast();
 
-  useEffect(() => {
-    let isMounted = true;
-    const loadCrops = async () => {
-      try {
-        const res = await cropsService.getAll(false);
-        if (isMounted) setCrops(res.data || []);
-      } catch (err: any) {
-        if (isMounted) toast.error('Failed to load crops', err.response?.data?.message || 'Server error');
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-    loadCrops();
-    return () => { isMounted = false; };
-  }, []);
-
-  const filteredCrops = crops.filter(c => 
-    c.name.toLowerCase().includes(search.toLowerCase()) || 
-    c.scientific_name?.toLowerCase().includes(search.toLowerCase())
+  const filtered = COTTON_CROP_DATA.filter(
+    (c) =>
+      c.name.toLowerCase().includes(search.toLowerCase()) ||
+      c.description.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-6xl mx-auto pb-12">
       <PageHeader
-        title="Crop Library"
-        description="Explore agricultural crops, their scientific profiles, and associated disease monitors."
+        title={crpT.title}
+        description={crpT.description}
         actions={
           <SearchInput
-            placeholder="Search crops..."
+            placeholder={t.common.searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onClear={() => setSearch('')}
@@ -65,56 +61,56 @@ export default function CropsPage() {
         }
       />
 
-      {loading ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map(i => <Skeleton key={i} className="h-48 w-full rounded-xl" />)}
-        </div>
-      ) : filteredCrops.length === 0 ? (
-        <EmptyState
-          icon={Sprout}
-          title="No crops found"
-          description={search ? "No crops matching your search criteria." : "No crops available in the library yet."}
-        />
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredCrops.map((crop) => (
-            <Card key={crop._id || crop.id} className="hover:shadow-md transition-shadow flex flex-col justify-between">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-primary-50 rounded-lg text-primary-600">
-                      <Leaf className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl">{crop.name}</CardTitle>
-                      {crop.scientific_name && (
-                        <p className="text-xs italic text-earth-500">{crop.scientific_name}</p>
-                      )}
-                    </div>
-                  </div>
-                  <Badge variant={crop.is_active ? 'success' : 'neutral'}>
-                    {crop.is_active ? 'Active' : 'Inactive'}
-                  </Badge>
+      <div className="grid gap-6">
+        {filtered.map((crop) => (
+          <Card key={crop.id} className="border-earth-200 shadow-sm">
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-xl font-extrabold text-earth-950 dark:text-white">{crop.name}</CardTitle>
+                  <p className="text-xs italic text-primary-700 dark:text-primary-400 font-medium">{crop.scientificName}</p>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm text-earth-600 line-clamp-3">
-                  {crop.description || 'No description provided for this crop.'}
-                </p>
-                <div className="pt-2 border-t border-earth-100 flex items-center justify-between text-xs text-earth-500">
-                  <span>Monitored Profile</span>
-                  <Link
-                    to={`/diseases?crop_id=${crop._id || crop.id}`}
-                    className="font-medium text-primary-600 hover:text-primary-700 transition-colors"
-                  >
-                    View Diseases &rarr;
-                  </Link>
+                <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold text-xs rounded-full border border-emerald-300 dark:border-emerald-800">
+                  {crop.season}
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-xs text-earth-700 dark:text-slate-300 leading-relaxed">{crop.description}</p>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 bg-earth-50 dark:bg-slate-800/80 rounded-xl border border-earth-200 dark:border-slate-700 text-xs">
+                <div>
+                  <span className="text-earth-500 dark:text-slate-400 block text-[11px] font-medium">{crpT.growingPeriod}:</span>
+                  <strong className="text-earth-900 dark:text-white font-bold">{crop.durationDays}</strong>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                <div>
+                  <span className="text-earth-500 dark:text-slate-400 block text-[11px] font-medium">{crpT.idealTemp}:</span>
+                  <strong className="text-earth-900 dark:text-white font-bold">{crop.idealTemp}</strong>
+                </div>
+                <div>
+                  <span className="text-earth-500 dark:text-slate-400 block text-[11px] font-medium">{crpT.waterNeed}:</span>
+                  <strong className="text-earth-900 dark:text-white font-bold">{crop.waterRequirement}</strong>
+                </div>
+                <div>
+                  <span className="text-earth-500 dark:text-slate-400 block text-[11px] font-medium">{crpT.soilType}:</span>
+                  <strong className="text-earth-900 dark:text-white font-bold truncate block">{crop.soilType}</strong>
+                </div>
+              </div>
+
+              <div>
+                <span className="text-xs font-bold text-earth-900 dark:text-white block mb-1.5">{crpT.keyPests}:</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {crop.keyPests.map((pest, idx) => (
+                    <span key={idx} className="px-2.5 py-1 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-300 font-semibold text-xs rounded-md border border-amber-200 dark:border-amber-800">
+                      {pest}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

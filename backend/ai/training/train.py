@@ -1,12 +1,14 @@
 """
 Main Training Pipeline Script for AgriLens AI Module 4.
-Orchestrates dataset loading, class weighting, tf.data pipeline creation, MobileNetV2 building,
-two-phase training (Transfer Learning & Fine-Tuning), evaluation, and artifact exporting.
+Orchestrates dataset loading, class weighting, tf.data pipeline creation,
+mixed precision initialization, model building (EfficientNetV2),
+two-phase training (Warmup Transfer Learning & Fine-Tuning), evaluation, and artifact exporting.
 """
 
 import sys
 import json
 from pathlib import Path
+import tensorflow as tf
 
 # Add backend directory to sys.path
 backend_dir = Path(__file__).resolve().parent.parent.parent
@@ -18,21 +20,37 @@ from ai.datasets.dataset_loader import load_dataset_splits
 from ai.datasets.preprocessing import prepare_tf_dataset
 from ai.datasets.augmentations import get_training_augmentation
 from ai.datasets.class_weights import calculate_class_weights
-from ai.models.model_builder import build_mobilenetv2_model, unfreeze_model_for_finetuning
+from ai.models.model_builder import build_model, unfreeze_model_for_finetuning
 from ai.training.callbacks import create_training_callbacks
 from ai.utils.evaluate import evaluate_model
 from ai.utils.export import export_artifacts
 
 
+def configure_mixed_precision():
+    """Enables mixed precision policy if GPU is available."""
+    gpus = tf.config.list_physical_devices('GPU')
+    if gpus and config.USE_MIXED_PRECISION:
+        try:
+            tf.keras.mixed_precision.set_global_policy('mixed_float16')
+            print("[Hardware Optimization] Mixed Precision (mixed_float16) enabled for GPU execution.")
+        except Exception as e:
+            print(f"[Hardware Optimization] Failed to set mixed precision: {e}")
+    else:
+        print("[Hardware Optimization] Standard float32 policy active.")
+
+
 def run_training_pipeline():
     """
     Executes the full AI model training pipeline.
+    Phase 1: Transfer Learning with frozen backbone (trains classification head only).
+    Phase 2: Fine-Tuning with top backbone layers unfrozen (adapts feature extractors).
     """
     print("=" * 70)
-    print("Starting AgriLens AI Model Training Pipeline (MobileNetV2)")
+    print(f"Starting AgriLens AI Model Training Pipeline ({config.BACKBONE.upper()})")
     print("=" * 70)
 
-    # 0. Ensure Output Directories Exist
+    # 0. Hardware & Output Directory Initialization
+    configure_mixed_precision()
     config.ensure_directories()
 
     # 1. Load Dataset Splits
@@ -84,23 +102,34 @@ def run_training_pipeline():
         is_training=False
     )
 
-    # 4. Build & Compile MobileNetV2 Classifier
-    print("\n[Step 4/7] Building MobileNetV2 Transfer Learning Architecture...")
-    model, base_backbone = build_mobilenetv2_model(
+    # 4. Build Architecture
+    print(f"\n[Step 4/7] Building {config.BACKBONE.upper()} Transfer Learning Architecture...")
+    model, base_backbone = build_model(
+        backbone_name=config.BACKBONE,
         input_shape=config.INPUT_SHAPE,
         num_classes=config.NUM_CLASSES,
         learning_rate=config.INITIAL_LR,
-        dropout_rate=0.4
+        dropout_rate=0.4,
+        optimizer_type=config.OPTIMIZER_TYPE,
+        weight_decay=config.WEIGHT_DECAY,
+        loss_type=config.LOSS_TYPE,
     )
     model.summary()
 
-    # 5. Phase 1 Training (Frozen Backbone)
-    print("\n[Step 5/7] Executing Training Phase 1: Transfer Learning (Frozen Backbone)...")
+    # =====================================================================
+    # 5. PHASE 1: Transfer Learning (Frozen Backbone)
+    # =====================================================================
+    print("\n[Step 5/7] Executing Stage 1: Warmup Transfer Learning (Frozen Backbone)...")
     phase1_callbacks = create_training_callbacks(
         models_dir=config.MODELS_DIR,
         logs_dir=config.LOGS_DIR,
         history_dir=config.HISTORY_DIR,
-        phase_name="phase1"
+        phase_name="phase1",
+        scheduler_type="cosine_warmup",
+        target_lr=config.INITIAL_LR,
+        warmup_epochs=config.WARMUP_EPOCHS,
+        total_epochs=config.EPOCHS,
+        patience=7
     )
 
     history_phase1 = model.fit(
@@ -111,26 +140,38 @@ def run_training_pipeline():
         callbacks=phase1_callbacks
     )
 
-    # 6. Phase 2 Training (Fine-Tuning)
-    print("\n[Step 6/7] Unfreezing Top Layers & Executing Training Phase 2: Fine-Tuning...")
+    # =====================================================================
+    # 6. PHASE 2: Fine-Tuning (Top Backbone Layers Unfrozen)
+    # =====================================================================
+    print("\n[Step 6/7] Unfreezing Top Layers & Executing Stage 2: Fine-Tuning...")
     model = unfreeze_model_for_finetuning(
         model=model,
         unfreeze_layers_count=config.UNFREEZE_LAYERS,
-        learning_rate=config.FINE_TUNE_LR
+        learning_rate=config.FINE_TUNE_LR,
+        optimizer_type=config.OPTIMIZER_TYPE,
+        weight_decay=config.WEIGHT_DECAY,
     )
 
+    # Use ReduceLROnPlateau for Phase 2 — it adapts to actual validation progress
+    # instead of cosine decay which has epoch-offset issues with initial_epoch
     phase2_callbacks = create_training_callbacks(
         models_dir=config.MODELS_DIR,
         logs_dir=config.LOGS_DIR,
         history_dir=config.HISTORY_DIR,
-        phase_name="fine_tune"
+        phase_name="fine_tune",
+        scheduler_type="reduce_on_plateau",
+        target_lr=config.FINE_TUNE_LR,
+        patience=10
     )
+
+    total_epochs = config.EPOCHS + config.FINE_TUNE_EPOCHS
+    initial_epoch = history_phase1.epoch[-1] + 1 if history_phase1.epoch else config.EPOCHS
 
     history_phase2 = model.fit(
         train_ds,
         validation_data=val_ds,
-        epochs=config.EPOCHS + config.FINE_TUNE_EPOCHS,
-        initial_epoch=history_phase1.epoch[-1] + 1 if history_phase1.epoch else config.EPOCHS,
+        epochs=total_epochs,
+        initial_epoch=initial_epoch,
         class_weight=class_weights,
         callbacks=phase2_callbacks
     )
@@ -145,7 +186,7 @@ def run_training_pipeline():
         json.dump(combined_history, f, indent=2)
 
     # 7. Model Evaluation & Export
-    print("\n[Step 7/7] Evaluating Trained Model on Test Set & Exporting Artifacts...")
+    print("\n[Step 7/7] Evaluating Trained Model on Test Set & Exporting Production Artifacts...")
     eval_results = evaluate_model(
         model=model,
         test_ds=test_ds,
