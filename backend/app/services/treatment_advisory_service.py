@@ -204,7 +204,10 @@ def generate_personalized_advisory(
 
     # Parse numerical dosage for total field calculation
     dosage_str = chem["dosage_per_acre"]
-    calculated_dosage_summary = f"{dosage_str} per acre (Total for {acres:.1f} acres: {water_total_litres} L water)"
+    if disease_name == "Healthy Leaf":
+        calculated_dosage_summary = "No chemical spray required. Crop canopy is healthy and disease-free."
+    else:
+        calculated_dosage_summary = f"{dosage_str} per acre (Total for {acres:.1f} acres: {water_total_litres} L water)"
 
     advisory = {
         "disease_name": disease_name,

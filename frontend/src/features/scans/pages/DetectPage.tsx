@@ -6,7 +6,7 @@ import { Card, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { Modal } from '../../../components/ui/Modal';
 import { useToast } from '../../../hooks/useToast';
-// import { scansService } from '../../../services/scansService';
+import { scansService } from '../../../services/scansService';
 import type { PredictionData } from '../../../types/prediction';
 import { DiagnosticPdfReport } from '../components/DiagnosticPdfReport';
 import { CameraCaptureModal } from '../components/CameraCaptureModal';
@@ -68,8 +68,8 @@ export default function DetectPage() {
       toast.error('Invalid File Type', 'Please select a valid leaf image (JPEG, PNG, WEBP).');
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('File Too Large', 'Image size must be less than 10MB.');
+    if (file.size > 25 * 1024 * 1024) {
+      toast.error('File Too Large', 'Image size must be less than 25MB.');
       return;
     }
     setSelectedFile(file);
@@ -104,16 +104,40 @@ export default function DetectPage() {
   const handleAnalyze = async () => {
     if (!selectedFile) return;
 
-    setIsAnalyzing(true);
-    // Under development preview for Phase 1 presentation
-    setTimeout(() => {
+    try {
+      setIsAnalyzing(true);
+      const res = await scansService.predictDisease(selectedFile, landAcres, useTta);
+      if (res.success && res.data) {
+        setPrediction(res.data);
+        setIsUnderDev(false);
+        toast.success('Diagnosis Complete', `${d.diagResult}: ${res.data.predicted_class}`);
+      } else {
+        toast.error('Diagnosis Failed', res.message || 'Diagnosis returned unexpected response.');
+      }
+    } catch (err: any) {
+      console.error('Diagnosis error:', err);
+      const rawMsg: string = err?.response?.data?.detail || err?.message || 'Failed to complete diagnosis.';
+      let title = 'Diagnosis Error';
+      let message = rawMsg;
+
+      if (rawMsg.includes('IMAGE_BLURRY:')) {
+        title = 'Image Too Blurry';
+        message = rawMsg.replace('IMAGE_BLURRY:', '').trim();
+      } else if (rawMsg.includes('NO_LEAF_DETECTED:')) {
+        title = 'No Cotton Leaf Detected';
+        message = rawMsg.replace('NO_LEAF_DETECTED:', '').trim();
+      } else if (rawMsg.includes('LOW_RESOLUTION:')) {
+        title = 'Low Resolution Image';
+        message = rawMsg.replace('LOW_RESOLUTION:', '').trim();
+      } else if (rawMsg.includes('CORRUPTED_IMAGE:')) {
+        title = 'Unreadable Image File';
+        message = rawMsg.replace('CORRUPTED_IMAGE:', '').trim();
+      }
+
+      toast.error(title, message);
+    } finally {
       setIsAnalyzing(false);
-      setIsUnderDev(true);
-      toast.info(
-        'Feature Under Development',
-        'AI Disease Detection engine is currently under development (Phase 2).'
-      );
-    }, 600);
+    }
   };
 
   const handleToggleSpeech = () => {
@@ -196,11 +220,10 @@ export default function DetectPage() {
                   <button
                     key={preset}
                     onClick={() => setLandAcres(preset)}
-                    className={`px-2 py-1 text-xs rounded transition-colors ${
-                      landAcres === preset
-                        ? 'bg-emerald-500 text-white font-bold'
-                        : 'bg-white/20 text-emerald-100 hover:bg-white/30'
-                    }`}
+                    className={`px-2 py-1 text-xs rounded transition-colors ${landAcres === preset
+                      ? 'bg-emerald-500 text-white font-bold'
+                      : 'bg-white/20 text-emerald-100 hover:bg-white/30'
+                      }`}
                   >
                     {preset}A
                   </button>
@@ -289,7 +312,7 @@ export default function DetectPage() {
                       >
                         <X className="w-5 h-5" />
                       </button>
-                      
+
                       {/* Source Indicator Tag */}
                       <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-semibold text-white flex items-center gap-1.5 border border-white/20">
                         {captureSource === 'camera' ? (
@@ -455,11 +478,10 @@ export default function DetectPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={handleToggleSpeech}
-                          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full transition-colors ${
-                            isSpeaking
-                              ? 'bg-rose-500 text-white animate-pulse'
-                              : 'bg-white/20 text-white hover:bg-white/30'
-                          }`}
+                          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full transition-colors ${isSpeaking
+                            ? 'bg-rose-500 text-white animate-pulse'
+                            : 'bg-white/20 text-white hover:bg-white/30'
+                            }`}
                         >
                           {isSpeaking ? (
                             <>
@@ -517,9 +539,8 @@ export default function DetectPage() {
                             </div>
                             <div className="w-full h-1.5 bg-earth-200 rounded-full overflow-hidden">
                               <div
-                                className={`h-full transition-all duration-500 ${
-                                  cname === prediction.predicted_class ? 'bg-primary-600' : 'bg-earth-400'
-                                }`}
+                                className={`h-full transition-all duration-500 ${cname === prediction.predicted_class ? 'bg-primary-600' : 'bg-earth-400'
+                                  }`}
                                 style={{ width: `${Math.max(1, prob * 100)}%` }}
                               />
                             </div>
@@ -547,33 +568,30 @@ export default function DetectPage() {
                 <div className="flex border-b border-earth-200 bg-earth-50 rounded-t-xl overflow-hidden">
                   <button
                     onClick={() => setActiveTab('chemical')}
-                    className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${
-                      activeTab === 'chemical'
-                        ? 'border-primary-600 text-primary-700 bg-white'
-                        : 'border-transparent text-earth-600 hover:text-earth-900'
-                    }`}
+                    className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'chemical'
+                      ? 'border-primary-600 text-primary-700 bg-white'
+                      : 'border-transparent text-earth-600 hover:text-earth-900'
+                      }`}
                   >
                     <FlaskConical className="w-4 h-4 text-primary-600" />
                     {d.tabChemical}
                   </button>
                   <button
                     onClick={() => setActiveTab('organic')}
-                    className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${
-                      activeTab === 'organic'
-                        ? 'border-emerald-600 text-emerald-700 bg-white'
-                        : 'border-transparent text-earth-600 hover:text-earth-900'
-                    }`}
+                    className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'organic'
+                      ? 'border-emerald-600 text-emerald-700 bg-white'
+                      : 'border-transparent text-earth-600 hover:text-earth-900'
+                      }`}
                   >
                     <Leaf className="w-4 h-4 text-emerald-600" />
                     {d.tabOrganic}
                   </button>
                   <button
                     onClick={() => setActiveTab('preventative')}
-                    className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${
-                      activeTab === 'preventative'
-                        ? 'border-teal-600 text-teal-700 bg-white'
-                        : 'border-transparent text-earth-600 hover:text-earth-900'
-                    }`}
+                    className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'preventative'
+                      ? 'border-teal-600 text-teal-700 bg-white'
+                      : 'border-transparent text-earth-600 hover:text-earth-900'
+                      }`}
                   >
                     <CloudSun className="w-4 h-4 text-teal-600" />
                     {d.tabCultural}

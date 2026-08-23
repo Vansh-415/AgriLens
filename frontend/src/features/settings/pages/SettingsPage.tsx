@@ -20,19 +20,42 @@ export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const isOnline = useOnlineStatus();
   const [isInstalled, setIsInstalled] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
     }
+
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
   }, []);
 
-  const handleInstallPWA = () => {
-    // Under development preview for Phase 1 presentation
-    toast.info(
-      'Feature Under Development',
-      'PWA Mobile & Desktop offline application installation is scheduled for Phase 2.'
-    );
+  const handleInstallPWA = async () => {
+    if (isInstalled) {
+      toast.info('Already Installed', 'AgriLens is already installed as a standalone PWA.');
+      return;
+    }
+
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setIsInstalled(true);
+        toast.success('Installation Started', 'AgriLens has been added to your device.');
+      }
+      setDeferredPrompt(null);
+    } else {
+      toast.info(
+        'Install via Browser Menu',
+        'Click the Install icon in your browser URL bar or select "Install AgriLens / Add to Home Screen" from the browser menu.'
+      );
+    }
   };
 
   return (
@@ -98,11 +121,10 @@ export default function SettingsPage() {
                 <button
                   key={item.id}
                   onClick={() => setTheme(item.id as any)}
-                  className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${
-                    theme === item.id
+                  className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${theme === item.id
                       ? 'border-primary-600 bg-primary-50/50 text-primary-700 font-bold ring-2 ring-primary-500'
                       : 'border-earth-200 bg-white dark:bg-slate-800 hover:bg-earth-50 text-earth-700 dark:text-slate-200'
-                  }`}
+                    }`}
                 >
                   <item.icon className="w-5 h-5" />
                   <span className="text-xs">{item.label}</span>

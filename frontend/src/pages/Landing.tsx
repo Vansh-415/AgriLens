@@ -113,7 +113,7 @@ const STEPS = [
     number: '01',
     title: 'Capture Focus',
     description: 'Take a high-resolution photo using your smartphone camera or upload directly from your gallery. Ensure the leaf is well-lit and in clear focus for optimal results.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0n1Wds7-ZEu45yV9YJj0pJCunieJTEDwQ1TO7zaDIZ-L7owPLvMP64wa2R19ZO9qiasqZ4uznZ_5CH_RPCM17LXUBA2y81Y2Cfl-wpc4F--AF7XfyREir35epQFNWty0YTmYwn6lzgIpCcItgmFiaasdFnWaph-REUznJR3TsVHw9NHsp0PPjsgRax15q07OgdE8YI0nyLCjZ-99qlgKzNCaxGqLXUwif2PzY-pvJSrFU5y1z_oDW',
+    image: '/images/step1_capture.jpg',
     imageAlt: 'Capturing cotton leaf with smartphone camera',
     reverse: false,
   },
@@ -129,7 +129,7 @@ const STEPS = [
     number: '03',
     title: 'Exact Prescription',
     description: 'Receive a comprehensive, acreage-scaled chemical dosage plan, bio-organic remedies, weather spray safety rules, and a 1-click downloadable field PDF report.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBepto-E-fsr8vk8QZc9uLSLRM3wxrukTBhFwfSki7vHjDuLghQ93fZn5qWa4FfBz9OFcO-W2l6qjeKukb5eLULtjmoUPpXfuXRCgS0eAQ3l-sS_75HtYdrFEKQYZf5Kjw-3wNmvJgPWmBj2I_-rf51jEdNQdcnVFickVBvWN_bvD4VC5pL5AO_0N4Ow9osD02SOSo4Khc4L3AVMwscRxwfxSbqO6-76SvcuYcEn0WHQmNJuMDA6oAo',
+    image: '/images/step3_prescription.jpg',
     imageAlt: 'Acreage-scaled treatment advisory and field prescription',
     reverse: false,
   },
@@ -140,42 +140,42 @@ const GALLERY_CARDS = [
     title: 'Healthy Canopy',
     badge: 'Healthy',
     badgeColor: 'text-emerald-700 bg-emerald-100 dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800',
-    image: 'https://lh3.googleusercontent.com/aida/AP1WRLsHBXx7CCajnNXrt8a-D2oOJWnLaIo09jKZXoti2-1SCljcgZBWDQmHryf-ZhjneiQhFTNgSOKQ5g06VtWhLTO1fkpwkxvzVYinw1BNxwZzf53H8tA03SOdBaaEEPLSGR3AXWXxFmgF1ghj78E2KV7dWty0yQ_x9dCUwlUvOFNl9czR1sEtL3plDfKi5jiKylgdMn29nciWSphzfprJSLICjNkdmrghUnLP4DYSSMKtUDB5jwDW2OsLRQ',
+    image: '/images/gallery_healthy.jpg',
     alt: 'Healthy cotton leaf',
   },
   {
     title: 'Fungal Blight',
     badge: 'Fungal Blight',
     badgeColor: 'text-rose-700 bg-rose-100 dark:bg-rose-950/80 dark:text-rose-300 border-rose-300 dark:border-rose-800',
-    image: 'https://lh3.googleusercontent.com/aida/AP1WRLsU5zBX16IlUZhyZ2RTcM2m9HyYOSSFJSR56V1tMHOVRxzuEo4PWKCRxpKm7vLD3AwFqi0tkmrgsCWQnE7Ox3l4sM8wbn8or30h0W6sBK8nEchgqXMqYgo5GwMmt8bSrJkcuYRZ0dnsSSlJNwRiwb3GUV1Xgv8zTUFoqWne_QnBHy5ftox2ML3ynnI93Dnl44E2uGT9xCe5c5j4ATiGPM2qqXe4R9N7exXXq60HDBASsNpWJWmeUQ-8iw',
+    image: '/images/gallery_fungal_blight.jpg',
     alt: 'Fungal blight on cotton leaf',
   },
   {
     title: 'Viral Leaf Curl',
     badge: 'Viral Leaf Curl',
     badgeColor: 'text-amber-700 bg-amber-100 dark:bg-amber-950/80 dark:text-amber-300 border-amber-300 dark:border-amber-800',
-    image: 'https://lh3.googleusercontent.com/aida/AP1WRLv1dGo3CBI1C5hvtR9iBo224VXSKpwhorpYlpKhYi_J6LYPBWZZZWnrGzjIs5Q6sqmCzSK1rZz_P5LD6Ax9tuZBqpDN87_jFn2Vvtgz2wc8ewZUSwefcglbTfpCaemVV460DIsByV0LW-E2iQRdlRESgKslZhoH0QLTg6kk8olQOmuksI6sil9-zSPOaZPEumGz45Wxr6x1WpsPLr0u8Zuevk4xKsU1xMd0AByR_ijzmpygW4jN4lwoUAQ',
+    image: '/images/gallery_curl_virus.jpg',
     alt: 'Cotton leaf curl virus',
   },
   {
     title: 'Bacterial Spot',
     badge: 'Bacterial Spot',
     badgeColor: 'text-rose-700 bg-rose-100 dark:bg-rose-950/80 dark:text-rose-300 border-rose-300 dark:border-rose-800',
-    image: 'https://lh3.googleusercontent.com/aida/AP1WRLt109cmOzyIy4mErRw823YeNmx3LtipprciLvQhdr4zwRIfxPgaSRgEvoRsXjD_qmvxn0BJgbyKjhzxRhaHwa-3FHP0S0PoEnO3bIEK6bkm40tvABuiU_TSP9eJ6PowiOKxb9a0BIWmIPhCJyEHENUEvxOpm5UM71g9YTFk9UWQGsOVmEasD1I2FxwbiYY_E_Wv7tkNsfVW0dbc72hutbljabKBsCl4wxOOiVQDkhAy88HZgEgeU5K7GOM',
+    image: '/images/gallery_bacterial_spot.jpg',
     alt: 'Bacterial leaf spot lesion',
   },
   {
     title: 'Nutrient Deficiency',
     badge: 'Nutrient Deficiency',
     badgeColor: 'text-amber-700 bg-amber-100 dark:bg-amber-950/80 dark:text-amber-300 border-amber-300 dark:border-amber-800',
-    image: 'https://lh3.googleusercontent.com/aida/AP1WRLtZcOLz1PXooqFsczqmO16ykoHTBD0pDQNT23HKeGIczXeaot9Q_oFksghXj9Y0DVmqubtDa_U8G6JyULdb_2RQ_47tkGh9FR5wTFqEQRKzDQyfQskMJU6flY9uaPpT9o0PTISBLNFZ44rWXjv6mCwkTMEYMAzt14Ep6w-uvIWXHSMHW3Bjfvg0F8SSsSHMpGqRujCryqP2_AjNxZ5mXXRkT1mP8BVnHKpmedsEB8C27nvIPjW4XkUqrY4',
+    image: '/images/gallery_nutrient_deficiency.jpg',
     alt: 'Magnesium nutrient deficiency on cotton foliage',
   },
   {
     title: 'Pest Damage',
     badge: 'Pest Damage',
     badgeColor: 'text-rose-700 bg-rose-100 dark:bg-rose-950/80 dark:text-rose-300 border-rose-300 dark:border-rose-800',
-    image: 'https://lh3.googleusercontent.com/aida/AP1WRLvUpNS0RsSI09sJ2eC9v23SA_TwEev1YSvoPdOVHLctfW0kpgj2hZPpBWVlsynFm3F3TTFXpArr8H7EqDy9N7JZByba_J3ir0ET4_cT2ZAiedUz9e0S-xZdZVVjviJvBkUdzZTbyJZ-OkW0Jm1ab2B9t_mhmStYcOh73pGHMeDGFKCkEPMGXMwZ5je2CuZZzlWhGc7zundOFNLeROR6UQc5RM5aZ4XgpasHt8WuJV63dVh7ePW36rjLPho',
+    image: '/images/gallery_pest_damage.jpg',
     alt: 'Pest damage on cotton leaf',
   },
 ];
@@ -349,7 +349,7 @@ export function Landing() {
                   <img
                     alt="Cotton leaf disease analysis preview"
                     className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRivGBIKJJGvUFh6vX2-vV2f7Cc2D4kmzCpm9NJZTdhLSij9Y4rm4HMQEx3gaX7iKTNpgmsycM2O3jJzUB2hzFyFTwAn40QKaPGASE7KjFgDeZbQ42yEiUywjcA4bkOqMddrAGQg6IDGnzbNioTBTAKyYQqZZD0ydJnHjTkXWUrsgYXcX-T6YTRAwUGrUAl1JhYqc2BL2tnCwKr5yE2d59bcnBHwyygy5i9jtGoYueL_Jp6eFBUgqy"
+                    src="/images/hero_preview.jpg"
                   />
                   {/* Analysis Complete Badge Overlay */}
                   <div className="absolute top-4 left-4 bg-white/95 dark:bg-earth-900/95 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2 shadow-md border border-white/60 dark:border-earth-700">
@@ -409,7 +409,7 @@ export function Landing() {
             <img
               alt="Lush green cotton field"
               className="absolute inset-0 w-full h-full object-cover z-0"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJAr1S7OkSjgKr66-16Mvrsv0QaiLiTgWh46CMDgwrEc_tQO04e-BPjQeG--_D01761ejKj-kmNPFErv-iH8gGHqgau4XG_FBxjIN5mbzzr7N47EtBuBZ6WUNxt-k9JTqLr7QGPVlRzJIcb8Jp5PP2sNwvnM3-EJzyP2Yv7Iwa_DRDCxTC0P2J6IreCpdiS2awmNi-A8JBaY_s_USruapRENfup6DpcslerMq9ZYJut8NeSxqXhwCQ"
+              src="/images/cultivating_precision.jpg"
             />
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[3px] z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10" />
@@ -481,7 +481,7 @@ export function Landing() {
             <img
               alt="Lush green cotton crop canopy"
               className="absolute inset-0 w-full h-full object-cover opacity-35 dark:opacity-20 z-0 mix-blend-luminosity"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzUUGddhTYzOWwq_Uh27tjRC2by6HevppM-zg3HsyKiVmIRnro0aW1fiRTkrYrxn1j2DplEiFrY5Rx88K61OKqPxj1reRRJOJyWDM5S-1YbmNmRItDOsC6mvBEfW_nJifMm0Vyp1ymRluQCmUc9zrSFhBZgXU3D0okQuZL2pCcmK5cVo8DB13bqLm9EiPl5xtB4M6DA6XUDgEni9NGGZjl79u8o94qmp1ywR5hpj88VJXKve7vDOe6"
+              src="/images/field_impact_bg.jpg"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#f4fcf0] via-[#f4fcf0]/90 to-[#f4fcf0]/30 dark:from-earth-900 dark:via-earth-900/90 dark:to-earth-900/30 z-10" />
 
@@ -499,7 +499,7 @@ export function Landing() {
                   <img
                     alt="Healthy cotton boll"
                     className="w-full h-full object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc1I0p3G-0kSyoREn7YpWB1YhbYeRLuSOm8EgO_WJ6c1L9JD4JnnsefSMJVKq6zSj9zaMOm1r5TJmnvcFvvmW4HT8JB6Yr7NsH9y96bWIhLnJ1JuTBEgqj7rVYMp0wAbC-xiN6lY-ZA2AGdJp0HdWiLJARn6wsr6DRirKR5r-YBX7sILVWQ00ayO0-nQFHOs2McYkR-qwoWhJKG_HEmfJ8pB10rALjwtNIbrMqhkWV1Hbf4Ddfxm-f"
+                    src="/images/circular_boll.jpg"
                   />
                 </div>
               </div>
@@ -615,7 +615,7 @@ export function Landing() {
               <img
                 alt="Sample Diagnostic PDF Field Report"
                 className="w-full h-auto object-contain"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1UlFQrXwQCzmIGu4CuQiWcXdIEv_GM5vfePrWCVLg3Xbzhdu7iCuYM7zDsfX5mmxVbXLlQiwvC2gyugO6ofiU84BWNMf84tNFjwdgHvslKndsqkpbnmNzRyM98HMxdJiNqp_bL3i5wZoTANXUwiVhcKmvG7Q0Wbg3E7EAdTbt4LHCHCz9G5bNtSsDrPlDlvHzwb7k2KbvI1NOWtHQ_mvsh3OlNgPv1bO9etiWvRYWPk-STAbFoPb8W5fQ"
+                src="/images/sample_report.png"
               />
             </div>
           </motion.div>

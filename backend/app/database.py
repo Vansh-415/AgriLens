@@ -28,7 +28,11 @@ async def connect_db() -> None:
 
     logger.info(f"Connecting to MongoDB database: {settings.DATABASE_NAME}")
 
-    _client = AsyncIOMotorClient(settings.MONGODB_URL)
+    _client = AsyncIOMotorClient(
+        settings.MONGODB_URL,
+        tlsCAFile=certifi.where(),
+        serverSelectionTimeoutMS=5000,
+    )
     _database = _client[settings.DATABASE_NAME]
 
     # Verify the connection is alive by pinging the server

@@ -1,8 +1,7 @@
 """
 Inference Module for AgriLens Cotton Leaf Disease Classifier.
-Loads trained model (EfficientNetV2/MobileNetV2) and labels.json for single-image diagnosis,
-confidence scoring, and Test-Time Augmentation (TTA).
-Dynamically adjusts image target dimensions based on model input shape.
+Combines Deep Learning Vision (EfficientNetV2 + TTA) with Foliar Quality &
+Biomarker Verification to prevent false positives and reject invalid/blurry inputs.
 """
 
 import io
@@ -12,6 +11,8 @@ from typing import Dict, Union, Any, List, Optional
 import numpy as np
 from PIL import Image
 import tensorflow as tf
+
+from ai.inference.foliar_validator import FoliarQualityValidator
 
 OptionalPath = Optional[Union[str, Path]]
 
@@ -61,10 +62,7 @@ class CottonDiseasePredictor:
             self.target_size = (int(h), int(w))
 
     def preprocess_image_input(self, image_input: Union[str, Path, bytes, Image.Image, np.ndarray]) -> np.ndarray:
-        """
-        Standardizes various input types (file path, raw bytes, PIL Image, or numpy array)
-        into a preprocessed 4D batch tensor of shape (1, H, W, 3).
-        """
+        """Standardizes various input types into a 4D batch tensor of shape (1, H, W, 3)."""
         if isinstance(image_input, (str, Path)):
             img = Image.open(str(image_input)).convert("RGB")
         elif isinstance(image_input, bytes):
@@ -81,63 +79,110 @@ class CottonDiseasePredictor:
 
         img = img.resize(self.target_size, Image.Resampling.BILINEAR)
         img_array = np.array(img, dtype=np.float32)
-        
-        # Raw [0, 255] float32 tensor
         batch_tensor = np.expand_dims(img_array, axis=0)
         return batch_tensor
 
     def _apply_tta(self, batch_tensor: np.ndarray) -> np.ndarray:
-        """
-        Applies Test-Time Augmentation (TTA) across original, horizontal flip,
-        and vertical flip views to compute ensemble probability distribution.
-        """
+        """Applies Test-Time Augmentation (TTA) across original and flipped views."""
         orig_pred = self.model.predict(batch_tensor, verbose=0)[0]
-
-        # Horizontal flip view
         hflip_tensor = np.flip(batch_tensor, axis=2)
         hflip_pred = self.model.predict(hflip_tensor, verbose=0)[0]
-
-        # Vertical flip view
         vflip_tensor = np.flip(batch_tensor, axis=1)
         vflip_pred = self.model.predict(vflip_tensor, verbose=0)[0]
 
-        # Ensemble average
         mean_pred = (orig_pred + hflip_pred + vflip_pred) / 3.0
         return mean_pred
 
-    def predict(self, image_input: Union[str, Path, bytes, Image.Image, np.ndarray], use_tta: Optional[bool] = None) -> Dict[str, Any]:
+    def predict(
+        self,
+        image_input: Union[str, Path, bytes, Image.Image, np.ndarray],
+        use_tta: Optional[bool] = None,
+        validate_quality: bool = True
+    ) -> Dict[str, Any]:
         """
-        Performs inference on a single image.
+        Performs quality-gated inference on a single image.
+
+        Raises:
+            ValueError: If image fails quality checks (blurry, non-leaf, corrupted).
 
         Returns:
             Dict containing:
                 - 'predicted_class': str
-                - 'confidence': float (0.0 to 1.0)
+                - 'confidence': float
                 - 'class_probabilities': Dict[str, float]
+                - 'biomarkers': Dict[str, float]
         """
         if self.model is None or not self.class_names:
             self.load_resources()
 
-        batch_tensor = self.preprocess_image_input(image_input)
+        # 1. Pre-Inference Foliar Quality & Domain Gatekeeper
+        if validate_quality:
+            is_valid, error_code, error_msg = FoliarQualityValidator.validate_image(image_input)
+            if not is_valid:
+                raise ValueError(f"{error_code}: {error_msg}")
 
+        # 2. Extract Physical Biomarkers (Chlorophyll, Necrosis, Anthocyanin)
+        biomarkers = FoliarQualityValidator.extract_biomarkers(image_input)
+
+        # 3. Neural Network Inference
+        batch_tensor = self.preprocess_image_input(image_input)
         run_tta = self.use_tta if use_tta is None else use_tta
 
         if run_tta:
-            predictions = self._apply_tta(batch_tensor)
+            raw_predictions = self._apply_tta(batch_tensor)
         else:
-            predictions = self.model.predict(batch_tensor, verbose=0)[0]
+            raw_predictions = self.model.predict(batch_tensor, verbose=0)[0]
 
-        top_idx = int(np.argmax(predictions))
+        # 4. Calibrated Hybrid Decision Engine
+        calibrated_preds = np.copy(raw_predictions).astype(np.float64)
+        c_map = {name: idx for idx, name in enumerate(self.class_names)}
+
+        healthy_idx = c_map.get("Healthy Leaf")
+        curl_idx = c_map.get("Curl Virus")
+        redding_idx = c_map.get("Leaf Redding")
+        bacterial_idx = c_map.get("Bacterial Blight")
+
+        green_ratio = biomarkers.get("green_ratio", 0.0)
+        necrotic_ratio = biomarkers.get("necrotic_ratio", 0.0)
+        anthocyanin_ratio = biomarkers.get("anthocyanin_ratio", 0.0)
+        mean_exg = biomarkers.get("mean_exg", 0.0)
+
+        # Healthy Canopy Safeguard:
+        # If the leaf has pristine green chlorophyll (ExG > 0.40, Green Ratio > 98%)
+        # with absolutely 0% necrotic spots and 0% red anthocyanin, ensure Healthy Leaf is prioritized
+        if (
+            healthy_idx is not None
+            and green_ratio >= 0.98
+            and necrotic_ratio < 0.005
+            and anthocyanin_ratio < 0.005
+            and mean_exg >= 0.38
+        ):
+            calibrated_preds[healthy_idx] = max(calibrated_preds[healthy_idx], 0.92)
+            if curl_idx is not None and calibrated_preds[curl_idx] > 0.5:
+                calibrated_preds[curl_idx] *= 0.15
+
+        # Disease Biomarker Reinforcement:
+        if redding_idx is not None and anthocyanin_ratio >= 0.10:
+            calibrated_preds[redding_idx] += 0.40 * anthocyanin_ratio
+
+        if bacterial_idx is not None and necrotic_ratio >= 0.08:
+            calibrated_preds[bacterial_idx] += 0.40 * necrotic_ratio
+
+        # Normalize probabilities
+        norm_preds = calibrated_preds / np.sum(calibrated_preds)
+
+        top_idx = int(np.argmax(norm_preds))
         predicted_class = self.class_names[top_idx]
-        confidence = float(predictions[top_idx])
+        confidence = float(norm_preds[top_idx])
 
         class_probabilities = {
             cname: float(prob)
-            for cname, prob in zip(self.class_names, predictions)
+            for cname, prob in zip(self.class_names, norm_preds)
         }
 
         return {
             "predicted_class": predicted_class,
             "confidence": round(confidence, 4),
-            "class_probabilities": {k: round(v, 4) for k, v in class_probabilities.items()}
+            "class_probabilities": {k: round(v, 4) for k, v in class_probabilities.items()},
+            "biomarkers": biomarkers
         }

@@ -45,10 +45,10 @@ async def predict_crop_disease(
                 detail="Empty image file received."
             )
         
-        if len(image_bytes) > 10 * 1024 * 1024:  # 10 MB limit
+        if len(image_bytes) > 25 * 1024 * 1024:  # 25 MB limit
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Image file too large. Maximum supported size is 10 MB."
+                detail="Image file too large. Maximum supported size is 25 MB."
             )
 
         start_time = time.perf_counter()
@@ -107,6 +107,12 @@ async def predict_crop_disease(
 
     except HTTPException:
         raise
+    except ValueError as ve:
+        logger.warning(f"Image quality validation rejected: {ve}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(ve)
+        )
     except Exception as e:
         logger.error(f"Prediction failed: {e}", exc_info=True)
         raise HTTPException(

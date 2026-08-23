@@ -5,6 +5,7 @@
 # This service has NO dependency on FastAPI.
 # ============================================================
 
+import asyncio
 from app.config import settings
 from app.database import get_database
 from app.utils.logger import get_logger
@@ -27,11 +28,11 @@ async def check_health() -> dict:
 
     try:
         db = get_database()
-        # Ping MongoDB to verify the connection is active
-        await db.command("ping")
+        # Ping MongoDB with a strict timeout to prevent endpoint hanging
+        await asyncio.wait_for(db.command("ping"), timeout=2.0)
         database_status = "connected"
     except Exception as e:
-        logger.warning(f"Database health check failed: {e}")
+        logger.warning(f"Database health check ping failed: {e}")
         database_status = "disconnected"
 
     return {
