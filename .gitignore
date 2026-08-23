@@ -48,6 +48,7 @@ backend/storage/uploads/*
 
 # ----- AI Models & Training -----
 backend/ai_models/cotton/model.keras
+backend/ai_models/cotton/best_model.keras
 ai_training/data/*
 !ai_training/data/.gitkeep
 ai_training/models/*
@@ -65,3 +66,4 @@ htmlcov/
 .coverage
 coverage/
 .cache/
+
