@@ -1,3 +1,19 @@
+export const CONFIDENCE_HIGH_THRESHOLD = 0.85;     // >= 85% => High Confidence
+export const CONFIDENCE_MODERATE_THRESHOLD = 0.65; // >= 65% and < 85% => Moderate Confidence
+                                                     // < 65% => Uncertain
+
+export type ConfidenceTier = 'uncertain' | 'moderate' | 'high';
+
+export function getConfidenceTier(confidence: number): ConfidenceTier {
+  if (confidence >= CONFIDENCE_HIGH_THRESHOLD) {
+    return 'high';
+  }
+  if (confidence >= CONFIDENCE_MODERATE_THRESHOLD) {
+    return 'moderate';
+  }
+  return 'uncertain';
+}
+
 export interface CalculatedDosage {
   active_ingredient: string;
   product_name: string;

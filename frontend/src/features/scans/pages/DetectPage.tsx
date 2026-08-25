@@ -8,6 +8,7 @@ import { Modal } from '../../../components/ui/Modal';
 import { useToast } from '../../../hooks/useToast';
 import { scansService } from '../../../services/scansService';
 import type { PredictionData } from '../../../types/prediction';
+import { getConfidenceTier } from '../../../types/prediction';
 import { DiagnosticPdfReport } from '../components/DiagnosticPdfReport';
 import { CameraCaptureModal } from '../components/CameraCaptureModal';
 import { printReportElement } from '../../../utils/printReport';
@@ -453,250 +454,385 @@ export default function DetectPage() {
               </Card>
             )
           ) : (
-            <div className="space-y-4">
-              {/* Primary Diagnosis Banner */}
-              <Card className="border-2 border-primary-500 shadow-lg overflow-hidden">
-                <div className="bg-gradient-to-r from-primary-700 to-emerald-700 text-white p-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="flex items-center gap-2 text-xs font-semibold text-emerald-200 uppercase tracking-wider">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                        {d.diagResult}
-                      </div>
-                      <h2 className="text-2xl font-black text-white mt-1">
-                        {prediction.predicted_class}
-                      </h2>
-                      <p className="text-xs text-emerald-100 italic mt-0.5">
-                        {prediction.personalized_advisory.scientific_name}
-                      </p>
-                    </div>
+            (() => {
+              const confTier = getConfidenceTier(prediction.confidence);
+              const topCandidates = Object.entries(prediction.class_probabilities || {})
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 3);
 
-                    <div className="flex flex-col items-end gap-2">
-                      <div className="px-3 py-1.5 bg-white text-primary-900 font-extrabold text-sm rounded-lg shadow-sm border border-white/20">
-                        {prediction.confidence_pct} {t.common.certainty}
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={handleToggleSpeech}
-                          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full transition-colors ${isSpeaking
-                            ? 'bg-rose-500 text-white animate-pulse'
-                            : 'bg-white/20 text-white hover:bg-white/30'
-                            }`}
-                        >
-                          {isSpeaking ? (
-                            <>
-                              <VolumeX className="w-3.5 h-3.5" /> {t.common.stopVoice}
-                            </>
-                          ) : (
-                            <>
-                              <Volume2 className="w-3.5 h-3.5" /> {t.common.listenTts}
-                            </>
-                          )}
-                        </button>
-                        <button
-                          onClick={() => setShowPdfModal(true)}
-                          className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-white text-primary-900 rounded-full hover:bg-emerald-50 transition-colors shadow-sm"
-                        >
-                          <FileText className="w-3.5 h-3.5 text-primary-700" /> {t.common.pdfReport}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 text-xs text-emerald-100 pt-4 mt-3 border-t border-white/15">
-                    <span className="flex items-center gap-1">
-                      <Zap className="w-3.5 h-3.5 text-amber-300" />
-                      {d.diagTime}: {prediction.prediction_time_ms} ms
-                    </span>
-                    <span>•</span>
-                    <span className={`px-2 py-0.5 text-[11px] font-bold rounded border ${getSeverityBadgeClass(prediction.personalized_advisory.severity)}`}>
-                      {t.common.threatIndex}: {prediction.personalized_advisory.severity}
-                    </span>
-                  </div>
-                </div>
-
-                <CardContent className="p-5 space-y-4">
-                  <p className="text-xs text-earth-700 leading-relaxed">
-                    {prediction.personalized_advisory.description}
-                  </p>
-
-                  <div className="border-t border-earth-100 pt-3">
-                    <button
-                      onClick={() => setShowProbabilityBreakdown(!showProbabilityBreakdown)}
-                      className="flex items-center justify-between w-full text-xs font-semibold text-earth-800 hover:text-primary-700 py-1"
-                    >
-                      <span>{d.multiClassSpectrum}</span>
-                      {showProbabilityBreakdown ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    </button>
-
-                    {showProbabilityBreakdown && (
-                      <div className="space-y-2 mt-3 p-3 bg-earth-50 rounded-lg text-xs">
-                        {Object.entries(prediction.class_probabilities).map(([cname, prob]) => (
-                          <div key={cname} className="space-y-1">
-                            <div className="flex justify-between font-medium text-earth-800">
-                              <span>{cname}</span>
-                              <span className="font-bold">{(prob * 100).toFixed(1)}%</span>
-                            </div>
-                            <div className="w-full h-1.5 bg-earth-200 rounded-full overflow-hidden">
-                              <div
-                                className={`h-full transition-all duration-500 ${cname === prediction.predicted_class ? 'bg-primary-600' : 'bg-earth-400'
-                                  }`}
-                                style={{ width: `${Math.max(1, prob * 100)}%` }}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Emergency Action */}
-              <div className="p-4 bg-amber-50 rounded-xl border-l-4 border-amber-500 text-amber-900 space-y-1 shadow-sm">
-                <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-amber-800">
-                  <AlertTriangle className="w-4 h-4 text-amber-600" />
-                  {d.emergencyTitle}
-                </div>
-                <p className="text-xs text-amber-900 font-medium leading-relaxed">
-                  {prediction.personalized_advisory.emergency_action}
-                </p>
-              </div>
-
-              {/* Treatment Tabs */}
-              <Card className="border-earth-200">
-                <div className="flex border-b border-earth-200 bg-earth-50 rounded-t-xl overflow-hidden">
-                  <button
-                    onClick={() => setActiveTab('chemical')}
-                    className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'chemical'
-                      ? 'border-primary-600 text-primary-700 bg-white'
-                      : 'border-transparent text-earth-600 hover:text-earth-900'
-                      }`}
-                  >
-                    <FlaskConical className="w-4 h-4 text-primary-600" />
-                    {d.tabChemical}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('organic')}
-                    className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'organic'
-                      ? 'border-emerald-600 text-emerald-700 bg-white'
-                      : 'border-transparent text-earth-600 hover:text-earth-900'
-                      }`}
-                  >
-                    <Leaf className="w-4 h-4 text-emerald-600" />
-                    {d.tabOrganic}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('preventative')}
-                    className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'preventative'
-                      ? 'border-teal-600 text-teal-700 bg-white'
-                      : 'border-transparent text-earth-600 hover:text-earth-900'
-                      }`}
-                  >
-                    <CloudSun className="w-4 h-4 text-teal-600" />
-                    {d.tabCultural}
-                  </button>
-                </div>
-
-                <CardContent className="p-5">
-                  {activeTab === 'chemical' && (
-                    <div className="space-y-4">
-                      <div className="p-4 bg-primary-50/60 rounded-xl border border-primary-200 space-y-3">
-                        <div className="flex justify-between items-start">
+              if (confTier === 'uncertain') {
+                return (
+                  <div className="space-y-4">
+                    {/* Uncertain Result Card */}
+                    <Card className="border-2 border-amber-400 shadow-lg overflow-hidden bg-white">
+                      <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white p-5">
+                        <div className="flex items-start justify-between gap-4">
                           <div>
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-primary-700">
-                              {d.recProduct}
-                            </span>
-                            <h4 className="text-base font-extrabold text-primary-950">
-                              {prediction.personalized_advisory.calculated_dosage.product_name}
+                            <div className="flex items-center gap-2 text-xs font-bold text-amber-100 uppercase tracking-wider">
+                              <AlertTriangle className="w-4 h-4 text-amber-200" />
+                              Uncertain Result
+                            </div>
+                            <h2 className="text-xl sm:text-2xl font-black text-white mt-1">
+                              Diagnosis Inconclusive
+                            </h2>
+                            <p className="text-xs text-amber-100 mt-0.5 font-medium">
+                              Confidence score: {prediction.confidence_pct} (below 65% certainty threshold)
+                            </p>
+                          </div>
+
+                          <div className="px-3 py-1.5 bg-white text-amber-900 font-extrabold text-xs rounded-lg shadow-sm">
+                            {prediction.confidence_pct}
+                          </div>
+                        </div>
+                      </div>
+
+                      <CardContent className="p-5 space-y-5">
+                        {/* Prominent Guidance Message */}
+                        <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-950 text-xs sm:text-sm font-medium leading-relaxed">
+                          We couldn't confidently identify the disease. Try retaking the photo with better lighting, a closer angle, or a cleaner background.
+                        </div>
+
+                        {/* Top 2-3 Candidate Diseases */}
+                        <div className="space-y-3 p-4 bg-earth-50 rounded-2xl border border-earth-200">
+                          <div className="flex items-center justify-between">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-earth-800">
+                              Top Candidate Diseases
                             </h4>
+                            <span className="text-[11px] font-semibold text-earth-500">Sorted by AI probability</span>
                           </div>
-                          <span className="px-2.5 py-1 bg-primary-600 text-white font-bold text-xs rounded-md">
-                            {landAcres} {t.common.acres}
-                          </span>
-                        </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2 border-t border-primary-200/60">
-                          <div>
-                            <span className="text-earth-500 block text-[11px]">{d.activeIngredient}:</span>
-                            <span className="font-semibold text-earth-900">
-                              {prediction.personalized_advisory.calculated_dosage.active_ingredient}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-earth-500 block text-[11px]">{d.dosagePerAcre}:</span>
-                            <span className="font-semibold text-earth-900">
-                              {prediction.personalized_advisory.calculated_dosage.dosage_per_acre}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-earth-500 block text-[11px]">{d.totalWater}:</span>
-                            <span className="font-bold text-primary-700 text-sm">
-                              {prediction.personalized_advisory.calculated_dosage.total_water_litres} Litres
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-earth-500 block text-[11px]">{d.repeatInterval}:</span>
-                            <span className="font-semibold text-earth-900">
-                              Every {prediction.personalized_advisory.calculated_dosage.application_interval_days} Days
-                            </span>
+                          <div className="space-y-2.5">
+                            {topCandidates.map(([cname, prob]) => (
+                              <div key={cname} className="space-y-1">
+                                <div className="flex justify-between text-xs font-bold text-earth-800">
+                                  <span>{cname}</span>
+                                  <span>{(prob * 100).toFixed(1)}%</span>
+                                </div>
+                                <div className="w-full h-2 bg-earth-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-amber-500 rounded-full transition-all duration-500"
+                                    style={{ width: `${Math.max(3, prob * 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </div>
-                      </div>
 
-                      <div className="p-3 bg-earth-50 rounded-lg text-xs text-earth-700 border border-earth-200">
-                        <span className="font-bold text-earth-900">{d.summary}: </span>
-                        {prediction.personalized_advisory.calculated_dosage.dosage_summary}
-                      </div>
-                    </div>
-                  )}
-
-                  {activeTab === 'organic' && (
-                    <div className="space-y-3">
-                      <div className="p-4 bg-emerald-50/70 rounded-xl border border-emerald-200 space-y-2">
-                        <h4 className="text-sm font-bold text-emerald-950 flex items-center gap-2">
-                          <Leaf className="w-4 h-4 text-emerald-600" />
-                          {d.tabOrganic}
-                        </h4>
-                        <p className="text-xs font-semibold text-emerald-900 leading-relaxed">
-                          {prediction.personalized_advisory.biological_organic.remedy}
-                        </p>
-                        <p className="text-xs text-emerald-800 pt-1">
-                          {prediction.personalized_advisory.biological_organic.description}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {activeTab === 'preventative' && (
-                    <div className="space-y-4 text-xs">
-                      <div className="p-3.5 bg-teal-50 rounded-xl border border-teal-200 text-teal-900 space-y-1">
-                        <div className="font-bold text-teal-950 flex items-center gap-2">
-                          <CloudSun className="w-4 h-4 text-teal-600" />
-                          {d.weatherRule}
+                        {/* Hidden Treatment Note */}
+                        <div className="p-3.5 bg-earth-100 rounded-xl text-center text-xs text-earth-700 font-medium border border-earth-200">
+                          Treatment recommendations are hidden until the disease is confidently identified.
                         </div>
-                        <p className="text-teal-900 font-medium">
-                          {prediction.personalized_advisory.weather_safety_rule}
-                        </p>
+
+                        {/* Primary & Secondary Actions */}
+                        <div className="space-y-3 pt-1">
+                          <Button
+                            onClick={handleClear}
+                            className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded-full shadow-md text-sm flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            <Camera className="w-4 h-4" />
+                            Retake Photo
+                          </Button>
+
+                          <div className="text-center space-y-1 pt-1">
+                            <button
+                              onClick={() => setShowPdfModal(true)}
+                              className="text-xs font-semibold text-earth-600 hover:text-earth-900 underline cursor-pointer"
+                            >
+                              Download Report Anyway
+                            </button>
+                            <p className="text-[11px] text-earth-500 font-light">
+                              Not recommended — confidence is too low for a reliable diagnosis.
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Full Class Spectrum Accordion */}
+                        <div className="border-t border-earth-100 pt-3">
+                          <button
+                            onClick={() => setShowProbabilityBreakdown(!showProbabilityBreakdown)}
+                            className="flex items-center justify-between w-full text-xs font-semibold text-earth-800 hover:text-primary-700 py-1 cursor-pointer"
+                          >
+                            <span>{d.multiClassSpectrum}</span>
+                            {showProbabilityBreakdown ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                          </button>
+
+                          {showProbabilityBreakdown && (
+                            <div className="space-y-2 mt-3 p-3 bg-earth-50 rounded-lg text-xs">
+                              {Object.entries(prediction.class_probabilities).map(([cname, prob]) => (
+                                <div key={cname} className="space-y-1">
+                                  <div className="flex justify-between font-medium text-earth-800">
+                                    <span>{cname}</span>
+                                    <span className="font-bold">{(prob * 100).toFixed(1)}%</span>
+                                  </div>
+                                  <div className="w-full h-1.5 bg-earth-200 rounded-full overflow-hidden">
+                                    <div
+                                      className="h-full bg-earth-400 transition-all duration-500"
+                                      style={{ width: `${Math.max(1, prob * 100)}%` }}
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="space-y-4">
+                  {/* Primary Diagnosis Banner */}
+                  <Card className="border-2 border-primary-500 shadow-lg overflow-hidden">
+                    <div className="bg-gradient-to-r from-primary-700 to-emerald-700 text-white p-5">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <div className="flex items-center gap-2 text-xs font-semibold text-emerald-200 uppercase tracking-wider">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                            {d.diagResult}
+                          </div>
+                          <h2 className="text-2xl font-black text-white mt-1">
+                            {prediction.predicted_class}
+                          </h2>
+                          <p className="text-xs text-emerald-100 italic mt-0.5">
+                            {prediction.personalized_advisory.scientific_name}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col items-end gap-2">
+                          <div className={`px-3 py-1 font-extrabold text-xs rounded-lg shadow-sm border ${
+                            confTier === 'high'
+                              ? 'bg-emerald-100 text-emerald-950 border-emerald-300'
+                              : 'bg-amber-100 text-amber-950 border-amber-300'
+                          }`}>
+                            {confTier === 'high' ? 'High Confidence' : 'Moderate Confidence'} ({prediction.confidence_pct})
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={handleToggleSpeech}
+                              className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full transition-colors ${isSpeaking
+                                ? 'bg-rose-500 text-white animate-pulse'
+                                : 'bg-white/20 text-white hover:bg-white/30'
+                                }`}
+                            >
+                              {isSpeaking ? (
+                                <>
+                                  <VolumeX className="w-3.5 h-3.5" /> {t.common.stopVoice}
+                                </>
+                              ) : (
+                                <>
+                                  <Volume2 className="w-3.5 h-3.5" /> {t.common.listenTts}
+                                </>
+                              )}
+                            </button>
+                            <button
+                              onClick={() => setShowPdfModal(true)}
+                              className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-white text-primary-900 rounded-full hover:bg-emerald-50 transition-colors shadow-sm"
+                            >
+                              <FileText className="w-3.5 h-3.5 text-primary-700" /> {t.common.pdfReport}
+                            </button>
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <span className="font-bold text-earth-900 block text-xs">
-                          {d.culturalTitle}:
+                      <div className="flex items-center gap-4 text-xs text-emerald-100 pt-4 mt-3 border-t border-white/15">
+                        <span className="flex items-center gap-1">
+                          <Zap className="w-3.5 h-3.5 text-amber-300" />
+                          {d.diagTime}: {prediction.prediction_time_ms} ms
                         </span>
-                        <ul className="space-y-1.5 pl-4 list-disc text-earth-700">
-                          {prediction.personalized_advisory.cultural_preventative.map((item, idx) => (
-                            <li key={idx} className="leading-relaxed">
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
+                        <span>•</span>
+                        <span className={`px-2 py-0.5 text-[11px] font-bold rounded border ${getSeverityBadgeClass(prediction.personalized_advisory.severity)}`}>
+                          {t.common.threatIndex}: {prediction.personalized_advisory.severity}
+                        </span>
                       </div>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+
+                    <CardContent className="p-5 space-y-4">
+                      <p className="text-xs text-earth-700 leading-relaxed">
+                        {prediction.personalized_advisory.description}
+                      </p>
+
+                      <div className="border-t border-earth-100 pt-3">
+                        <button
+                          onClick={() => setShowProbabilityBreakdown(!showProbabilityBreakdown)}
+                          className="flex items-center justify-between w-full text-xs font-semibold text-earth-800 hover:text-primary-700 py-1"
+                        >
+                          <span>{d.multiClassSpectrum}</span>
+                          {showProbabilityBreakdown ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        </button>
+
+                        {showProbabilityBreakdown && (
+                          <div className="space-y-2 mt-3 p-3 bg-earth-50 rounded-lg text-xs">
+                            {Object.entries(prediction.class_probabilities).map(([cname, prob]) => (
+                              <div key={cname} className="space-y-1">
+                                <div className="flex justify-between font-medium text-earth-800">
+                                  <span>{cname}</span>
+                                  <span className="font-bold">{(prob * 100).toFixed(1)}%</span>
+                                </div>
+                                <div className="w-full h-1.5 bg-earth-200 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full transition-all duration-500 ${cname === prediction.predicted_class ? 'bg-primary-600' : 'bg-earth-400'
+                                      }"
+                                    style={{ width: `${Math.max(1, prob * 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Emergency Action */}
+                  <div className="p-4 bg-amber-50 rounded-xl border-l-4 border-amber-500 text-amber-900 space-y-1 shadow-sm">
+                    <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-amber-800">
+                      <AlertTriangle className="w-4 h-4 text-amber-600" />
+                      {d.emergencyTitle}
+                    </div>
+                    <p className="text-xs text-amber-900 font-medium leading-relaxed">
+                      {prediction.personalized_advisory.emergency_action}
+                    </p>
+                  </div>
+
+                  {/* Treatment Tabs */}
+                  <Card className="border-earth-200">
+                    <div className="flex border-b border-earth-200 bg-earth-50 rounded-t-xl overflow-hidden">
+                      <button
+                        onClick={() => setActiveTab('chemical')}
+                        className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'chemical'
+                          ? 'border-primary-600 text-primary-700 bg-white'
+                          : 'border-transparent text-earth-600 hover:text-earth-900'
+                          }`}
+                      >
+                        <FlaskConical className="w-4 h-4 text-primary-600" />
+                        {d.tabChemical}
+                      </button>
+                      <button
+                        onClick={() => setActiveTab('organic')}
+                        className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'organic'
+                          ? 'border-emerald-600 text-emerald-700 bg-white'
+                          : 'border-transparent text-earth-600 hover:text-earth-900'
+                          }`}
+                      >
+                        <Leaf className="w-4 h-4 text-emerald-600" />
+                        {d.tabOrganic}
+                      </button>
+                      <button
+                        onClick={() => setActiveTab('preventative')}
+                        className={`flex-1 py-3 px-4 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'preventative'
+                          ? 'border-teal-600 text-teal-700 bg-white'
+                          : 'border-transparent text-earth-600 hover:text-earth-900'
+                          }`}
+                      >
+                        <CloudSun className="w-4 h-4 text-teal-600" />
+                        {d.tabCultural}
+                      </button>
+                    </div>
+
+                    <CardContent className="p-5">
+                      {activeTab === 'chemical' && (
+                        <div className="space-y-4">
+                          <div className="p-4 bg-primary-50/60 rounded-xl border border-primary-200 space-y-3">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-primary-700">
+                                  {d.recProduct}
+                                </span>
+                                <h4 className="text-base font-extrabold text-primary-950">
+                                  {prediction.personalized_advisory.calculated_dosage.product_name}
+                                </h4>
+                              </div>
+                              <span className="px-2.5 py-1 bg-primary-600 text-white font-bold text-xs rounded-md">
+                                {landAcres} {t.common.acres}
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2 border-t border-primary-200/60">
+                              <div>
+                                <span className="text-earth-500 block text-[11px]">{d.activeIngredient}:</span>
+                                <span className="font-semibold text-earth-900">
+                                  {prediction.personalized_advisory.calculated_dosage.active_ingredient}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-earth-500 block text-[11px]">{d.dosagePerAcre}:</span>
+                                <span className="font-semibold text-earth-900">
+                                  {prediction.personalized_advisory.calculated_dosage.dosage_per_acre}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-earth-500 block text-[11px]">{d.totalWater}:</span>
+                                <span className="font-bold text-primary-700 text-sm">
+                                  {prediction.personalized_advisory.calculated_dosage.total_water_litres} Litres
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-earth-500 block text-[11px]">{d.repeatInterval}:</span>
+                                <span className="font-semibold text-earth-900">
+                                  Every {prediction.personalized_advisory.calculated_dosage.application_interval_days} Days
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="p-3 bg-earth-50 rounded-lg text-xs text-earth-700 border border-earth-200">
+                            <span className="font-bold text-earth-900">{d.summary}: </span>
+                            {prediction.personalized_advisory.calculated_dosage.dosage_summary}
+                          </div>
+                        </div>
+                      )}
+
+                      {activeTab === 'organic' && (
+                        <div className="space-y-3">
+                          <div className="p-4 bg-emerald-50/70 rounded-xl border border-emerald-200 space-y-2">
+                            <h4 className="text-sm font-bold text-emerald-950 flex items-center gap-2">
+                              <Leaf className="w-4 h-4 text-emerald-600" />
+                              {d.tabOrganic}
+                            </h4>
+                            <p className="text-xs font-semibold text-emerald-900 leading-relaxed">
+                              {prediction.personalized_advisory.biological_organic.remedy}
+                            </p>
+                            <p className="text-xs text-emerald-800 pt-1">
+                              {prediction.personalized_advisory.biological_organic.description}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {activeTab === 'preventative' && (
+                        <div className="space-y-4 text-xs">
+                          <div className="p-3.5 bg-teal-50 rounded-xl border border-teal-200 text-teal-900 space-y-1">
+                            <div className="font-bold text-teal-950 flex items-center gap-2">
+                              <CloudSun className="w-4 h-4 text-teal-600" />
+                              {d.weatherRule}
+                            </div>
+                            <p className="text-teal-900 font-medium">
+                              {prediction.personalized_advisory.weather_safety_rule}
+                            </p>
+                          </div>
+
+                          <div className="space-y-2">
+                            <span className="font-bold text-earth-900 block text-xs">
+                              {d.culturalTitle}:
+                            </span>
+                            <ul className="space-y-1.5 pl-4 list-disc text-earth-700">
+                              {prediction.personalized_advisory.cultural_preventative.map((item, idx) => (
+                                <li key={idx} className="leading-relaxed">
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              );
+            })()
           )}
         </div>
       </div>

@@ -15,6 +15,7 @@ import { getLocalizedDiseases } from '../../../i18n/localizedData';
 import type { DiseaseProfile } from '../../../i18n/localizedData';
 import { printReportElement } from '../../../utils/printReport';
 import type { PredictionData } from '../../../types/prediction';
+import { getConfidenceTier } from '../../../types/prediction';
 import { History, Leaf, Printer, FileText, Calendar, MapPin } from 'lucide-react';
 
 interface ScanRecord {
@@ -192,12 +193,39 @@ export default function ScanHistoryPage() {
                         <span className="flex items-center gap-1 font-semibold text-emerald-800">
                           <MapPin className="w-3.5 h-3.5" /> {acres} {t.common.acres} ({acres * 200}L Water)
                         </span>
-                        {scan.confidence_pct && (
-                          <>
-                            <span>•</span>
-                            <span className="font-bold text-primary-700">{scan.confidence_pct} Certainty</span>
-                          </>
-                        )}
+                        {(() => {
+                          const conf = scan.confidence ?? (scan.confidence_pct ? parseFloat(scan.confidence_pct) / 100 : 0.9);
+                          const tier = getConfidenceTier(conf);
+                          const confText = scan.confidence_pct || `${(conf * 100).toFixed(1)}%`;
+                          if (tier === 'high') {
+                            return (
+                              <>
+                                <span>•</span>
+                                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-900 border border-emerald-300 rounded font-bold text-[10px]">
+                                  High Confidence ({confText})
+                                </span>
+                              </>
+                            );
+                          }
+                          if (tier === 'moderate') {
+                            return (
+                              <>
+                                <span>•</span>
+                                <span className="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded font-bold text-[10px]">
+                                  Moderate Confidence ({confText})
+                                </span>
+                              </>
+                            );
+                          }
+                          return (
+                            <>
+                              <span>•</span>
+                              <span className="px-2 py-0.5 bg-rose-100 text-rose-900 border border-rose-300 rounded font-bold text-[10px]">
+                                Uncertain ({confText})
+                              </span>
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>
