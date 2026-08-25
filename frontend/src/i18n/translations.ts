@@ -46,6 +46,7 @@ export interface TranslationDictionary {
     searchPlaceholder: string;
     viewDetails: string;
     logout: string;
+    aiDisclaimer: string;
   };
   dashboard: {
     title: string;
@@ -262,6 +263,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       searchPlaceholder: 'Search disease or treatment...',
       viewDetails: 'View Details',
       logout: 'Logout',
+      aiDisclaimer: 'AI predictions may sometimes be inaccurate. Please verify with an agricultural expert before taking action.',
     },
     dashboard: {
       title: 'Dashboard',
@@ -476,6 +478,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       searchPlaceholder: 'रोग या दवा खोजें...',
       viewDetails: 'विवरण देखें',
       logout: 'लॉगआउट',
+      aiDisclaimer: 'एआई भविष्यवाणियां कभी-कभी गलत हो सकती हैं। कोई भी कदम उठाने से पहले कृपया किसी कृषि विशेषज्ञ से पुष्टि करें।',
     },
     dashboard: {
       title: 'डैशबोर्ड',
@@ -690,6 +693,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       searchPlaceholder: 'रोग किंवा औषध शोधा...',
       viewDetails: 'तपशील पहा',
       logout: 'लॉगआउट',
+      aiDisclaimer: 'एआय अंदाज काही वेळा चुकीचे असू शकतात. कोणतीही कृती करण्यापूर्वी कृपया कृषी तज्ञांचा सल्ला घ्या.',
     },
     dashboard: {
       title: 'डॅशबोर्ड',

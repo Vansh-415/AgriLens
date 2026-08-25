@@ -31,7 +31,8 @@ import {
   ChevronDown,
   ChevronUp,
   FileText,
-  Printer
+  Printer,
+  Info
 } from 'lucide-react';
 
 export default function DetectPage() {
@@ -519,6 +520,12 @@ export default function DetectPage() {
                           </div>
                         </div>
 
+                        {/* AI Disclaimer Footnote */}
+                        <div className="flex items-center gap-2 text-[11px] text-earth-500 bg-earth-50 px-3 py-2 rounded-lg border border-earth-200/70">
+                          <Info className="w-3.5 h-3.5 flex-shrink-0 text-earth-400" />
+                          <span className="leading-snug">{t.common.aiDisclaimer}</span>
+                        </div>
+
                         {/* Hidden Treatment Note */}
                         <div className="p-3.5 bg-earth-100 rounded-xl text-center text-xs text-earth-700 font-medium border border-earth-200">
                           Treatment recommendations are hidden until the disease is confidently identified.
@@ -694,6 +701,12 @@ export default function DetectPage() {
                       </div>
                     </CardContent>
                   </Card>
+
+                  {/* AI Disclaimer Footnote */}
+                  <div className="flex items-center gap-2 text-[11px] text-earth-500 px-1 py-0.5">
+                    <Info className="w-3.5 h-3.5 flex-shrink-0 text-earth-400" />
+                    <span className="leading-snug">{t.common.aiDisclaimer}</span>
+                  </div>
 
                   {/* Emergency Action */}
                   <div className="p-4 bg-amber-50 rounded-xl border-l-4 border-amber-500 text-amber-900 space-y-1 shadow-sm">

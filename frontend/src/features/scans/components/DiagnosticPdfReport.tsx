@@ -221,6 +221,12 @@ export function DiagnosticPdfReport({
         </ul>
       </div>
 
+      {/* AI Advisory Disclaimer */}
+      <div className="bg-earth-50 border border-earth-200 p-2.5 rounded text-[10px] text-earth-600 flex items-center gap-1.5">
+        <span className="font-bold text-earth-700 flex-shrink-0">⚠️ Note:</span>
+        <p className="leading-snug">{t.common.aiDisclaimer}</p>
+      </div>
+
       {/* Footer & Academic Disclaimer */}
       <div className="border-t border-earth-300 pt-3 flex justify-between items-end text-[10px] text-earth-500">
         <div>
