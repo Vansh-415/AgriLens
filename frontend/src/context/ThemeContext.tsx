@@ -18,9 +18,9 @@ interface ThemeProviderState {
 }
 
 const initialState: ThemeProviderState = {
-  theme: 'system',
+  theme: 'light',
   setTheme: () => null,
-  isLockedLight: false,
+  isLockedLight: true,
   setLockLight: () => null,
 };
 
@@ -28,14 +28,13 @@ export const ThemeContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
-  defaultTheme = 'system',
+  defaultTheme = 'light',
   storageKey = 'vite-ui-theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  );
-  const [isLockedLight, setIsLockedLight] = useState<boolean>(false);
+  // Dark mode temporarily disabled post-login — pending full token audit
+  const [theme, setTheme] = useState<Theme>('light');
+  const [isLockedLight, setIsLockedLight] = useState<boolean>(true);
 
   const setLockLight = useCallback((lock: boolean) => {
     setIsLockedLight(lock);
@@ -44,45 +43,24 @@ export function ThemeProvider({
   useEffect(() => {
     const root = window.document.documentElement;
 
+    // Dark mode temporarily disabled post-login — pending full token audit
+    // Always enforce light theme on root element across the entire application
     const applyTheme = () => {
-      root.classList.remove('light', 'dark');
-
-      if (isLockedLight) {
-        root.classList.add('light');
-        root.setAttribute('data-theme', 'light');
-        root.style.colorScheme = 'light';
-        return;
-      }
-
-      root.removeAttribute('data-theme');
-      if (theme === 'system') {
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark'
-          : 'light';
-        root.classList.add(systemTheme);
-        root.style.colorScheme = systemTheme;
-      } else {
-        root.classList.add(theme);
-        root.style.colorScheme = theme;
-      }
+      root.classList.remove('dark');
+      root.classList.add('light');
+      root.setAttribute('data-theme', 'light');
+      root.style.colorScheme = 'light';
     };
 
     applyTheme();
-
-    if (!isLockedLight && theme === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => applyTheme();
-
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
   }, [theme, isLockedLight]);
 
   const value = {
     theme,
-    setTheme: (newTheme: Theme) => {
-      localStorage.setItem(storageKey, newTheme);
-      setTheme(newTheme);
+    setTheme: (_newTheme: Theme) => {
+      // Dark mode temporarily disabled post-login — pending full token audit
+      localStorage.setItem(storageKey, 'light');
+      setTheme('light');
     },
     isLockedLight,
     setLockLight,

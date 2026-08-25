@@ -3,7 +3,6 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Breadcrumbs } from './Breadcrumbs';
 import { Footer } from './Footer';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../hooks/useTheme';
 import { useLanguage } from '../context/LanguageContext';
 import { AgriLensLogo } from '../components/ui/AgriLensLogo';
 import { LanguageSwitcher } from '../components/ui/LanguageSwitcher';
@@ -23,7 +22,6 @@ import {
   User,
   Shield,
   Sun,
-  Moon,
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { cn } from '../utils/cn';
@@ -31,17 +29,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export function MainLayout() {
   const { user, logout } = useAuth();
-  const { theme, setTheme } = useTheme();
   const { t } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
+  // Dark mode temporarily disabled post-login — pending full token audit
   const toggleTheme = () => {
-    if (theme === 'dark') {
-      setTheme('light');
-    } else {
-      setTheme('dark');
-    }
+    // No-op: Light mode strictly enforced
   };
 
   const navigation = [
@@ -79,13 +73,14 @@ export function MainLayout() {
           <LanguageSwitcher />
 
           {/* Quick Theme Toggle Button */}
+          {/* Dark mode temporarily disabled post-login — pending full token audit */}
           <button
             onClick={toggleTheme}
-            className="p-2 text-earth-600 hover:text-earth-900 hover:bg-earth-100 rounded-lg transition-colors"
-            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            aria-label="Toggle theme mode"
+            className="p-2 text-earth-600 hover:text-earth-900 hover:bg-earth-100 rounded-lg transition-colors cursor-default"
+            title="Theme Mode (Light)"
+            aria-label="Theme mode"
           >
-            {theme === 'dark' ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-earth-600" />}
+            <Sun className="h-5 w-5 text-amber-500" />
           </button>
 
           <Link to="/profile" className="hidden sm:flex flex-col items-end mr-1 hover:opacity-80 transition-opacity">

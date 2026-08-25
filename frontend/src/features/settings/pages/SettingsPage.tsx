@@ -6,7 +6,6 @@ import { PageHeader } from '../../../components/ui/PageHeader';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/Card';
 import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
-import { useTheme } from '../../../hooks/useTheme';
 import { useOnlineStatus } from '../../../hooks/useOnlineStatus';
 import { useToast } from '../../../hooks/useToast';
 import { Moon, Sun, Monitor, Wifi, Globe, Smartphone, Download } from 'lucide-react';
@@ -17,7 +16,6 @@ export default function SettingsPage() {
   const stgT = t.settings;
   const toast = useToast();
 
-  const { theme, setTheme } = useTheme();
   const isOnline = useOnlineStatus();
   const [isInstalled, setIsInstalled] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -105,6 +103,7 @@ export default function SettingsPage() {
         </Card>
 
         {/* Theme Preferences */}
+        {/* Dark mode temporarily disabled post-login — pending full token audit */}
         <Card className="border-earth-200">
           <CardHeader>
             <CardTitle className="text-base font-bold text-earth-900 flex items-center gap-2">
@@ -120,10 +119,12 @@ export default function SettingsPage() {
               ].map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => setTheme(item.id as any)}
-                  className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${theme === item.id
+                  onClick={() => {
+                    // Dark mode temporarily disabled post-login — pending full token audit
+                  }}
+                  className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${item.id === 'light'
                     ? 'border-primary-600 bg-primary-50/50 text-primary-700 font-bold ring-2 ring-primary-500'
-                    : 'border-earth-200 bg-white dark:bg-slate-800 hover:bg-earth-50 text-earth-700 dark:text-slate-200'
+                    : 'border-earth-200 bg-white hover:bg-earth-50 text-earth-700 opacity-60'
                     }`}
                 >
                   <item.icon className="w-5 h-5" />
