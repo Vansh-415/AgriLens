@@ -600,3 +600,65 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
 }
 
 export const COTTON_DISEASE_LIBRARY = getLocalizedDiseases('en');
+
+export interface CropInfo {
+  id: string;
+  name: string;
+  scientificName: string;
+  season: string;
+  durationDays: string;
+  idealTemp: string;
+  waterRequirement: string;
+  soilType: string;
+  keyPests: string[];
+  description: string;
+}
+
+export function getLocalizedCrops(lang: Language): CropInfo[] {
+  if (lang === 'hi') {
+    return [
+      {
+        id: 'cotton_bt',
+        name: 'कपास (Gossypium hirsutum)',
+        scientificName: 'Gossypium hirsutum L.',
+        season: 'खरीफ मौसम (मई - नवंबर)',
+        durationDays: '150 - 180 दिन',
+        idealTemp: '21°C - 35°C',
+        waterRequirement: '500 - 800 mm',
+        soilType: 'काली कपासी मिट्टी (रेगुर) / जल निकासी वाली दोमट',
+        keyPests: ['सफेद मक्खी (बेगोमोवायरस वाहक)', 'लीफ हॉपर जैसिड्स', 'जीवाणु झुलसा', 'गुलाबी सुंडी'],
+        description: 'कपास भारत की प्रमुख व्यावसायिक रेशा फसल है। अधिकतम पैदावार के लिए उच्च तापमान, मध्यम वर्षा और जल निकासी वाली गहरी काली मिट्टी आदर्श होती है।'
+      }
+    ];
+  }
+  if (lang === 'mr') {
+    return [
+      {
+        id: 'cotton_bt',
+        name: 'कापूस (Gossypium hirsutum)',
+        scientificName: 'Gossypium hirsutum L.',
+        season: 'खरीप हंगाम (मे - नोव्हेंबर)',
+        durationDays: '150 - 180 दिवस',
+        idealTemp: '21°C - 35°C',
+        waterRequirement: '500 - 800 mm',
+        soilType: 'काळी कापसाची माती (रेगूर) / चांगला निचरा होणारी जमीन',
+        keyPests: ['पांढरी माशी (बेगोमोव्हायरस वाहक)', 'तुडतुडे (जॅसिड्स)', 'जिवाणू करपा', 'बोंड अळी'],
+        description: 'कापूस हे भारतातील प्रमुख व्यावसायिक पीक आहे. भरपूर उत्पादनासाठी उष्ण तापमान, मध्यम पाऊस आणि पाण्याचा चांगला निचरा होणारी काळी माती उत्तम असते.'
+      }
+    ];
+  }
+  return [
+    {
+      id: 'cotton_bt',
+      name: 'Cotton (Gossypium hirsutum)',
+      scientificName: 'Gossypium hirsutum L.',
+      season: 'Kharif Season (May - Nov)',
+      durationDays: '150 - 180 Days',
+      idealTemp: '21°C - 35°C',
+      waterRequirement: '500 - 800 mm',
+      soilType: 'Deep Black Cotton Soil (Regur) / Well-drained Loam',
+      keyPests: ['Whitefly (Begomovirus vector)', 'Leaf Hopper Jassids', 'Bacterial Blight', 'Bollworm'],
+      description: "Cotton is India's prime commercial fiber crop. High temperature, moderate rainfall, and well-drained deep black soil are ideal for maximum boll yield."
+    }
+  ];
+}

@@ -18,9 +18,9 @@ import {
 export type { DiseaseProfile };
 
 export default function DiseasesPage() {
-  useDocumentTitle('Cotton Disease Index & Agronomic Library');
   const { language, t } = useLanguage();
   const disT = t.diseases;
+  useDocumentTitle(disT.title);
 
   const diseaseLibrary = getLocalizedDiseases(language);
 
@@ -104,7 +104,7 @@ export default function DiseasesPage() {
                     <span className="font-bold text-earth-900 dark:text-white">{disease.disease_index_score}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-earth-500 dark:text-slate-400 font-medium">Stage:</span>
+                    <span className="text-earth-500 dark:text-slate-400 font-medium">{disT.stage}:</span>
                     <span className="font-semibold text-earth-800 dark:text-slate-200 truncate max-w-[150px]">{disease.vulnerable_stage}</span>
                   </div>
                 </div>
@@ -117,7 +117,7 @@ export default function DiseasesPage() {
                   ))}
                   {disease.symptoms.length > 2 && (
                     <span className="px-2 py-0.5 text-[11px] bg-earth-100 text-earth-600 rounded">
-                      +{disease.symptoms.length - 2} more
+                      +{disease.symptoms.length - 2} {t.common.more}
                     </span>
                   )}
                 </div>
@@ -146,7 +146,7 @@ export default function DiseasesPage() {
             <div className="flex items-center justify-between p-3 bg-earth-50 rounded-lg border border-earth-200">
               <div>
                 <span className="text-xs italic font-semibold text-primary-900 block">{selectedDisease.scientific_name}</span>
-                <span className="text-[11px] text-earth-600">Causal Agent: {selectedDisease.causal_agent}</span>
+                <span className="text-[11px] text-earth-600">{disT.causalAgent}: {selectedDisease.causal_agent}</span>
               </div>
               {getSeverityBadge(selectedDisease.severity)}
             </div>
@@ -164,7 +164,7 @@ export default function DiseasesPage() {
 
             <div>
               <h4 className="font-bold text-earth-900 mb-1 flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-primary-600" /> Description & Pathology
+                <Layers className="w-4 h-4 text-primary-600" /> {disT.descAndPathology}
               </h4>
               <p className="text-earth-700 leading-relaxed">{selectedDisease.description}</p>
             </div>
@@ -182,12 +182,12 @@ export default function DiseasesPage() {
 
             <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200 space-y-2">
               <h4 className="font-bold text-emerald-950 flex items-center gap-1.5">
-                <Droplets className="w-4 h-4 text-emerald-600" /> Curative Protocol Recommendation
+                <Droplets className="w-4 h-4 text-emerald-600" /> {disT.curativeProtocol}
               </h4>
               <div className="space-y-1 text-emerald-900">
-                <p><strong>Chemical Product:</strong> {selectedDisease.recommended_treatments.chemical}</p>
-                <p><strong>Standard Dosage:</strong> {selectedDisease.recommended_treatments.dosage}</p>
-                <p><strong>Bio-Organic Alternative:</strong> {selectedDisease.recommended_treatments.organic}</p>
+                <p><strong>{disT.chemicalProduct}:</strong> {selectedDisease.recommended_treatments.chemical}</p>
+                <p><strong>{disT.standardDosage}:</strong> {selectedDisease.recommended_treatments.dosage}</p>
+                <p><strong>{disT.bioOrganicAlternative}:</strong> {selectedDisease.recommended_treatments.organic}</p>
               </div>
             </div>
           </div>

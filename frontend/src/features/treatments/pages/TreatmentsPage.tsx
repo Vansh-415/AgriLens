@@ -157,9 +157,9 @@ export const COTTON_TREATMENT_LIBRARY: TreatmentProtocol[] = [
 ];
 
 export default function TreatmentsPage() {
-  useDocumentTitle('Validated Agronomic Treatment Protocols');
   const { t } = useLanguage();
   const trtT = t.treatments;
+  useDocumentTitle(trtT.title);
 
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'chemical' | 'organic' | 'biological'>('all');
@@ -189,11 +189,11 @@ export default function TreatmentsPage() {
   const getCategoryBadge = (category: string) => {
     switch (category) {
       case 'organic':
-        return <Badge variant="success">Organic Remedy</Badge>;
+        return <Badge variant="success">{trtT.organicInterventions}</Badge>;
       case 'biological':
-        return <Badge variant="neutral">Bio-Control</Badge>;
+        return <Badge variant="neutral">{trtT.bioControl}</Badge>;
       default:
-        return <Badge variant="info">Chemical Spray</Badge>;
+        return <Badge variant="info">{trtT.chemicalInterventions}</Badge>;
     }
   };
 
@@ -254,7 +254,7 @@ export default function TreatmentsPage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   {getCategoryBadge(treatment.category)}
-                  <span className="text-[11px] font-bold text-primary-800 dark:text-primary-400">PHI: {treatment.pre_harvest_interval_days} Days</span>
+                  <span className="text-[11px] font-bold text-primary-800 dark:text-primary-400">{trtT.phi}: {treatment.pre_harvest_interval_days} {t.common.days}</span>
                 </div>
 
                 <p className="text-xs text-earth-700 dark:text-slate-300 leading-relaxed line-clamp-2">{treatment.description}</p>
@@ -283,7 +283,7 @@ export default function TreatmentsPage() {
                 <span className="flex items-center gap-1">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" /> {trtT.viewDosageSafety}
                 </span>
-                <span>Details &rarr;</span>
+                <span>{t.common.viewDetails} &rarr;</span>
               </div>
             </CardContent>
           </Card>
@@ -301,14 +301,14 @@ export default function TreatmentsPage() {
             <div className="flex items-center justify-between p-3 bg-earth-50 rounded-lg border border-earth-200">
               <div>
                 <span className="text-xs font-bold text-earth-900 block">{selectedProtocol.active_ingredient}</span>
-                <span className="text-[11px] text-earth-600">Category: {selectedProtocol.category.toUpperCase()}</span>
+                <span className="text-[11px] text-earth-600">{trtT.category}: {selectedProtocol.category.toUpperCase()}</span>
               </div>
               {getCategoryBadge(selectedProtocol.category)}
             </div>
 
             <div className="p-3 bg-primary-50/70 rounded-lg border border-primary-200 space-y-2">
               <h4 className="font-bold text-primary-950 flex items-center gap-1.5">
-                <FlaskConical className="w-4 h-4 text-primary-700" /> Standard Dosage & Dilution Rules
+                <FlaskConical className="w-4 h-4 text-primary-700" /> {trtT.dosageRules}
               </h4>
               <div className="grid grid-cols-2 gap-2 text-earth-900">
                 <div>
@@ -316,16 +316,16 @@ export default function TreatmentsPage() {
                   <strong>{selectedProtocol.dosage_per_acre}</strong>
                 </div>
                 <div>
-                  <span className="text-earth-500 block text-[11px]">Spray Water Dilution:</span>
+                  <span className="text-earth-500 block text-[11px]">{trtT.sprayDilution}:</span>
                   <strong>{selectedProtocol.water_dilution_per_acre}</strong>
                 </div>
                 <div>
-                  <span className="text-earth-500 block text-[11px]">Repeat Application:</span>
-                  <strong>Every {selectedProtocol.repeat_interval_days} Days</strong>
+                  <span className="text-earth-500 block text-[11px]">{trtT.repeatApplication}:</span>
+                  <strong>Every {selectedProtocol.repeat_interval_days} {t.common.days}</strong>
                 </div>
                 <div>
                   <span className="text-earth-500 block text-[11px]">{trtT.phi}:</span>
-                  <strong className="text-amber-800">{selectedProtocol.pre_harvest_interval_days} Days Waiting</strong>
+                  <strong className="text-amber-800">{selectedProtocol.pre_harvest_interval_days} {trtT.daysWaiting}</strong>
                 </div>
               </div>
             </div>

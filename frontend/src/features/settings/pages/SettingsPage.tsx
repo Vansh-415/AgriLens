@@ -11,9 +11,9 @@ import { useToast } from '../../../hooks/useToast';
 import { Moon, Sun, Monitor, Wifi, Globe, Smartphone, Download } from 'lucide-react';
 
 export default function SettingsPage() {
-  useDocumentTitle('Settings');
   const { t } = useLanguage();
   const stgT = t.settings;
+  useDocumentTitle(stgT.title);
   const toast = useToast();
 
   const isOnline = useOnlineStatus();
@@ -70,11 +70,11 @@ export default function SettingsPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-wider">
                 <Smartphone className="w-4 h-4 text-amber-300" />
-                Progressive Web App (PWA) Mobile Install
+                {stgT.pwaInstallTitle}
               </div>
-              <h3 className="text-lg font-black text-white">Install AgriLens on Home Screen</h3>
+              <h3 className="text-lg font-black text-white">{stgT.pwaInstallHeading}</h3>
               <p className="text-xs text-emerald-100 max-w-xl">
-                AgriLens can be installed directly onto your Android, iPhone, or Desktop home screen as a standalone offline mobile application.
+                {stgT.pwaInstallDesc}
               </p>
             </div>
 
@@ -84,7 +84,7 @@ export default function SettingsPage() {
               className="bg-white text-emerald-950 hover:bg-emerald-50 font-extrabold text-xs px-5 py-3 shadow-md flex-shrink-0"
             >
               <Download className="w-4 h-4 mr-2 text-emerald-700" />
-              {isInstalled ? 'App Installed ✓' : 'Install Mobile App'}
+              {isInstalled ? stgT.appInstalled : stgT.installApp}
             </Button>
           </CardContent>
         </Card>
@@ -93,11 +93,11 @@ export default function SettingsPage() {
         <Card className="border-earth-200">
           <CardHeader>
             <CardTitle className="text-base font-bold text-earth-900 flex items-center gap-2">
-              <Globe className="w-5 h-5 text-emerald-600" /> Platform Preferred Language
+              <Globe className="w-5 h-5 text-emerald-600" /> {stgT.preferredLanguage}
             </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-between">
-            <span className="text-xs text-earth-700 font-medium">Select global language for full site translation & voice AI:</span>
+            <span className="text-xs text-earth-700 font-medium">{stgT.languageSelectDesc}</span>
             <LanguageSwitcher />
           </CardContent>
         </Card>
@@ -113,9 +113,9 @@ export default function SettingsPage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
               {[
-                { id: 'light', label: 'Light', icon: Sun },
-                { id: 'dark', label: 'Dark', icon: Moon },
-                { id: 'system', label: 'System', icon: Monitor },
+                { id: 'light', label: stgT.light, icon: Sun },
+                { id: 'dark', label: stgT.dark, icon: Moon },
+                { id: 'system', label: stgT.system, icon: Monitor },
               ].map((item) => (
                 <button
                   key={item.id}
@@ -139,7 +139,7 @@ export default function SettingsPage() {
         <Card className="border-earth-200">
           <CardHeader>
             <CardTitle className="text-base font-bold text-earth-900 flex items-center gap-2">
-              <Wifi className="w-5 h-5 text-teal-600" /> Connectivity & PWA Status
+              <Wifi className="w-5 h-5 text-teal-600" /> {stgT.connectivityStatus}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -147,12 +147,12 @@ export default function SettingsPage() {
               <div className="flex items-center gap-3">
                 <Wifi className="w-5 h-5 text-earth-600" />
                 <div>
-                  <p className="font-bold text-earth-900 dark:text-white">Network Status</p>
-                  <p className="text-[11px] text-earth-500">Real-time connection monitor</p>
+                  <p className="font-bold text-earth-900 dark:text-white">{stgT.networkStatus}</p>
+                  <p className="text-[11px] text-earth-500">{stgT.networkMonitorDesc}</p>
                 </div>
               </div>
               <Badge variant={isOnline ? 'success' : 'danger'}>
-                {isOnline ? '🟢 Online' : '🔴 Offline Field Mode Active'}
+                {isOnline ? stgT.online : stgT.offline}
               </Badge>
             </div>
 
@@ -160,11 +160,11 @@ export default function SettingsPage() {
               <div className="flex items-center gap-3">
                 <Smartphone className="w-5 h-5 text-earth-600" />
                 <div>
-                  <p className="font-bold text-earth-900 dark:text-white">Progressive Web App (PWA)</p>
-                  <p className="text-[11px] text-earth-500">Service worker & offline cache active</p>
+                  <p className="font-bold text-earth-900 dark:text-white">{stgT.pwaTitle}</p>
+                  <p className="text-[11px] text-earth-500">{stgT.pwaCacheDesc}</p>
                 </div>
               </div>
-              <Badge variant="success">Active (Offline Ready)</Badge>
+              <Badge variant="success">{stgT.pwaActive}</Badge>
             </div>
           </CardContent>
         </Card>

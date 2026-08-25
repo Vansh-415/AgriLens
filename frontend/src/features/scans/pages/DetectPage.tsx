@@ -36,9 +36,9 @@ import {
 } from 'lucide-react';
 
 export default function DetectPage() {
-  useDocumentTitle('Field Pathology Diagnosis Studio');
   const { t } = useLanguage();
   const d = t.detect;
+  useDocumentTitle(d.title);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [captureSource, setCaptureSource] = useState<'upload' | 'camera' | null>(null);
@@ -422,13 +422,13 @@ export default function DetectPage() {
                   </div>
                   <div className="space-y-1.5">
                     <span className="inline-block px-3 py-1 bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 text-[11px] font-extrabold uppercase tracking-wider rounded-full border border-amber-300 dark:border-amber-700">
-                      Phase 2 Feature
+                      {d.phase2Feature}
                     </span>
                     <h3 className="text-xl font-black text-earth-950 dark:text-white">
-                      Feature Under Development
+                      {d.featureUnderDev}
                     </h3>
                     <p className="text-xs text-earth-600 dark:text-earth-400 leading-relaxed font-medium">
-                      AI Leaf Disease Inference pipeline, automated pathology classification, and chemical dosage formulation will be activated in Phase 2.
+                      {d.featureUnderDevDesc}
                     </p>
                   </div>
                   <div className="pt-2">
@@ -438,7 +438,7 @@ export default function DetectPage() {
                       onClick={handleClear}
                       className="text-xs font-bold rounded-xl bg-white dark:bg-earth-800 hover:bg-earth-100 border-earth-300"
                     >
-                      Clear & Try Another Photo
+                      {d.clearTryAnother}
                     </Button>
                   </div>
                 </CardContent>
@@ -471,13 +471,13 @@ export default function DetectPage() {
                           <div>
                             <div className="flex items-center gap-2 text-xs font-bold text-amber-100 uppercase tracking-wider">
                               <AlertTriangle className="w-4 h-4 text-amber-200" />
-                              Uncertain Result
+                              {d.uncertainResult}
                             </div>
                             <h2 className="text-xl sm:text-2xl font-black text-white mt-1">
-                              Diagnosis Inconclusive
+                              {d.diagnosisInconclusive}
                             </h2>
                             <p className="text-xs text-amber-100 mt-0.5 font-medium">
-                              Confidence score: {prediction.confidence_pct} (below 65% certainty threshold)
+                              {d.uncertainConfidenceMsg}: {prediction.confidence_pct}
                             </p>
                           </div>
 
@@ -490,16 +490,16 @@ export default function DetectPage() {
                       <CardContent className="p-5 space-y-5">
                         {/* Prominent Guidance Message */}
                         <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-950 text-xs sm:text-sm font-medium leading-relaxed">
-                          We couldn't confidently identify the disease. Try retaking the photo with better lighting, a closer angle, or a cleaner background.
+                          {d.uncertainGuidance}
                         </div>
 
                         {/* Top 2-3 Candidate Diseases */}
                         <div className="space-y-3 p-4 bg-earth-50 rounded-2xl border border-earth-200">
                           <div className="flex items-center justify-between">
                             <h4 className="text-xs font-bold uppercase tracking-wider text-earth-800">
-                              Top Candidate Diseases
+                              {d.topCandidates}
                             </h4>
-                            <span className="text-[11px] font-semibold text-earth-500">Sorted by AI probability</span>
+                            <span className="text-[11px] font-semibold text-earth-500">{d.sortedByProbability}</span>
                           </div>
 
                           <div className="space-y-2.5">
@@ -528,7 +528,7 @@ export default function DetectPage() {
 
                         {/* Hidden Treatment Note */}
                         <div className="p-3.5 bg-earth-100 rounded-xl text-center text-xs text-earth-700 font-medium border border-earth-200">
-                          Treatment recommendations are hidden until the disease is confidently identified.
+                          {d.hiddenTreatmentNote}
                         </div>
 
                         {/* Primary & Secondary Actions */}
@@ -538,7 +538,7 @@ export default function DetectPage() {
                             className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded-full shadow-md text-sm flex items-center justify-center gap-2 cursor-pointer"
                           >
                             <Camera className="w-4 h-4" />
-                            Retake Photo
+                            {d.retakePhoto}
                           </Button>
 
                           <div className="text-center space-y-1 pt-1">
@@ -546,10 +546,10 @@ export default function DetectPage() {
                               onClick={() => setShowPdfModal(true)}
                               className="text-xs font-semibold text-earth-600 hover:text-earth-900 underline cursor-pointer"
                             >
-                              Download Report Anyway
+                              {d.downloadAnyway}
                             </button>
                             <p className="text-[11px] text-earth-500 font-light">
-                              Not recommended — confidence is too low for a reliable diagnosis.
+                              {d.notRecommendedUncertain}
                             </p>
                           </div>
                         </div>
@@ -598,7 +598,7 @@ export default function DetectPage() {
                         <div>
                           <div className="flex items-center gap-2 text-xs font-semibold text-emerald-200 uppercase tracking-wider">
                             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                            {isHealthyClass(prediction.predicted_class) ? 'Healthy Canopy Diagnosis' : d.diagResult}
+                            {isHealthyClass(prediction.predicted_class) ? d.healthyDiagnosisHeader : d.diagResult}
                           </div>
                           <div className="flex items-center gap-2.5 mt-1 flex-wrap">
                             <h2 className="text-2xl font-black text-white">
@@ -609,7 +609,7 @@ export default function DetectPage() {
                                 ? 'bg-emerald-300 text-emerald-950 shadow-xs'
                                 : 'bg-rose-500 text-white shadow-xs'
                             }`}>
-                              {isHealthyClass(prediction.predicted_class) ? 'Healthy' : 'Disease Found'}
+                              {isHealthyClass(prediction.predicted_class) ? t.common.healthyCanopy : t.common.pathologyFound}
                             </span>
                           </div>
                           <p className="text-xs text-emerald-100 italic mt-0.5">
@@ -623,7 +623,7 @@ export default function DetectPage() {
                               ? 'bg-emerald-100 text-emerald-950 border-emerald-300'
                               : 'bg-amber-100 text-amber-950 border-amber-300'
                           }`}>
-                            {confTier === 'high' ? 'High Confidence' : 'Moderate Confidence'} ({prediction.confidence_pct})
+                            {confTier === 'high' ? t.common.highConfidence : t.common.moderateConfidence} ({prediction.confidence_pct})
                           </div>
                           <div className="flex gap-2">
                             <button
@@ -791,12 +791,12 @@ export default function DetectPage() {
                                   {prediction.personalized_advisory.calculated_dosage.total_water_litres} Litres
                                 </span>
                               </div>
-                              <div>
-                                <span className="text-earth-500 block text-[11px]">{d.repeatInterval}:</span>
-                                <span className="font-semibold text-earth-900">
-                                  Every {prediction.personalized_advisory.calculated_dosage.application_interval_days} Days
-                                </span>
-                              </div>
+                                <div>
+                                  <span className="text-earth-500 block text-[11px]">{d.repeatInterval}:</span>
+                                  <span className="font-semibold text-earth-900">
+                                    Every {prediction.personalized_advisory.calculated_dosage.application_interval_days} {t.common.days}
+                                  </span>
+                                </div>
                             </div>
                           </div>
 

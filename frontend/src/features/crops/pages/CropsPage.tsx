@@ -4,43 +4,17 @@ import { useLanguage } from '../../../context/LanguageContext';
 import { PageHeader } from '../../../components/ui/PageHeader';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/Card';
 import { SearchInput } from '../../../components/ui/SearchInput';
-
-interface CropInfo {
-  id: string;
-  name: string;
-  scientificName: string;
-  season: string;
-  durationDays: string;
-  idealTemp: string;
-  waterRequirement: string;
-  soilType: string;
-  keyPests: string[];
-  description: string;
-}
-
-const COTTON_CROP_DATA: CropInfo[] = [
-  {
-    id: 'cotton_bt',
-    name: 'Cotton (Gossypium hirsutum)',
-    scientificName: 'Gossypium hirsutum L.',
-    season: 'Kharif Season (May - Nov)',
-    durationDays: '150 - 180 Days',
-    idealTemp: '21°C - 35°C',
-    waterRequirement: '500 - 800 mm',
-    soilType: 'Deep Black Cotton Soil (Regur) / Well-drained Loam',
-    keyPests: ['Whitefly (Begomovirus vector)', 'Leaf Hopper Jassids', 'Bacterial Blight', 'Bollworm'],
-    description: 'Cotton is India\'s prime commercial fiber crop. High temperature, moderate rainfall, and well-drained deep black soil are ideal for maximum boll yield.'
-  }
-];
+import { getLocalizedCrops } from '../../../i18n/localizedData';
 
 export default function CropsPage() {
-  useDocumentTitle('Cotton Crop Library');
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const crpT = t.crops;
+  useDocumentTitle(crpT.title);
 
   const [search, setSearch] = useState('');
+  const cropsData = getLocalizedCrops(language);
 
-  const filtered = COTTON_CROP_DATA.filter(
+  const filtered = cropsData.filter(
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.description.toLowerCase().includes(search.toLowerCase())

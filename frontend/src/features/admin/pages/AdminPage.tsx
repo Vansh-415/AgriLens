@@ -1,5 +1,6 @@
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { useEffect, useState, useCallback } from 'react';
+import { useLanguage } from '../../../context/LanguageContext';
 import { PageHeader } from '../../../components/ui/PageHeader';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
@@ -20,7 +21,9 @@ interface CropOption {
 }
 
 export default function AdminPage() {
-  useDocumentTitle('Admin Control Center');
+  const { t } = useLanguage();
+  const admT = t.admin;
+  useDocumentTitle(admT.title);
 
   const [activeTab, setActiveTab] = useState<'crops' | 'diseases' | 'treatments'>('crops');
   const [dataList, setDataList] = useState<any[]>([]);
@@ -128,12 +131,12 @@ export default function AdminPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Admin Control Center"
-        description="Manage crop catalogues, disease profiles, and treatment protocols with full CRUD permissions."
+        title={admT.title}
+        description={admT.description}
         actions={
           <Button onClick={() => setIsAddModalOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            Add {activeTab.slice(0, -1)}
+            {admT.addRecord} {activeTab.slice(0, -1)}
           </Button>
         }
       />
@@ -148,7 +151,7 @@ export default function AdminPage() {
               activeTab === tab ? 'text-primary-700 border-b-2 border-primary-600' : 'text-earth-500 hover:text-earth-900'
             }`}
           >
-            {tab} Management
+            {tab} {admT.management}
           </button>
         ))}
       </div>
@@ -161,7 +164,7 @@ export default function AdminPage() {
               <Skeleton className="h-10 w-full" />
             </div>
           ) : dataList.length === 0 ? (
-            <div className="p-8 text-center text-earth-500">No records found.</div>
+            <div className="p-8 text-center text-earth-500">{admT.noRecords}</div>
           ) : (
             <div className="divide-y divide-earth-100">
               {dataList.map((item) => (
@@ -186,17 +189,17 @@ export default function AdminPage() {
       <Modal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title={`Create New ${activeTab.slice(0, -1)}`}
+        title={admT.createRecord}
       >
         <form onSubmit={handleCreate} className="space-y-4">
           <Input
-            label="Name"
+            label={admT.name}
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
           />
           <Input
-            label="Description"
+            label={t.common.viewDetails}
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             required
@@ -205,7 +208,7 @@ export default function AdminPage() {
           {activeTab === 'diseases' && (
             <>
               <div className="flex flex-col space-y-1.5">
-                <label className="text-sm font-medium text-earth-800">Associated Crop</label>
+                <label className="text-sm font-medium text-earth-800">{admT.associatedCrop}</label>
                 <select
                   value={formData.cropId}
                   onChange={(e) => setFormData({ ...formData, cropId: e.target.value })}
@@ -220,7 +223,7 @@ export default function AdminPage() {
               </div>
 
               <div className="flex flex-col space-y-1.5">
-                <label className="text-sm font-medium text-earth-800">Severity</label>
+                <label className="text-sm font-medium text-earth-800">{t.common.severity}</label>
                 <select
                   value={formData.severity}
                   onChange={(e) => setFormData({ ...formData, severity: e.target.value as any })}
@@ -236,7 +239,7 @@ export default function AdminPage() {
 
           {activeTab === 'treatments' && (
             <div className="flex flex-col space-y-1.5">
-              <label className="text-sm font-medium text-earth-800">Treatment Type</label>
+              <label className="text-sm font-medium text-earth-800">{admT.treatmentType}</label>
               <select
                 value={formData.treatmentType}
                 onChange={(e) => setFormData({ ...formData, treatmentType: e.target.value as any })}
@@ -251,9 +254,9 @@ export default function AdminPage() {
 
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setIsAddModalOpen(false)}>
-              Cancel
+              {t.common.cancel}
             </Button>
-            <Button type="submit">Create Record</Button>
+            <Button type="submit">{admT.createRecord}</Button>
           </div>
         </form>
       </Modal>
@@ -263,8 +266,8 @@ export default function AdminPage() {
         isOpen={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        title="Confirm Deletion"
-        description="Are you sure you want to delete this record? This action cannot be undone."
+        title={admT.confirmDeletion}
+        description={admT.deleteConfirmDesc}
         isDestructive
       />
     </div>

@@ -47,6 +47,18 @@ export interface TranslationDictionary {
     viewDetails: string;
     logout: string;
     aiDisclaimer: string;
+    highConfidence: string;
+    moderateConfidence: string;
+    uncertain: string;
+    recent: string;
+    farmer: string;
+    cottonLeafScan: string;
+    cancel: string;
+    save: string;
+    delete: string;
+    more: string;
+    days: string;
+    viewPdfReport: string;
   };
   dashboard: {
     title: string;
@@ -83,6 +95,11 @@ export interface TranslationDictionary {
     totalLand: string;
     role: string;
     saveChanges: string;
+    personalCredentials: string;
+    accountSecurity: string;
+    currentPassword: string;
+    newPassword: string;
+    updatePassword: string;
   };
   settings: {
     title: string;
@@ -92,6 +109,24 @@ export interface TranslationDictionary {
     notifications: string;
     voiceSettings: string;
     audioOutputSpeed: string;
+    pwaInstallTitle: string;
+    pwaInstallHeading: string;
+    pwaInstallDesc: string;
+    appInstalled: string;
+    installApp: string;
+    preferredLanguage: string;
+    languageSelectDesc: string;
+    light: string;
+    dark: string;
+    system: string;
+    connectivityStatus: string;
+    networkStatus: string;
+    networkMonitorDesc: string;
+    online: string;
+    offline: string;
+    pwaTitle: string;
+    pwaCacheDesc: string;
+    pwaActive: string;
   };
   footer: {
     tagline: string;
@@ -157,6 +192,20 @@ export interface TranslationDictionary {
     orDivider: string;
     cameraSource: string;
     uploadSource: string;
+    uncertainResult: string;
+    diagnosisInconclusive: string;
+    uncertainConfidenceMsg: string;
+    uncertainGuidance: string;
+    topCandidates: string;
+    sortedByProbability: string;
+    hiddenTreatmentNote: string;
+    downloadAnyway: string;
+    notRecommendedUncertain: string;
+    healthyDiagnosisHeader: string;
+    phase2Feature: string;
+    featureUnderDev: string;
+    featureUnderDevDesc: string;
+    clearTryAnother: string;
   };
   diseases: {
     title: string;
@@ -171,6 +220,13 @@ export interface TranslationDictionary {
     vulnerableStage: string;
     keySymptoms: string;
     viewProtocol: string;
+    causalAgent: string;
+    descAndPathology: string;
+    curativeProtocol: string;
+    chemicalProduct: string;
+    standardDosage: string;
+    bioOrganicAlternative: string;
+    stage: string;
   };
   treatments: {
     title: string;
@@ -186,6 +242,12 @@ export interface TranslationDictionary {
     commercialBrands: string;
     requiredPpe: string;
     safetyPrecaution: string;
+    bioControl: string;
+    category: string;
+    dosageRules: string;
+    sprayDilution: string;
+    repeatApplication: string;
+    daysWaiting: string;
   };
   pdfReport: {
     title: string;
@@ -213,6 +275,19 @@ export interface TranslationDictionary {
     preventiveMeasures: string;
     footerNote: string;
     officerSignoff: string;
+  };
+  admin: {
+    title: string;
+    description: string;
+    addRecord: string;
+    management: string;
+    noRecords: string;
+    createRecord: string;
+    confirmDeletion: string;
+    deleteConfirmDesc: string;
+    name: string;
+    associatedCrop: string;
+    treatmentType: string;
   };
 }
 
@@ -264,6 +339,18 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       viewDetails: 'View Details',
       logout: 'Logout',
       aiDisclaimer: 'AI predictions may sometimes be inaccurate. Please verify with an agricultural expert before taking action.',
+      highConfidence: 'High Confidence',
+      moderateConfidence: 'Moderate Confidence',
+      uncertain: 'Uncertain',
+      recent: 'Recent',
+      farmer: 'Farmer',
+      cottonLeafScan: 'Cotton Leaf Scan',
+      cancel: 'Cancel',
+      save: 'Save',
+      delete: 'Delete',
+      more: 'more',
+      days: 'Days',
+      viewPdfReport: 'View PDF Report',
     },
     dashboard: {
       title: 'Dashboard',
@@ -300,6 +387,11 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       totalLand: 'Total Field Area',
       role: 'Role',
       saveChanges: 'Save Changes',
+      personalCredentials: 'Personal Credentials',
+      accountSecurity: 'Account Security',
+      currentPassword: 'Current Password',
+      newPassword: 'New Password',
+      updatePassword: 'Update Password',
     },
     settings: {
       title: 'Settings & Preferences',
@@ -309,6 +401,24 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       notifications: 'Alerts',
       voiceSettings: 'Voice Settings',
       audioOutputSpeed: 'Speech Speed',
+      pwaInstallTitle: 'Progressive Web App (PWA) Mobile Install',
+      pwaInstallHeading: 'Install AgriLens on Home Screen',
+      pwaInstallDesc: 'AgriLens can be installed directly onto your Android, iPhone, or Desktop home screen as a standalone offline mobile application.',
+      appInstalled: 'App Installed ✓',
+      installApp: 'Install Mobile App',
+      preferredLanguage: 'Platform Preferred Language',
+      languageSelectDesc: 'Select global language for full site translation & voice AI:',
+      light: 'Light',
+      dark: 'Dark',
+      system: 'System',
+      connectivityStatus: 'Connectivity & PWA Status',
+      networkStatus: 'Network Status',
+      networkMonitorDesc: 'Real-time connection monitor',
+      online: '🟢 Online',
+      offline: '🔴 Offline Field Mode Active',
+      pwaTitle: 'Progressive Web App (PWA)',
+      pwaCacheDesc: 'Service worker & offline cache active',
+      pwaActive: 'Active (Offline Ready)',
     },
     footer: {
       tagline: 'Smart Cotton Disease Detection & Treatment Advisory Platform.',
@@ -374,6 +484,20 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       orDivider: 'OR',
       cameraSource: 'Captured with Live Camera',
       uploadSource: 'Uploaded Leaf Image',
+      uncertainResult: 'Uncertain Result',
+      diagnosisInconclusive: 'Diagnosis Inconclusive',
+      uncertainConfidenceMsg: 'Confidence score is below the 65% certainty threshold',
+      uncertainGuidance: "We couldn't confidently identify the disease. Try retaking the photo with better lighting, a closer angle, or a cleaner background.",
+      topCandidates: 'Top Candidate Diseases',
+      sortedByProbability: 'Sorted by AI probability',
+      hiddenTreatmentNote: 'Treatment recommendations are hidden until the disease is confidently identified.',
+      downloadAnyway: 'Download Report Anyway',
+      notRecommendedUncertain: 'Not recommended — confidence is too low for a reliable diagnosis.',
+      healthyDiagnosisHeader: 'Healthy Canopy Diagnosis',
+      phase2Feature: 'Phase 2 Feature',
+      featureUnderDev: 'Feature Under Development',
+      featureUnderDevDesc: 'AI Leaf Disease Inference pipeline, automated pathology classification, and chemical dosage formulation will be activated in Phase 2.',
+      clearTryAnother: 'Clear & Try Another Photo',
     },
     diseases: {
       title: 'Cotton Disease Index',
@@ -388,6 +512,13 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       vulnerableStage: 'Vulnerable Stage',
       keySymptoms: 'Main Symptoms',
       viewProtocol: 'View Treatment',
+      causalAgent: 'Causal Agent',
+      descAndPathology: 'Description & Pathology',
+      curativeProtocol: 'Curative Protocol Recommendation',
+      chemicalProduct: 'Chemical Product',
+      standardDosage: 'Standard Dosage',
+      bioOrganicAlternative: 'Bio-Organic Alternative',
+      stage: 'Stage',
     },
     treatments: {
       title: 'Treatment Protocols',
@@ -403,6 +534,12 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       commercialBrands: 'Common Brand Names',
       requiredPpe: 'Safety Gear (PPE)',
       safetyPrecaution: 'Safety Precaution',
+      bioControl: 'Bio-Control',
+      category: 'Category',
+      dosageRules: 'Standard Dosage & Dilution Rules',
+      sprayDilution: 'Spray Water Dilution',
+      repeatApplication: 'Repeat Application',
+      daysWaiting: 'Days Waiting',
     },
     pdfReport: {
       title: 'AgriLens Pathology Report',
@@ -430,6 +567,19 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       preventiveMeasures: 'Preventive Guidelines',
       footerNote: 'Generated Advisory Report for Cotton Field Management.',
       officerSignoff: 'Advisory Summary',
+    },
+    admin: {
+      title: 'Admin Control Center',
+      description: 'Manage crop catalogues, disease profiles, and treatment protocols with full CRUD permissions.',
+      addRecord: 'Add',
+      management: 'Management',
+      noRecords: 'No records found.',
+      createRecord: 'Create Record',
+      confirmDeletion: 'Confirm Deletion',
+      deleteConfirmDesc: 'Are you sure you want to delete this record? This action cannot be undone.',
+      name: 'Name',
+      associatedCrop: 'Associated Crop',
+      treatmentType: 'Treatment Type',
     },
   },
   hi: {
@@ -479,6 +629,18 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       viewDetails: 'विवरण देखें',
       logout: 'लॉगआउट',
       aiDisclaimer: 'एआई भविष्यवाणियां कभी-कभी गलत हो सकती हैं। कोई भी कदम उठाने से पहले कृपया किसी कृषि विशेषज्ञ से पुष्टि करें।',
+      highConfidence: 'उच्च सटीकता',
+      moderateConfidence: 'मध्यम सटीकता',
+      uncertain: 'अनिश्चित',
+      recent: 'हाल का',
+      farmer: 'किसान',
+      cottonLeafScan: 'कपास पत्ती स्कैन',
+      cancel: 'रद्द करें',
+      save: 'सहेजें',
+      delete: 'हटाएं',
+      more: 'अधिक',
+      days: 'दिन',
+      viewPdfReport: 'पीडीएफ रिपोर्ट देखें',
     },
     dashboard: {
       title: 'डैशबोर्ड',
@@ -515,6 +677,11 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       totalLand: 'कुल खेत का आकार',
       role: 'भूमिका',
       saveChanges: 'बदलाव सहेजें',
+      personalCredentials: 'व्यक्तिगत जानकारी',
+      accountSecurity: 'खाता सुरक्षा',
+      currentPassword: 'वर्तमान पासवर्ड',
+      newPassword: 'नया पासवर्ड',
+      updatePassword: 'पासवर्ड अपडेट करें',
     },
     settings: {
       title: 'सेटिंग्स',
@@ -524,6 +691,24 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       notifications: 'सूचनाएं',
       voiceSettings: 'आवाज सेटिंग्स',
       audioOutputSpeed: 'बोलने की गति',
+      pwaInstallTitle: 'प्रोग्रेसिव वेब ऐप (PWA) मोबाइल इंस्टाल',
+      pwaInstallHeading: 'एग्रीलेंस को होम स्क्रीन पर इंस्टॉल करें',
+      pwaInstallDesc: 'एग्रीलेंस को सीधे अपने एंड्रॉयड, आईफोन या डेस्कटॉप होम स्क्रीन पर ऑफलाइन मोबाइल ऐप के रूप में इंस्टॉल किया जा सकता है।',
+      appInstalled: 'ऐप इंस्टॉल है ✓',
+      installApp: 'मोबाइल ऐप इंस्टॉल करें',
+      preferredLanguage: 'प्लेटफॉर्म पसंदीदा भाषा',
+      languageSelectDesc: 'संपूर्ण अनुवाद और आवाज एआई के लिए भाषा चुनें:',
+      light: 'लाइट',
+      dark: 'डार्क',
+      system: 'सिस्टम',
+      connectivityStatus: 'कनेक्टिविटी और PWA स्थिति',
+      networkStatus: 'नेटवर्क स्थिति',
+      networkMonitorDesc: 'रीयल-टाइम कनेक्शन मॉनिटर',
+      online: '🟢 ऑनलाइन',
+      offline: '🔴 ऑफलाइन फील्ड मोड सक्रिय',
+      pwaTitle: 'प्रोग्रेसिव वेब ऐप (PWA)',
+      pwaCacheDesc: 'सर्विस वर्कर और ऑफलाइन कैश सक्रिय',
+      pwaActive: 'सक्रिय (ऑफलाइन तैयार)',
     },
     footer: {
       tagline: 'कपास फसल रोग पहचान एवं दवा सलाह मंच।',
@@ -589,6 +774,20 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       orDivider: 'या',
       cameraSource: 'कैमरे से खींची गई फोटो',
       uploadSource: 'अपलोड की गई पत्ती फोटो',
+      uncertainResult: 'अनिश्चित परिणाम',
+      diagnosisInconclusive: 'निदान अनिर्णायक',
+      uncertainConfidenceMsg: 'सटीकता स्कोर 65% सीमा से कम है',
+      uncertainGuidance: 'हम निश्चित रूप से रोग की पहचान नहीं कर सके। कृपया बेहतर रोशनी या साफ पृष्ठभूमि के साथ दोबारा फोटो लें।',
+      topCandidates: 'शीर्ष संभावित रोग',
+      sortedByProbability: 'एआई संभावना के अनुसार',
+      hiddenTreatmentNote: 'रोग की निश्चित पहचान होने तक उपचार सिफारिशें छिपाई गई हैं।',
+      downloadAnyway: 'फिर भी रिपोर्ट डाउनलोड करें',
+      notRecommendedUncertain: 'सिफारिश नहीं की जाती — विश्वसनीय निदान के लिए सटीकता बहुत कम है।',
+      healthyDiagnosisHeader: 'स्वस्थ फसल निदान',
+      phase2Feature: 'फेज 2 सुविधा',
+      featureUnderDev: 'सुविधा निर्माणाधीन है',
+      featureUnderDevDesc: 'एआई पत्ती रोग पहचान और रासायनिक खुराक निर्माण फेज 2 में सक्रिय होगा।',
+      clearTryAnother: 'हटाएं और दूसरी फोटो आज़माएं',
     },
     diseases: {
       title: 'कपास रोग सूचकांक',
@@ -603,6 +802,13 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       vulnerableStage: 'संवेदनशील समय',
       keySymptoms: 'मुख्य लक्षण',
       viewProtocol: 'दवा देखें',
+      causalAgent: 'कारक जीव',
+      descAndPathology: 'विवरण और रोग विज्ञान',
+      curativeProtocol: 'रोग निवारण उपचार सिफारिश',
+      chemicalProduct: 'रासायनिक दवा',
+      standardDosage: 'मानक खुराक',
+      bioOrganicAlternative: 'जैविक विकल्प',
+      stage: 'चरण',
     },
     treatments: {
       title: 'उपचार और दवाएं',
@@ -618,6 +824,12 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       commercialBrands: 'दुकान का ब्रांड नाम',
       requiredPpe: 'सुरक्षा गियर (PPE)',
       safetyPrecaution: 'सुरक्षा नियम',
+      bioControl: 'जैविक नियंत्रण',
+      category: 'श्रेणी',
+      dosageRules: 'मानक दवा खुराक और घोल नियम',
+      sprayDilution: 'छिड़काव पानी की मात्रा',
+      repeatApplication: 'दोबारा छिड़काव',
+      daysWaiting: 'दिन प्रतीक्षा',
     },
     pdfReport: {
       title: 'एग्रीलेंस रोग निदान रिपोर्ट',
@@ -645,6 +857,19 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       preventiveMeasures: 'बचाव नियम',
       footerNote: 'कपास खेत प्रबंधन हेतु तैयार की गई सलाह रिपोर्ट।',
       officerSignoff: 'सलाह सारांश',
+    },
+    admin: {
+      title: 'एडमिन नियंत्रण केंद्र',
+      description: 'फसल सूची, रोग प्रोफाइल और उपचार प्रोटोकॉल का प्रबंधन करें।',
+      addRecord: 'जोड़ें',
+      management: 'प्रबंधन',
+      noRecords: 'कोई रिकॉर्ड नहीं मिला।',
+      createRecord: 'रिकॉर्ड बनाएं',
+      confirmDeletion: 'हटाने की पुष्टि करें',
+      deleteConfirmDesc: 'क्या आप वाकई इस रिकॉर्ड को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।',
+      name: 'नाम',
+      associatedCrop: 'संबंधित फसल',
+      treatmentType: 'उपचार प्रकार',
     },
   },
   mr: {
@@ -694,6 +919,18 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       viewDetails: 'तपशील पहा',
       logout: 'लॉगआउट',
       aiDisclaimer: 'एआय अंदाज काही वेळा चुकीचे असू शकतात. कोणतीही कृती करण्यापूर्वी कृपया कृषी तज्ञांचा सल्ला घ्या.',
+      highConfidence: 'उच्च अचूकता',
+      moderateConfidence: 'मध्यम अचूकता',
+      uncertain: 'अनिश्चित',
+      recent: 'नुकतेच',
+      farmer: 'शेतकरी',
+      cottonLeafScan: 'कापूस पान स्कॅन',
+      cancel: 'रद्द करा',
+      save: 'जतन करा',
+      delete: 'हटवा',
+      more: 'अधिक',
+      days: 'दिवस',
+      viewPdfReport: 'पीडीएफ अहवाल पहा',
     },
     dashboard: {
       title: 'डॅशबोर्ड',
@@ -730,6 +967,11 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       totalLand: 'एकूण शेत क्षेत्र',
       role: 'भूमिका',
       saveChanges: 'बदल जतन करा',
+      personalCredentials: 'वैयक्तिक माहिती',
+      accountSecurity: 'खाते सुरक्षा',
+      currentPassword: 'सध्याचा पासवर्ड',
+      newPassword: 'नवीन पासवर्ड',
+      updatePassword: 'पासवर्ड अपडेट करा',
     },
     settings: {
       title: 'सेटिंग्ज',
@@ -739,6 +981,24 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       notifications: 'सूचना',
       voiceSettings: 'आवाज सेटिंग्ज',
       audioOutputSpeed: 'बोलण्याचा वेग',
+      pwaInstallTitle: 'प्रोग्रेसिव वेब ॲप (PWA) मोबाईल इन्स्टॉल',
+      pwaInstallHeading: 'ॲग्रीलेन्स होम स्क्रीनवर इन्स्टॉल करा',
+      pwaInstallDesc: 'ॲग्रीलेन्स थेट तुमच्या अँड्रॉइड, आयफोन किंवा डेस्कटॉप स्क्रीनवर ऑफलाइन मोबाईल ॲप म्हणून इन्स्टॉल केले जाऊ शकते.',
+      appInstalled: 'ॲप इन्स्टॉल केले ✓',
+      installApp: 'मोबाईल ॲप इन्स्टॉल करा',
+      preferredLanguage: 'प्लॅटफॉर्म पसंतीची भाषा',
+      languageSelectDesc: 'संपूर्ण भाषांतर आणि आवाज एआय साठी भाषा निवडा:',
+      light: 'लाइट',
+      dark: 'डार्क',
+      system: 'सिस्टम',
+      connectivityStatus: 'कनेक्टिव्हिटी आणि PWA स्थिती',
+      networkStatus: 'नेटवर्क स्थिती',
+      networkMonitorDesc: 'रिअल-टाइम कनेक्शन मॉनिटर',
+      online: '🟢 ऑनलाइन',
+      offline: '🔴 ऑफलाइन फील्ड मोड सक्रिय',
+      pwaTitle: 'प्रोग्रेसिव वेब ॲप (PWA)',
+      pwaCacheDesc: 'सर्व्हिस वर्कर आणि ऑफलाइन कॅश सक्रिय',
+      pwaActive: 'सक्रिय (ऑफलाइन तयार)',
     },
     footer: {
       tagline: 'स्मार्ट कापूस पीक रोग निदान व औषध सल्ला प्रणाली.',
@@ -804,6 +1064,20 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       orDivider: 'किंवा',
       cameraSource: 'कॅमेऱ्याने काढलेला फोटो',
       uploadSource: 'अपलोड केलेली फाईल',
+      uncertainResult: 'अनिश्चित निकाल',
+      diagnosisInconclusive: 'निदान अनिर्णित',
+      uncertainConfidenceMsg: 'अचूकता स्कोअर 65% मर्यादेपेक्षा कमी आहे',
+      uncertainGuidance: 'आम्ही खात्रीशीरपणे रोग ओळखू शकलो नाही. कृपया चांगल्या प्रकाशात किंवा जवळून पुन्हा फोटो घ्या.',
+      topCandidates: 'संभाव्य प्रमुख रोग',
+      sortedByProbability: 'एआय संभाव्यतेनुसार',
+      hiddenTreatmentNote: 'रोगाची खात्रीशीर ओळख होईपर्यंत उपचार माहिती लपवली आहे.',
+      downloadAnyway: 'तरीही अहवाल डाउनलोड करा',
+      notRecommendedUncertain: 'शिफारस केलेली नाही — अचूकता अत्यंत कमी आहे.',
+      healthyDiagnosisHeader: 'निरोगी पीक तपासणी',
+      phase2Feature: 'फेज २ सुविधा',
+      featureUnderDev: 'सुविधा प्रगतीपथावर आहे',
+      featureUnderDevDesc: 'एआय पान रोग ओळख आणि औषध प्रमाण सूत्र फेज २ मध्ये सक्रिय केले जाईल.',
+      clearTryAnother: 'साफ करा आणि दुसरा फोटो घ्या',
     },
     diseases: {
       title: 'कापूस रोग अनुक्रमणिका',
@@ -818,6 +1092,13 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       vulnerableStage: 'संवेदनशील वेळ',
       keySymptoms: 'मुख्य लक्षणे',
       viewProtocol: 'औषध पहा',
+      causalAgent: 'कारणीभूत घटक',
+      descAndPathology: 'वर्णन आणि रोगशास्त्र',
+      curativeProtocol: 'रोग निवारण उपचार शिफारस',
+      chemicalProduct: 'रासायनिक औषध',
+      standardDosage: 'प्रमाणित मात्रा',
+      bioOrganicAlternative: 'जैविक पर्याय',
+      stage: 'टप्पा',
     },
     treatments: {
       title: 'उपचार व औषधे',
@@ -833,6 +1114,12 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       commercialBrands: 'दुकानातील ब्रँड नावे',
       requiredPpe: 'सुरक्षा साधने (PPE)',
       safetyPrecaution: 'सुरक्षा नियम',
+      bioControl: 'जैविक नियंत्रण',
+      category: 'प्रवर्ग',
+      dosageRules: 'प्रमाणित औषध मात्रा आणि द्रावण नियम',
+      sprayDilution: 'फवारणी पाण्याचे प्रमाण',
+      repeatApplication: 'पुन्हा फवारणी',
+      daysWaiting: 'दिवस प्रतीक्षा',
     },
     pdfReport: {
       title: 'ॲग्रीलेन्स रोग निदान अहवाल',
@@ -860,6 +1147,19 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       preventiveMeasures: 'बचाव नियम',
       footerNote: 'कापूस शेत व्यवस्थापनासाठी तयार केलेला सल्ला अहवाल.',
       officerSignoff: 'सल्ला सारांश',
+    },
+    admin: {
+      title: 'अ‍ॅडमिन नियंत्रण केंद्र',
+      description: 'पिक यादी, रोग माहिती आणि उपचार पद्धतींचे व्यवस्थापन करा.',
+      addRecord: 'जोडा',
+      management: 'व्यवस्थापन',
+      noRecords: 'कोणतीही नोंद आढळली नाही.',
+      createRecord: 'नोंद तयार करा',
+      confirmDeletion: 'हटवण्याची खात्री करा',
+      deleteConfirmDesc: 'तुम्हाला खात्री आहे की तुम्ही ही नोंद हटवू इच्छिता? ही कृती पूर्ववत केली जाऊ शकत नाही.',
+      name: 'नाव',
+      associatedCrop: 'संबंधित पीक',
+      treatmentType: 'उपचार प्रकार',
     },
   },
 };

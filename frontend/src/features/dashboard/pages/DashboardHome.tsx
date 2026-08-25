@@ -34,8 +34,8 @@ interface ScanItem {
 }
 
 export default function DashboardHome() {
-  useDocumentTitle('Dashboard');
   const { t } = useLanguage();
+  useDocumentTitle(t.nav.dashboard);
 
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -82,7 +82,7 @@ export default function DashboardHome() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-8">
       <PageHeader
-        title={`${t.common.welcomeBack}, ${user?.full_name?.split(' ')[0] || 'Farmer'}`}
+        title={`${t.common.welcomeBack}, ${user?.full_name?.split(' ')[0] || t.common.farmer}`}
         description={t.dashboard.description}
         actions={
           <div className="flex gap-2">
@@ -182,7 +182,7 @@ export default function DashboardHome() {
                         : scan.disease_id.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
                       : isHealthy
                       ? HEALTHY_CLASS_LABEL
-                      : 'Cotton Leaf Scan');
+                      : t.common.cottonLeafScan);
 
                   return (
                     <div key={scan.id || scan._id || i} className="flex items-center justify-between p-3 bg-earth-50/60 rounded-xl border border-earth-200/80">
@@ -199,12 +199,12 @@ export default function DashboardHome() {
                           <span className={`inline-block px-1.5 py-0.2 text-[10px] font-bold rounded ${
                             isHealthy ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                           }`}>
-                            {isHealthy ? 'Healthy' : 'Disease Found'}
+                            {isHealthy ? t.common.healthyCanopy : t.common.pathologyFound}
                           </span>
                         </div>
                       </div>
                       <div className="font-bold text-xs text-earth-600">
-                        {scan.created_at ? new Date(scan.created_at).toLocaleDateString() : 'Recent'}
+                        {scan.created_at ? new Date(scan.created_at).toLocaleDateString() : t.common.recent}
                       </div>
                     </div>
                   );

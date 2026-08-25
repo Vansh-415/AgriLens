@@ -11,9 +11,9 @@ import { useToast } from '../../../hooks/useToast';
 import { User, Lock, Save } from 'lucide-react';
 
 export default function ProfilePage() {
-  useDocumentTitle('User Profile');
   const { t } = useLanguage();
   const prfT = t.profile;
+  useDocumentTitle(prfT.title);
 
   const { user } = useAuth();
   const toast = useToast();
@@ -59,7 +59,7 @@ export default function ProfilePage() {
           <p className="text-xs text-earth-500">{user?.email}</p>
           <div className="mt-4">
             <Badge variant={user?.role === 'admin' ? 'danger' : 'success'} className="capitalize">
-              {user?.role || 'Farmer'}
+              {user?.role || t.common.farmer}
             </Badge>
           </div>
         </Card>
@@ -67,7 +67,7 @@ export default function ProfilePage() {
         <Card className="md:col-span-2 border-earth-200">
           <CardHeader>
             <CardTitle className="text-base font-bold text-earth-900 flex items-center gap-2">
-              <User className="w-5 h-5 text-primary-600" /> Personal Credentials
+              <User className="w-5 h-5 text-primary-600" /> {prfT.personalCredentials}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -92,27 +92,27 @@ export default function ProfilePage() {
       <Card className="border-earth-200">
         <CardHeader>
           <CardTitle className="text-base font-bold text-earth-900 flex items-center gap-2">
-            <Lock className="w-5 h-5 text-amber-600" /> Account Security
+            <Lock className="w-5 h-5 text-amber-600" /> {prfT.accountSecurity}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
             <Input
               type="password"
-              label="Current Password"
+              label={prfT.currentPassword}
               placeholder="••••••••"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
             />
             <Input
               type="password"
-              label="New Password"
+              label={prfT.newPassword}
               placeholder="••••••••"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
             <Button type="submit" variant="outline" className="border-earth-300 font-bold text-xs">
-              Update Password
+              {prfT.updatePassword}
             </Button>
           </form>
         </CardContent>

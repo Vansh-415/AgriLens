@@ -90,7 +90,7 @@ export function MainLayout() {
 
           <Button variant="ghost" size="sm" onClick={logout} className="text-earth-500 hover:text-red-600 hover:bg-red-50">
             <LogOut className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">Logout</span>
+            <span className="hidden sm:inline">{t.common.logout}</span>
           </Button>
         </div>
       </header>

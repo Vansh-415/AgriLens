@@ -38,8 +38,8 @@ interface ScanRecord {
 }
 
 export default function ScanHistoryPage() {
-  useDocumentTitle('Crop Scan History');
   const { language, t } = useLanguage();
+  useDocumentTitle(t.history.title);
   const [loading, setLoading] = useState(true);
   const [scans, setScans] = useState<ScanRecord[]>([]);
   const [selectedScan, setSelectedScan] = useState<ScanRecord | null>(null);
@@ -163,7 +163,7 @@ export default function ScanHistoryPage() {
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       <PageHeader
         title={t.nav.history}
-        description="Historical log of field leaf pathology diagnoses and exported PDF reports."
+        description={t.history.description}
       />
 
       {loading ? (
@@ -177,9 +177,9 @@ export default function ScanHistoryPage() {
           <CardContent className="p-8">
             <EmptyState
               icon={History}
-              title="No scan history found"
-              description="Your saved crop scans and PDF field reports will appear here."
-              actionLabel="Run New Scan"
+              title={t.history.noHistory}
+              description={t.history.noHistoryDesc}
+              actionLabel={t.history.runNewScan}
               onAction={() => (window.location.href = '/detect')}
             />
           </CardContent>
@@ -212,14 +212,14 @@ export default function ScanHistoryPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-extrabold text-earth-900 text-base leading-snug">{diseaseName}</h3>
                         <Badge variant={isHealthy ? 'success' : 'danger'}>
-                          {isHealthy ? 'Healthy' : 'Disease Found'}
+                          {isHealthy ? t.common.healthyCanopy : t.common.pathologyFound}
                         </Badge>
                       </div>
 
                       <div className="flex items-center gap-4 text-xs text-earth-500 flex-wrap">
                         <span className="flex items-center gap-1 font-medium">
                           <Calendar className="w-3.5 h-3.5 text-earth-400" />
-                          {scan.created_at ? new Date(scan.created_at).toLocaleDateString() : 'Recent'}
+                          {scan.created_at ? new Date(scan.created_at).toLocaleDateString() : t.common.recent}
                         </span>
                         <span>•</span>
                         <span className="flex items-center gap-1 font-semibold text-emerald-800">
@@ -234,7 +234,7 @@ export default function ScanHistoryPage() {
                               <>
                                 <span>•</span>
                                 <span className="px-2 py-0.5 bg-emerald-100 text-emerald-900 border border-emerald-300 rounded font-bold text-[10px]">
-                                  High Confidence ({confText})
+                                  {t.common.highConfidence} ({confText})
                                 </span>
                               </>
                             );
@@ -244,7 +244,7 @@ export default function ScanHistoryPage() {
                               <>
                                 <span>•</span>
                                 <span className="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded font-bold text-[10px]">
-                                  Moderate Confidence ({confText})
+                                  {t.common.moderateConfidence} ({confText})
                                 </span>
                               </>
                             );
@@ -253,7 +253,7 @@ export default function ScanHistoryPage() {
                             <>
                               <span>•</span>
                               <span className="px-2 py-0.5 bg-rose-100 text-rose-900 border border-rose-300 rounded font-bold text-[10px]">
-                                Uncertain ({confText})
+                                {t.common.uncertain} ({confText})
                               </span>
                             </>
                           );
@@ -269,7 +269,7 @@ export default function ScanHistoryPage() {
                       size="sm"
                       className="flex-1 sm:flex-initial border-earth-300 hover:bg-emerald-50 text-emerald-900 font-bold text-xs"
                     >
-                      <FileText className="w-3.5 h-3.5 mr-1.5 text-emerald-700" /> View / {t.common.pdfReport}
+                      <FileText className="w-3.5 h-3.5 mr-1.5 text-emerald-700" /> {t.common.viewPdfReport}
                     </Button>
                   </div>
                 </CardContent>
