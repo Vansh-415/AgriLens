@@ -15,13 +15,16 @@ import { getLocalizedDiseases } from '../../../i18n/localizedData';
 import type { DiseaseProfile } from '../../../i18n/localizedData';
 import { printReportElement } from '../../../utils/printReport';
 import type { PredictionData } from '../../../types/prediction';
-import { getConfidenceTier } from '../../../types/prediction';
+import { getConfidenceTier, HEALTHY_CLASS_LABEL, isHealthyClass } from '../../../types/prediction';
 import { History, Leaf, Printer, FileText, Calendar, MapPin } from 'lucide-react';
 
 interface ScanRecord {
   _id: string;
   id?: string;
   user_id?: string;
+  crop_id?: string;
+  disease_id?: string;
+  image_path?: string;
   image_url?: string;
   predicted_disease?: string;
   disease_name?: string;
@@ -70,13 +73,21 @@ export default function ScanHistoryPage() {
   const getDiseaseDisplayName = (scan: ScanRecord) => {
     if (scan.predicted_disease) return scan.predicted_disease;
     if (scan.disease_name) return scan.disease_name;
-    return scan.is_healthy ? 'Healthy Cotton Canopy' : 'Cotton Pathology Scan';
+    if (scan.disease_id) {
+      if (isHealthyClass(scan.disease_id)) return HEALTHY_CLASS_LABEL;
+      return scan.disease_id
+        .split('_')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+    }
+    return scan.is_healthy ? HEALTHY_CLASS_LABEL : 'Cotton Pathology Scan';
   };
 
   // Map exact commercial solution & active chemical formulation from library
   const constructPredictionData = (scan: ScanRecord): PredictionData => {
     const dname = getDiseaseDisplayName(scan);
     const conf = scan.confidence || 0.96;
+    const isHealthy = isHealthyClass(dname) || isHealthyClass(scan.disease_id) || scan.is_healthy === true;
 
     // Search matching disease profile in localizedDiseases
     const libraryMatch = localizedDiseases.find((d: DiseaseProfile) =>
@@ -85,7 +96,7 @@ export default function ScanHistoryPage() {
     ) || localizedDiseases[0];
 
     return {
-      predicted_class: libraryMatch.name,
+      predicted_class: isHealthy ? HEALTHY_CLASS_LABEL : libraryMatch.name,
       confidence: conf,
       confidence_pct: scan.confidence_pct || `${(conf * 100).toFixed(1)}%`,
       prediction_time_ms: scan.prediction_time_ms || 120,
@@ -93,32 +104,48 @@ export default function ScanHistoryPage() {
       model_version: 'v2.1',
       saved_scan_id: scan._id || scan.id || null,
       class_probabilities: {
-        [libraryMatch.name]: conf,
+        [isHealthy ? HEALTHY_CLASS_LABEL : libraryMatch.name]: conf,
         'Other Pathologies': 1 - conf
       },
       personalized_advisory: {
-        disease_name: libraryMatch.name,
-        scientific_name: libraryMatch.scientific_name,
-        severity: libraryMatch.severity.toUpperCase(),
-        emergency_action: `Immediate Action Required: Apply ${libraryMatch.recommended_treatments.chemical} within next 24-48 hours.`,
-        description: libraryMatch.description,
+        disease_name: isHealthy ? HEALTHY_CLASS_LABEL : libraryMatch.name,
+        scientific_name: isHealthy ? 'N/A (Healthy Crop)' : libraryMatch.scientific_name,
+        severity: isHealthy ? 'NONE' : libraryMatch.severity.toUpperCase(),
+        emergency_action: isHealthy
+          ? 'No disease symptoms detected. Continue routine pest monitoring and standard agronomic practices.'
+          : `Immediate Action Required: Apply ${libraryMatch.recommended_treatments.chemical} within next 24-48 hours.`,
+        description: isHealthy
+          ? 'Your cotton leaves show healthy green pigmentation, normal venation, and zero visual disease symptoms.'
+          : libraryMatch.description,
         land_acres: scan.land_acres || 1.0,
         calculated_dosage: {
-          product_name: libraryMatch.recommended_treatments.chemical,
-          active_ingredient: 'Certified Pathology Formulation',
-          dosage_per_acre: libraryMatch.recommended_treatments.dosage,
+          product_name: isHealthy ? 'None Required' : libraryMatch.recommended_treatments.chemical,
+          active_ingredient: isHealthy ? 'N/A' : 'Certified Pathology Formulation',
+          dosage_per_acre: isHealthy ? 'N/A' : libraryMatch.recommended_treatments.dosage,
           water_per_acre_litres: 200,
           total_water_litres: (scan.land_acres || 1.0) * 200,
-          application_interval_days: 10,
-          pre_harvest_interval_days: 15,
-          dosage_summary: `Mix ${libraryMatch.recommended_treatments.chemical} in ${(scan.land_acres || 1.0) * 200}L water for ${scan.land_acres || 1.0} acres.`
+          application_interval_days: isHealthy ? 0 : 10,
+          pre_harvest_interval_days: isHealthy ? 0 : 15,
+          dosage_summary: isHealthy
+            ? 'No chemical dosage required for healthy canopy.'
+            : `Mix ${libraryMatch.recommended_treatments.chemical} in ${(scan.land_acres || 1.0) * 200}L water for ${scan.land_acres || 1.0} acres.`
         },
         biological_organic: {
-          remedy: libraryMatch.recommended_treatments.organic,
-          description: 'Certified bio-organic alternative for eco-friendly disease control.'
+          remedy: isHealthy ? 'Routine organic foliar nourishment' : libraryMatch.recommended_treatments.organic,
+          description: isHealthy
+            ? 'Maintain soil organic matter and beneficial insect habitats.'
+            : 'Certified bio-organic alternative for eco-friendly disease control.'
         },
-        weather_safety_rule: 'Do not spray if high wind (>12 km/h) or rainfall is expected within 4 hours.',
-        cultural_preventative: libraryMatch.preventive_measures
+        weather_safety_rule: isHealthy
+          ? 'Favorable field conditions. Continue standard crop care.'
+          : 'Do not spray if high wind (>12 km/h) or rainfall is expected within 4 hours.',
+        cultural_preventative: isHealthy
+          ? [
+              'Maintain balanced NPK fertilization.',
+              'Inspect field weekly for early aphid/jassid infestation.',
+              'Ensure adequate drainage during monsoon.'
+            ]
+          : libraryMatch.preventive_measures
       }
     };
   };
@@ -161,7 +188,12 @@ export default function ScanHistoryPage() {
         <div className="grid gap-4">
           {scans.map((scan, idx) => {
             const diseaseName = getDiseaseDisplayName(scan);
-            const isHealthy = scan.is_healthy || diseaseName.toLowerCase().includes('healthy');
+            const isHealthy =
+              scan.is_healthy === true ||
+              isHealthyClass(diseaseName) ||
+              isHealthyClass(scan.disease_id) ||
+              isHealthyClass(scan.predicted_disease) ||
+              isHealthyClass(scan.disease_name);
             const acres = scan.land_acres || 1.0;
 
             return (
@@ -180,7 +212,7 @@ export default function ScanHistoryPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-extrabold text-earth-900 text-base leading-snug">{diseaseName}</h3>
                         <Badge variant={isHealthy ? 'success' : 'danger'}>
-                          {isHealthy ? t.common.healthyCanopy : t.common.pathologyFound}
+                          {isHealthy ? 'Healthy' : 'Disease Found'}
                         </Badge>
                       </div>
 

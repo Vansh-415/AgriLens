@@ -20,12 +20,14 @@ import {
 import { useAuth } from '../../../context/AuthContext';
 import { cropsService } from '../../../services/cropsService';
 import { scansService } from '../../../services/scansService';
+import { isHealthyClass, HEALTHY_CLASS_LABEL } from '../../../types/prediction';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface ScanItem {
   id?: string;
   _id?: string;
   created_at?: string;
+  disease_id?: string;
   predicted_disease?: string;
   status?: string;
   is_healthy?: boolean;
@@ -63,7 +65,7 @@ export default function DashboardHome() {
   }, []);
 
   const totalScans = scans.length;
-  const healthyCount = scans.filter((s) => s.is_healthy || s.predicted_disease?.toLowerCase() === 'healthy').length;
+  const healthyCount = scans.filter((s) => s.is_healthy || isHealthyClass(s.predicted_disease) || isHealthyClass(s.disease_id)).length;
   const diseaseCount = totalScans - healthyCount;
 
   // Weekly scan activity data
@@ -170,26 +172,43 @@ export default function DashboardHome() {
               />
             ) : (
               <div className="space-y-3">
-                {scans.slice(0, 5).map((scan, i) => (
-                  <div key={scan.id || scan._id || i} className="flex items-center justify-between p-3 bg-earth-50/60 rounded-xl border border-earth-200/80">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold">
-                        <ShieldCheck className="w-4 h-4" />
+                {scans.slice(0, 5).map((scan, i) => {
+                  const isHealthy = scan.is_healthy || isHealthyClass(scan.predicted_disease) || isHealthyClass(scan.disease_id);
+                  const scanTitle =
+                    scan.predicted_disease ||
+                    (scan.disease_id
+                      ? isHealthyClass(scan.disease_id)
+                        ? HEALTHY_CLASS_LABEL
+                        : scan.disease_id.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+                      : isHealthy
+                      ? HEALTHY_CLASS_LABEL
+                      : 'Cotton Leaf Scan');
+
+                  return (
+                    <div key={scan.id || scan._id || i} className="flex items-center justify-between p-3 bg-earth-50/60 rounded-xl border border-earth-200/80">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${
+                          isHealthy ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                        }`}>
+                          <ShieldCheck className="w-4 h-4" />
+                        </div>
+                        <div className="space-y-0.5">
+                          <p className="text-xs font-bold text-earth-900 leading-none">
+                            {scanTitle}
+                          </p>
+                          <span className={`inline-block px-1.5 py-0.2 text-[10px] font-bold rounded ${
+                            isHealthy ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}>
+                            {isHealthy ? 'Healthy' : 'Disease Found'}
+                          </span>
+                        </div>
                       </div>
-                      <div className="space-y-0.5">
-                        <p className="text-xs font-bold text-earth-900 leading-none">
-                          {scan.predicted_disease || 'Cotton Leaf Scan'}
-                        </p>
-                        <p className="text-[11px] text-earth-500">
-                          {scan.is_healthy ? t.common.healthyCanopy : t.common.pathologyFound}
-                        </p>
+                      <div className="font-bold text-xs text-earth-600">
+                        {scan.created_at ? new Date(scan.created_at).toLocaleDateString() : 'Recent'}
                       </div>
                     </div>
-                    <div className="font-bold text-xs text-earth-600">
-                      {scan.created_at ? new Date(scan.created_at).toLocaleDateString() : 'Recent'}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </CardContent>

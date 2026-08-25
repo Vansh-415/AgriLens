@@ -8,7 +8,7 @@ import { Modal } from '../../../components/ui/Modal';
 import { useToast } from '../../../hooks/useToast';
 import { scansService } from '../../../services/scansService';
 import type { PredictionData } from '../../../types/prediction';
-import { getConfidenceTier } from '../../../types/prediction';
+import { getConfidenceTier, isHealthyClass } from '../../../types/prediction';
 import { DiagnosticPdfReport } from '../components/DiagnosticPdfReport';
 import { CameraCaptureModal } from '../components/CameraCaptureModal';
 import { printReportElement } from '../../../utils/printReport';
@@ -591,11 +591,20 @@ export default function DetectPage() {
                         <div>
                           <div className="flex items-center gap-2 text-xs font-semibold text-emerald-200 uppercase tracking-wider">
                             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                            {d.diagResult}
+                            {isHealthyClass(prediction.predicted_class) ? 'Healthy Canopy Diagnosis' : d.diagResult}
                           </div>
-                          <h2 className="text-2xl font-black text-white mt-1">
-                            {prediction.predicted_class}
-                          </h2>
+                          <div className="flex items-center gap-2.5 mt-1 flex-wrap">
+                            <h2 className="text-2xl font-black text-white">
+                              {prediction.predicted_class}
+                            </h2>
+                            <span className={`px-2.5 py-0.5 text-xs font-extrabold rounded-full ${
+                              isHealthyClass(prediction.predicted_class)
+                                ? 'bg-emerald-300 text-emerald-950 shadow-xs'
+                                : 'bg-rose-500 text-white shadow-xs'
+                            }`}>
+                              {isHealthyClass(prediction.predicted_class) ? 'Healthy' : 'Disease Found'}
+                            </span>
+                          </div>
                           <p className="text-xs text-emerald-100 italic mt-0.5">
                             {prediction.personalized_advisory.scientific_name}
                           </p>

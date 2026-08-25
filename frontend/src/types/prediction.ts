@@ -4,6 +4,19 @@ export const CONFIDENCE_MODERATE_THRESHOLD = 0.65; // >= 65% and < 85% => Modera
 
 export type ConfidenceTier = 'uncertain' | 'moderate' | 'high';
 
+export const HEALTHY_CLASS_LABEL = 'Healthy Leaf'; // Exact class label used by the AI model/backend
+
+export function isHealthyClass(className?: string | null): boolean {
+  if (!className) return false;
+  const normalized = className.trim().toLowerCase();
+  return (
+    normalized === HEALTHY_CLASS_LABEL.toLowerCase() ||
+    normalized === 'healthy' ||
+    normalized === 'healthy leaf' ||
+    normalized.includes('healthy')
+  );
+}
+
 export function getConfidenceTier(confidence: number): ConfidenceTier {
   if (confidence >= CONFIDENCE_HIGH_THRESHOLD) {
     return 'high';
