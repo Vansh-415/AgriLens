@@ -122,8 +122,8 @@ export default function SettingsPage() {
                   key={item.id}
                   onClick={() => setTheme(item.id as any)}
                   className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${theme === item.id
-                      ? 'border-primary-600 bg-primary-50/50 text-primary-700 font-bold ring-2 ring-primary-500'
-                      : 'border-earth-200 bg-white dark:bg-slate-800 hover:bg-earth-50 text-earth-700 dark:text-slate-200'
+                    ? 'border-primary-600 bg-primary-50/50 text-primary-700 font-bold ring-2 ring-primary-500'
+                    : 'border-earth-200 bg-white dark:bg-slate-800 hover:bg-earth-50 text-earth-700 dark:text-slate-200'
                     }`}
                 >
                   <item.icon className="w-5 h-5" />

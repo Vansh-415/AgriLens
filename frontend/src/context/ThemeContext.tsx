@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
 type Theme = 'dark' | 'light' | 'system';
@@ -13,11 +13,15 @@ interface ThemeProviderProps {
 interface ThemeProviderState {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  isLockedLight: boolean;
+  setLockLight: (lock: boolean) => void;
 }
 
 const initialState: ThemeProviderState = {
   theme: 'system',
   setTheme: () => null,
+  isLockedLight: false,
+  setLockLight: () => null,
 };
 
 export const ThemeContext = createContext<ThemeProviderState>(initialState);
@@ -31,33 +35,48 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   );
+  const [isLockedLight, setIsLockedLight] = useState<boolean>(false);
+
+  const setLockLight = useCallback((lock: boolean) => {
+    setIsLockedLight(lock);
+  }, []);
 
   useEffect(() => {
     const root = window.document.documentElement;
 
-    const applyTheme = (targetTheme: Theme) => {
+    const applyTheme = () => {
       root.classList.remove('light', 'dark');
 
-      if (targetTheme === 'system') {
+      if (isLockedLight) {
+        root.classList.add('light');
+        root.setAttribute('data-theme', 'light');
+        root.style.colorScheme = 'light';
+        return;
+      }
+
+      root.removeAttribute('data-theme');
+      if (theme === 'system') {
         const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
           ? 'dark'
           : 'light';
         root.classList.add(systemTheme);
+        root.style.colorScheme = systemTheme;
       } else {
-        root.classList.add(targetTheme);
+        root.classList.add(theme);
+        root.style.colorScheme = theme;
       }
     };
 
-    applyTheme(theme);
+    applyTheme();
 
-    if (theme === 'system') {
+    if (!isLockedLight && theme === 'system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => applyTheme('system');
-      
+      const handleChange = () => applyTheme();
+
       mediaQuery.addEventListener('change', handleChange);
       return () => mediaQuery.removeEventListener('change', handleChange);
     }
-  }, [theme]);
+  }, [theme, isLockedLight]);
 
   const value = {
     theme,
@@ -65,6 +84,8 @@ export function ThemeProvider({
       localStorage.setItem(storageKey, newTheme);
       setTheme(newTheme);
     },
+    isLockedLight,
+    setLockLight,
   };
 
   return (

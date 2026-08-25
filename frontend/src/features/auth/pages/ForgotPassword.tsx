@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
+import { useLockLightTheme } from '../../../hooks/useTheme';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Card, CardContent } from '../../../components/ui/Card';
-import { Leaf } from 'lucide-react';
+import { AgriLensLogo } from '../../../components/ui/AgriLensLogo';
 import { authService } from '../../../services/authService';
 
 const forgotPasswordSchema = z.object({
@@ -16,6 +18,9 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 
 export function ForgotPassword() {
+  useDocumentTitle('Reset Password — AgriLens');
+  useLockLightTheme();
+
   const [success, setSuccess] = React.useState(false);
   
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ForgotPasswordValues>({
@@ -32,47 +37,57 @@ export function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-earth-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+    <div
+      data-theme="light"
+      className="min-h-screen bg-[#f4fcf0] flex flex-col justify-center py-10 sm:py-16 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#16a34a] selection:text-white"
+    >
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
         <div className="flex justify-center">
-          <div className="bg-primary-600 p-2 rounded-xl shadow-sm">
-            <Leaf className="h-8 w-8 text-white" />
-          </div>
+          <Link to="/" aria-label="AgriLens Home">
+            <AgriLensLogo size="lg" />
+          </Link>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-earth-900">
+        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#19100e] font-heading pt-2">
           Reset your password
         </h2>
-        <p className="mt-2 text-center text-sm text-earth-600">
+        <p className="text-xs sm:text-sm text-[#5c4a42]">
           Or{' '}
-          <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500 transition-colors">
+          <Link to="/login" className="font-bold text-[#16a34a] hover:text-[#15803d] transition-colors underline-offset-2 hover:underline">
             return to login
           </Link>
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <Card>
-          <CardContent className="pt-6">
+        <Card className="bg-white/95 backdrop-blur-xl border border-[#eaddd7] shadow-xl rounded-3xl overflow-hidden">
+          <CardContent className="p-6 sm:p-8">
             {success ? (
               <div className="text-center space-y-4">
-                <div className="p-3 bg-green-50 border-l-4 border-green-500 text-green-700 text-sm rounded-md">
+                <div className="p-3 bg-[#dcfce7] border-l-4 border-[#16a34a] text-[#15803d] text-xs sm:text-sm rounded-xl font-medium">
                   If an account exists for that email, we have sent password reset instructions.
                 </div>
                 <Link to="/login">
-                  <Button variant="outline" className="w-full mt-4">Return to login</Button>
+                  <Button variant="outline" className="w-full mt-4 border border-[#d2bab0] text-[#271a17] rounded-full py-3">
+                    Return to login
+                  </Button>
                 </Link>
               </div>
             ) : (
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 <Input
                   label="Email address"
                   type="email"
                   autoComplete="email"
+                  placeholder="farmer@agrilens.in"
                   error={errors.email?.message}
                   {...register('email')}
                 />
                 
-                <Button type="submit" className="w-full" isLoading={isSubmitting}>
+                <Button
+                  type="submit"
+                  className="w-full bg-[#16a34a] hover:bg-[#15803d] text-white font-extrabold rounded-full py-3.5 shadow-md shadow-[#16a34a]/20 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer min-h-[44px]"
+                  isLoading={isSubmitting}
+                >
                   Send reset link
                 </Button>
               </form>

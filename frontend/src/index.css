@@ -12,21 +12,25 @@
   --earth-600: #977669;
   --earth-700: #846358;
   --earth-800: #43302b;
+  --earth-850: #2f211c;
   --earth-900: #271a17;
+  --earth-950: #19100e;
   color-scheme: light;
 }
 
 .dark {
-  --earth-50: #0b1120;
-  --earth-100: #172136;
-  --earth-200: #1e293b;
-  --earth-300: #334155;
+  --earth-50: #0f172a;
+  --earth-100: #1e293b;
+  --earth-200: #334155;
+  --earth-300: #475569;
   --earth-400: #64748b;
   --earth-500: #94a3b8;
   --earth-600: #cbd5e1;
   --earth-700: #e2e8f0;
-  --earth-800: #f1f5f9;
+  --earth-800: #1e293b;
+  --earth-850: #172033;
   --earth-900: #f8fafc;
+  --earth-950: #ffffff;
   color-scheme: dark;
 }
 
@@ -52,7 +56,9 @@
   --color-earth-600: var(--earth-600);
   --color-earth-700: var(--earth-700);
   --color-earth-800: var(--earth-800);
+  --color-earth-850: var(--earth-850);
   --color-earth-900: var(--earth-900);
+  --color-earth-950: var(--earth-950);
 
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-heading: "Outfit", "Inter", sans-serif;
@@ -110,31 +116,6 @@ html[lang="mr"] h6,
   font-family: "Noto Sans Devanagari", "Outfit", sans-serif !important;
   letter-spacing: 0.01em !important;
   line-height: 1.45 !important;
-}
-
-/* Custom dark overrides for containers, modals, cards, navbar, & elements */
-.dark .bg-white {
-  background-color: #1e293b !important;
-}
-
-.dark .bg-earth-50\/50 {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-}
-
-.dark .bg-primary-50 {
-  background-color: rgba(20, 83, 45, 0.35) !important;
-}
-
-.dark .bg-primary-100 {
-  background-color: rgba(22, 101, 52, 0.45) !important;
-}
-
-.dark .text-primary-700 {
-  color: #4ade80 !important;
-}
-
-.dark .text-primary-600 {
-  color: #22c55e !important;
 }
 
 /* Print Rules - Suppress non-report elements during print */
