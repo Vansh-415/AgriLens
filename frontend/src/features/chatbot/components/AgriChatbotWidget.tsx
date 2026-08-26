@@ -259,7 +259,8 @@ export function AgriChatbotWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 p-3 sm:p-3.5 min-w-[48px] min-h-[48px] bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 group border-2 border-white/20 cursor-pointer"
+          style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))', right: 'calc(1rem + env(safe-area-inset-right, 0px))' }}
+          className="fixed z-40 p-3 sm:p-3.5 min-w-[48px] min-h-[48px] bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 group border-2 border-white/20 cursor-pointer"
           aria-label="Open AI Agronomist Chatbot"
         >
           <div className="relative">
@@ -272,7 +273,10 @@ export function AgriChatbotWidget() {
 
       {/* Floating Chatbot Dialog */}
       {isOpen && (
-        <div className="fixed inset-x-2 bottom-2 sm:inset-auto sm:bottom-6 sm:right-6 z-50 w-auto sm:w-[420px] max-w-[calc(100vw-16px)] sm:max-w-md bg-white dark:bg-earth-900 rounded-3xl shadow-2xl border border-earth-200 dark:border-earth-700 flex flex-col h-[85vh] sm:h-[580px] max-h-[640px] overflow-hidden font-sans transition-all">
+        <div
+          style={{ bottom: 'calc(0.5rem + env(safe-area-inset-bottom, 0px))' }}
+          className="fixed inset-x-2 sm:inset-auto sm:right-6 z-50 w-auto sm:w-[420px] max-w-[calc(100vw-16px)] sm:max-w-md bg-white dark:bg-earth-900 rounded-3xl shadow-2xl border border-earth-200 dark:border-earth-700 flex flex-col h-[85vh] sm:h-[580px] max-h-[640px] overflow-hidden font-sans transition-all"
+        >
           
           {/* Chat Header */}
           <div className="bg-gradient-to-r from-emerald-800 via-teal-900 to-earth-950 text-white p-4 flex items-center justify-between shadow-sm">

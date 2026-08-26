@@ -54,7 +54,7 @@ export function MainLayout() {
   return (
     <div className="min-h-screen bg-earth-50 text-earth-900 flex flex-col transition-colors duration-200">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-40 bg-white border-b border-earth-200 h-16 flex items-center justify-between px-3 sm:px-4 md:px-6 lg:px-8 shadow-xs">
+      <header className="sticky top-0 z-40 bg-white border-b border-earth-200 min-h-16 pt-safe flex items-center justify-between px-3 sm:px-4 md:px-6 lg:px-8 shadow-xs">
         <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={() => setSidebarOpen(true)}
