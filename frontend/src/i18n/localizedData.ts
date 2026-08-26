@@ -25,7 +25,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'bacterial_blight',
         name: 'जीवाणु जनित धब्बा रोग (Bacterial Blight)',
-        scientific_name: 'ज़ैंथोमोनस सिट्री पीवी माल्वासेरम',
+        scientific_name: 'Xanthomonas citri pv. malvacearum',
         causal_agent: 'जीवाणु (संवहनी प्रणाली प्रसार)',
         severity: 'critical',
         disease_index_score: '85/100 (गंभीर फसल खतरा)',
@@ -52,7 +52,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'curl_virus',
         name: 'कपास पत्ती मरोड़िया वायरस (Leaf Curl Virus)',
-        scientific_name: 'बेगोमोवायरस / सफेद मक्खी वाहक',
+        scientific_name: 'Begomovirus / Whitefly Vector Complex',
         causal_agent: 'विषाणु (सफेद मक्खी बेमिसिया टैबासी द्वारा प्रसारित)',
         severity: 'critical',
         disease_index_score: '92/100 (उच्च आर्थिक नुकसान खतरा)',
@@ -79,7 +79,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_hopper_jassids',
         name: 'हरा तेला / जस्सिड्स (Leaf Hopper Jassids)',
-        scientific_name: 'एम्रास्का बिगट्टुला बिगट्टुला',
+        scientific_name: 'Amrasca biguttula biguttula',
         causal_agent: 'रस चूसक कीट शिशु एवं वयस्क',
         severity: 'high',
         disease_index_score: '74/100 (उच्च कीट तनाव)',
@@ -106,7 +106,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_redding',
         name: 'पत्ती लाल होना (Physiological Leaf Redding)',
-        scientific_name: 'पोषण / तापमान तनाव विकार',
+        scientific_name: 'Physiological / Magnesium Deficiency Stress',
         causal_agent: 'मैग्नीशियम (Mg) की कमी + ठंडी रातों का तनाव',
         severity: 'moderate',
         disease_index_score: '48/100 (शारीरिक तनाव)',
@@ -133,7 +133,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'herbicide_growth_damage',
         name: 'खरपतवारनाशक क्षति (Herbicide Phytotoxicity)',
-        scientific_name: 'अ-चयनात्मक खरपतवारनाशक बहकाव क्षति',
+        scientific_name: 'Herbicide Drift / Phytotoxicity',
         causal_agent: 'रसायन बहकाव (2,4-D / ग्लाइफोसेट)',
         severity: 'high',
         disease_index_score: '68/100 (रासायनिक क्षति)',
@@ -160,7 +160,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_variegation',
         name: 'पत्ती चितकबरापन (Leaf Variegation)',
-        scientific_name: 'आनुवंशिक / हरिमहीनता विकार',
+        scientific_name: 'Genetic / Chimera Variegation',
         causal_agent: 'आनुवंशिक मोज़ेक या क्लोरोफिल उत्परिवर्तन',
         severity: 'low',
         disease_index_score: '18/100 (कम क्षति)',
@@ -186,7 +186,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'healthy_leaf',
         name: 'स्वस्थ कपास फसल (Healthy Canopy)',
-        scientific_name: 'गॉसिपियम हिरसुटम (सामान्य)',
+        scientific_name: 'Gossypium hirsutum (Normal Physiology)',
         causal_agent: 'कोई नहीं (उत्कृष्ट स्वास्थ्य)',
         severity: 'low',
         disease_index_score: '0/100 (उत्कृष्ट फसल स्वास्थ्य)',
@@ -218,7 +218,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'bacterial_blight',
         name: 'जिवाणूजन्य करपा (Bacterial Blight)',
-        scientific_name: 'झँथोमोनस सिट्री पीव्ही माल्व्हासेरम',
+        scientific_name: 'Xanthomonas citri pv. malvacearum',
         causal_agent: 'जिवाणू (वाहिनी प्रणाली प्रसार)',
         severity: 'critical',
         disease_index_score: '८५/१०० (अतिधोकादायक)',
@@ -245,7 +245,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'curl_virus',
         name: 'कापूस पर्णमोड / चुरडा-मुरडा (Leaf Curl Virus)',
-        scientific_name: 'बेगोमोव्हायरस / पांढरी माशी वाहक',
+        scientific_name: 'Begomovirus / Whitefly Vector Complex',
         causal_agent: 'विषाणू (पांढरी माशी बेमिसिया टॅबासी द्वारे प्रसार)',
         severity: 'critical',
         disease_index_score: '९२/१०० (उच्च आर्थिक नुकसान)',
@@ -272,7 +272,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_hopper_jassids',
         name: 'तुडतुडे व मावा (Leaf Hopper Jassids)',
-        scientific_name: 'अम्रास्का बिगट्टुला बिगट्टुला',
+        scientific_name: 'Amrasca biguttula biguttula',
         causal_agent: 'रस शोषणारे कीटक',
         severity: 'high',
         disease_index_score: '७४/१०० (उच्च कीटक ताण)',
@@ -299,7 +299,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_redding',
         name: 'कापूस लाल्या पडणे (Physiological Leaf Redding)',
-        scientific_name: 'अन्नद्रव्य / तापमान ताण',
+        scientific_name: 'Physiological / Magnesium Deficiency Stress',
         causal_agent: 'मॅग्नेशियम (Mg) कमतरता + थंड रात्रींचा ताण',
         severity: 'moderate',
         disease_index_score: '४८/१०० (शारीरिक ताण)',
@@ -326,7 +326,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'herbicide_growth_damage',
         name: 'तणनाशक बाधा (Herbicide Phytotoxicity)',
-        scientific_name: 'तणनाशक फवारणी ड्रिफ्ट हानी',
+        scientific_name: 'Herbicide Drift / Phytotoxicity',
         causal_agent: 'रसायन वाऱ्यामुळे उडणे (२,४-D / ग्लायफोसेट)',
         severity: 'high',
         disease_index_score: '६८/१०० (रासायनिक हानी)',
@@ -353,7 +353,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_variegation',
         name: 'पानांवरील पांढरे डाग (Leaf Variegation)',
-        scientific_name: 'जनुकीय / हरिमद्रव्य विकार',
+        scientific_name: 'Genetic / Chimera Variegation',
         causal_agent: 'जनुकीय बदल किंवा क्लोरोफिल कमतरता',
         severity: 'low',
         disease_index_score: '१८/१०० (कमी धोका)',
@@ -379,7 +379,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'healthy_leaf',
         name: 'निरोगी कापूस पिक (Healthy Canopy)',
-        scientific_name: 'गॉसिपियम हिरसुटम (सामान्य)',
+        scientific_name: 'Gossypium hirsutum (Normal Physiology)',
         causal_agent: 'काहीही नाही (उत्कृष्ट आरोग्य)',
         severity: 'low',
         disease_index_score: '०/१०० (उत्कृष्ट पीक आरोग्य)',
@@ -661,4 +661,47 @@ export function getLocalizedCrops(lang: Language): CropInfo[] {
       description: "Cotton is India's prime commercial fiber crop. High temperature, moderate rainfall, and well-drained deep black soil are ideal for maximum boll yield."
     }
   ];
+}
+
+/**
+ * Normalizes any disease string (e.g. "Bacterial Blight", "bacterial_blight", "Bacterial Blight / Angular Leaf Spot")
+ * to its standard canonical ID (e.g. "bacterial_blight").
+ */
+export function normalizeDiseaseId(diseaseIdOrName?: string | null): string {
+  if (!diseaseIdOrName) return 'healthy_leaf';
+  const clean = diseaseIdOrName.toLowerCase().trim().replace(/[-/\s]+/g, '_');
+  if (clean.includes('bacterial') || clean.includes('blight') || clean.includes('angular')) return 'bacterial_blight';
+  if (clean.includes('curl') || clean.includes('clcuv')) return 'curl_virus';
+  if (clean.includes('jassid') || clean.includes('hopper')) return 'leaf_hopper_jassids';
+  if (clean.includes('redding') || clean.includes('red')) return 'leaf_redding';
+  if (clean.includes('herbicide') || clean.includes('phytotox')) return 'herbicide_growth_damage';
+  if (clean.includes('variegat')) return 'leaf_variegation';
+  if (clean.includes('healthy')) return 'healthy_leaf';
+  return clean;
+}
+
+/**
+ * Returns the localized disease profile for a given disease name/ID and language.
+ */
+export function getLocalizedDiseaseProfile(diseaseIdOrName: string | undefined | null, lang: Language): DiseaseProfile {
+  const normId = normalizeDiseaseId(diseaseIdOrName);
+  const list = getLocalizedDiseases(lang);
+  const found = list.find((d) => d.id === normId);
+  return found || list[0];
+}
+
+/**
+ * Returns the localized display name for a disease.
+ */
+export function getLocalizedDiseaseName(diseaseIdOrName: string | undefined | null, lang: Language): string {
+  const profile = getLocalizedDiseaseProfile(diseaseIdOrName, lang);
+  return profile.name;
+}
+
+/**
+ * Returns the localized description for a disease.
+ */
+export function getLocalizedDiseaseDescription(diseaseIdOrName: string | undefined | null, lang: Language): string {
+  const profile = getLocalizedDiseaseProfile(diseaseIdOrName, lang);
+  return profile.description;
 }

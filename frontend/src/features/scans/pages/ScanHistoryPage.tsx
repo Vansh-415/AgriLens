@@ -11,30 +11,28 @@ import { Button } from '../../../components/ui/Button';
 import { useToast } from '../../../hooks/useToast';
 import { scansService } from '../../../services/scansService';
 import { DiagnosticPdfReport } from '../components/DiagnosticPdfReport';
-import { getLocalizedDiseases } from '../../../i18n/localizedData';
-import type { DiseaseProfile } from '../../../i18n/localizedData';
+import {
+  getLocalizedDiseaseName,
+  getLocalizedDiseaseProfile,
+} from '../../../i18n/localizedData';
 import { printReportElement } from '../../../utils/printReport';
 import type { PredictionData } from '../../../types/prediction';
-import { getConfidenceTier, HEALTHY_CLASS_LABEL, isHealthyClass } from '../../../types/prediction';
+import { getConfidenceTier, isHealthyClass } from '../../../types/prediction';
 import { History, Leaf, Printer, FileText, Calendar, MapPin } from 'lucide-react';
 
 interface ScanRecord {
-  _id: string;
+  _id?: string;
   id?: string;
-  user_id?: string;
-  crop_id?: string;
-  disease_id?: string;
-  image_path?: string;
   image_url?: string;
-  predicted_disease?: string;
+  disease_id?: string;
   disease_name?: string;
+  predicted_disease?: string;
   confidence?: number;
   confidence_pct?: string;
-  is_healthy?: boolean;
-  land_acres?: number;
-  status?: string;
-  created_at?: string;
   prediction_time_ms?: number;
+  land_acres?: number;
+  is_healthy?: boolean;
+  created_at?: string;
 }
 
 export default function ScanHistoryPage() {
@@ -45,8 +43,6 @@ export default function ScanHistoryPage() {
   const [selectedScan, setSelectedScan] = useState<ScanRecord | null>(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
   const toast = useToast();
-
-  const localizedDiseases = getLocalizedDiseases(language);
 
   useEffect(() => {
     let isMounted = true;
@@ -71,32 +67,24 @@ export default function ScanHistoryPage() {
   }, []);
 
   const getDiseaseDisplayName = (scan: ScanRecord) => {
-    if (scan.predicted_disease) return scan.predicted_disease;
-    if (scan.disease_name) return scan.disease_name;
-    if (scan.disease_id) {
-      if (isHealthyClass(scan.disease_id)) return HEALTHY_CLASS_LABEL;
-      return scan.disease_id
-        .split('_')
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ');
+    const rawKey = scan.predicted_disease || scan.disease_name || scan.disease_id;
+    const isHealthy = scan.is_healthy === true || isHealthyClass(rawKey || '');
+    if (isHealthy) {
+      return getLocalizedDiseaseName('healthy_leaf', language);
     }
-    return scan.is_healthy ? HEALTHY_CLASS_LABEL : 'Cotton Pathology Scan';
+    return getLocalizedDiseaseName(rawKey || '', language);
   };
 
   // Map exact commercial solution & active chemical formulation from library
   const constructPredictionData = (scan: ScanRecord): PredictionData => {
-    const dname = getDiseaseDisplayName(scan);
+    const rawKey = scan.predicted_disease || scan.disease_name || scan.disease_id;
     const conf = scan.confidence || 0.96;
-    const isHealthy = isHealthyClass(dname) || isHealthyClass(scan.disease_id) || scan.is_healthy === true;
-
-    // Search matching disease profile in localizedDiseases
-    const libraryMatch = localizedDiseases.find((d: DiseaseProfile) =>
-      dname.toLowerCase().includes(d.id.replace('_', ' ')) ||
-      d.name.toLowerCase().includes(dname.toLowerCase())
-    ) || localizedDiseases[0];
+    const isHealthy = isHealthyClass(rawKey || '') || scan.is_healthy === true;
+    const libraryMatch = getLocalizedDiseaseProfile(rawKey || '', language);
+    const localizedName = isHealthy ? getLocalizedDiseaseName('healthy_leaf', language) : libraryMatch.name;
 
     return {
-      predicted_class: isHealthy ? HEALTHY_CLASS_LABEL : libraryMatch.name,
+      predicted_class: localizedName,
       confidence: conf,
       confidence_pct: scan.confidence_pct || `${(conf * 100).toFixed(1)}%`,
       prediction_time_ms: scan.prediction_time_ms || 120,
@@ -104,18 +92,26 @@ export default function ScanHistoryPage() {
       model_version: 'v2.1',
       saved_scan_id: scan._id || scan.id || null,
       class_probabilities: {
-        [isHealthy ? HEALTHY_CLASS_LABEL : libraryMatch.name]: conf,
+        [localizedName]: conf,
         'Other Pathologies': 1 - conf
       },
       personalized_advisory: {
-        disease_name: isHealthy ? HEALTHY_CLASS_LABEL : libraryMatch.name,
-        scientific_name: isHealthy ? 'N/A (Healthy Crop)' : libraryMatch.scientific_name,
+        disease_name: localizedName,
+        scientific_name: isHealthy ? 'Gossypium hirsutum (Normal Physiology)' : libraryMatch.scientific_name,
         severity: isHealthy ? 'NONE' : libraryMatch.severity.toUpperCase(),
         emergency_action: isHealthy
-          ? 'No disease symptoms detected. Continue routine pest monitoring and standard agronomic practices.'
-          : `Immediate Action Required: Apply ${libraryMatch.recommended_treatments.chemical} within next 24-48 hours.`,
+          ? (language === 'hi'
+              ? 'फसल में कोई रोग नहीं मिला। सामान्य फसल देखभाल और कीट निरीक्षण जारी रखें।'
+              : language === 'mr'
+              ? 'पिकात कोणताही रोग आढळला नाही. नियमित पाहणी व खत व्यवस्थापन सुरू ठेवा.'
+              : 'No disease symptoms detected. Continue routine pest monitoring and standard agronomic practices.')
+          : `Immediate Action: ${libraryMatch.recommended_treatments.chemical}`,
         description: isHealthy
-          ? 'Your cotton leaves show healthy green pigmentation, normal venation, and zero visual disease symptoms.'
+          ? (language === 'hi'
+              ? 'कपास की पत्तियां गहरी हरी, चिकनी और किसी भी रोग या कीट से 100% मुक्त हैं।'
+              : language === 'mr'
+              ? 'कापसाची पाने हिरवीगार, टवटवीत आणि कोणत्याही रोगापासून १००% मुक्त आहेत.'
+              : 'Your cotton leaves show healthy green pigmentation, normal venation, and zero visual disease symptoms.')
           : libraryMatch.description,
         land_acres: scan.land_acres || 1.0,
         calculated_dosage: {

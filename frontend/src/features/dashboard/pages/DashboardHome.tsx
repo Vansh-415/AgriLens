@@ -20,7 +20,8 @@ import {
 import { useAuth } from '../../../context/AuthContext';
 import { cropsService } from '../../../services/cropsService';
 import { scansService } from '../../../services/scansService';
-import { isHealthyClass, HEALTHY_CLASS_LABEL } from '../../../types/prediction';
+import { isHealthyClass } from '../../../types/prediction';
+import { getLocalizedDiseaseName } from '../../../i18n/localizedData';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface ScanItem {
@@ -34,7 +35,7 @@ interface ScanItem {
 }
 
 export default function DashboardHome() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   useDocumentTitle(t.nav.dashboard);
 
   const { user } = useAuth();
@@ -173,16 +174,11 @@ export default function DashboardHome() {
             ) : (
               <div className="space-y-3">
                 {scans.slice(0, 5).map((scan, i) => {
-                  const isHealthy = scan.is_healthy || isHealthyClass(scan.predicted_disease) || isHealthyClass(scan.disease_id);
-                  const scanTitle =
-                    scan.predicted_disease ||
-                    (scan.disease_id
-                      ? isHealthyClass(scan.disease_id)
-                        ? HEALTHY_CLASS_LABEL
-                        : scan.disease_id.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-                      : isHealthy
-                      ? HEALTHY_CLASS_LABEL
-                      : t.common.cottonLeafScan);
+                  const rawKey = scan.predicted_disease || scan.disease_id;
+                  const isHealthy = scan.is_healthy || isHealthyClass(rawKey);
+                  const scanTitle = isHealthy
+                    ? getLocalizedDiseaseName('healthy_leaf', language)
+                    : (rawKey ? getLocalizedDiseaseName(rawKey, language) : t.common.cottonLeafScan);
 
                   return (
                     <div key={scan.id || scan._id || i} className="flex items-center justify-between p-3 bg-earth-50/60 rounded-xl border border-earth-200/80">

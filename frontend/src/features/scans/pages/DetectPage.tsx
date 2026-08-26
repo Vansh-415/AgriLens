@@ -9,6 +9,7 @@ import { useToast } from '../../../hooks/useToast';
 import { scansService } from '../../../services/scansService';
 import type { PredictionData } from '../../../types/prediction';
 import { getConfidenceTier, isHealthyClass } from '../../../types/prediction';
+import { getLocalizedDiseaseName, getLocalizedDiseaseDescription } from '../../../i18n/localizedData';
 import { DiagnosticPdfReport } from '../components/DiagnosticPdfReport';
 import { CameraCaptureModal } from '../components/CameraCaptureModal';
 import { printReportElement } from '../../../utils/printReport';
@@ -36,7 +37,7 @@ import {
 } from 'lucide-react';
 
 export default function DetectPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const d = t.detect;
   useDocumentTitle(d.title);
 
@@ -506,7 +507,7 @@ export default function DetectPage() {
                             {topCandidates.map(([cname, prob]) => (
                               <div key={cname} className="space-y-1">
                                 <div className="flex justify-between text-xs font-bold text-earth-800">
-                                  <span>{cname}</span>
+                                  <span>{getLocalizedDiseaseName(cname, language)}</span>
                                   <span>{(prob * 100).toFixed(1)}%</span>
                                 </div>
                                 <div className="w-full h-2 bg-earth-200 rounded-full overflow-hidden">
@@ -569,7 +570,7 @@ export default function DetectPage() {
                               {Object.entries(prediction.class_probabilities).map(([cname, prob]) => (
                                 <div key={cname} className="space-y-1">
                                   <div className="flex justify-between font-medium text-earth-800">
-                                    <span>{cname}</span>
+                                    <span>{getLocalizedDiseaseName(cname, language)}</span>
                                     <span className="font-bold">{(prob * 100).toFixed(1)}%</span>
                                   </div>
                                   <div className="w-full h-1.5 bg-earth-200 rounded-full overflow-hidden">
@@ -602,7 +603,9 @@ export default function DetectPage() {
                           </div>
                           <div className="flex items-center gap-2.5 mt-1 flex-wrap">
                             <h2 className="text-2xl font-black text-white">
-                              {prediction.predicted_class}
+                              {isHealthyClass(prediction.predicted_class)
+                                ? getLocalizedDiseaseName('healthy_leaf', language)
+                                : getLocalizedDiseaseName(prediction.predicted_class, language)}
                             </h2>
                             <span className={`px-2.5 py-0.5 text-xs font-extrabold rounded-full ${
                               isHealthyClass(prediction.predicted_class)
@@ -667,7 +670,9 @@ export default function DetectPage() {
 
                     <CardContent className="p-5 space-y-4">
                       <p className="text-xs text-earth-700 leading-relaxed">
-                        {prediction.personalized_advisory.description}
+                        {isHealthyClass(prediction.predicted_class)
+                          ? getLocalizedDiseaseDescription('healthy_leaf', language)
+                          : getLocalizedDiseaseDescription(prediction.predicted_class, language) || prediction.personalized_advisory.description}
                       </p>
 
                       <div className="border-t border-earth-100 pt-3">
@@ -684,13 +689,13 @@ export default function DetectPage() {
                             {Object.entries(prediction.class_probabilities).map(([cname, prob]) => (
                               <div key={cname} className="space-y-1">
                                 <div className="flex justify-between font-medium text-earth-800">
-                                  <span>{cname}</span>
+                                  <span>{getLocalizedDiseaseName(cname, language)}</span>
                                   <span className="font-bold">{(prob * 100).toFixed(1)}%</span>
                                 </div>
                                 <div className="w-full h-1.5 bg-earth-200 rounded-full overflow-hidden">
                                   <div
-                                    className="h-full transition-all duration-500 ${cname === prediction.predicted_class ? 'bg-primary-600' : 'bg-earth-400'
-                                      }"
+                                    className={`h-full transition-all duration-500 ${cname === prediction.predicted_class ? 'bg-primary-600' : 'bg-earth-400'
+                                      }`}
                                     style={{ width: `${Math.max(1, prob * 100)}%` }}
                                   />
                                 </div>

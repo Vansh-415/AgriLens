@@ -1,6 +1,7 @@
 import type { PredictionData } from '../../../types/prediction';
-import { getConfidenceTier } from '../../../types/prediction';
+import { getConfidenceTier, isHealthyClass } from '../../../types/prediction';
 import { useLanguage } from '../../../context/LanguageContext';
+import { getLocalizedDiseaseName, getLocalizedDiseaseDescription } from '../../../i18n/localizedData';
 
 interface DiagnosticPdfReportProps {
   prediction: PredictionData;
@@ -31,6 +32,15 @@ export function DiagnosticPdfReport({
   const topCandidates = Object.entries(prediction.class_probabilities || {})
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3);
+
+  const diseaseRaw = adv.disease_name || prediction.predicted_class;
+  const isHealthy = isHealthyClass(diseaseRaw);
+  const localizedDiseaseName = isHealthy
+    ? getLocalizedDiseaseName('healthy_leaf', language)
+    : getLocalizedDiseaseName(diseaseRaw, language);
+  const localizedDescription = isHealthy
+    ? getLocalizedDiseaseDescription('healthy_leaf', language)
+    : (getLocalizedDiseaseDescription(diseaseRaw, language) || adv.description);
 
   return (
     <div
@@ -81,7 +91,7 @@ export function DiagnosticPdfReport({
           <span className="text-[10px] font-bold uppercase tracking-wider text-earth-500">
             {isUncertain ? 'Top Candidate Diagnosis' : pdfT.primaryPathology}
           </span>
-          <h2 className="text-base font-extrabold text-earth-950">{adv.disease_name}</h2>
+          <h2 className="text-base font-extrabold text-earth-950">{localizedDiseaseName}</h2>
           <p className="text-[11px] italic text-emerald-800 font-medium">{adv.scientific_name}</p>
         </div>
 
@@ -114,7 +124,7 @@ export function DiagnosticPdfReport({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
             {topCandidates.map(([cname, prob]) => (
               <div key={cname} className="p-2 bg-white rounded border border-earth-200 flex justify-between">
-                <span className="font-semibold text-earth-900">{cname}</span>
+                <span className="font-semibold text-earth-900">{getLocalizedDiseaseName(cname, language)}</span>
                 <span className="font-bold text-amber-700">{(prob * 100).toFixed(1)}%</span>
               </div>
             ))}
@@ -127,7 +137,7 @@ export function DiagnosticPdfReport({
         <h3 className="text-[11px] font-bold uppercase tracking-wider text-earth-800 border-b border-earth-200 pb-1">
           {pdfT.observation}
         </h3>
-        <p className="text-xs text-earth-700 leading-relaxed">{adv.description}</p>
+        <p className="text-xs text-earth-700 leading-relaxed">{localizedDescription}</p>
       </div>
 
       {/* Emergency Action Callout */}
