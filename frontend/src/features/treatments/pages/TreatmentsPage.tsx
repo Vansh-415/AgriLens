@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui
 import { Badge } from '../../../components/ui/Badge';
 import { SearchInput } from '../../../components/ui/SearchInput';
 import { Modal } from '../../../components/ui/Modal';
+import { getLocalizedDiseaseName, getLocalizedTreatmentDescription } from '../../../i18n/localizedData';
 import { FlaskConical, Leaf, Activity, ShieldCheck, AlertCircle, ShieldAlert } from 'lucide-react';
 
 export interface TreatmentProtocol {
@@ -157,7 +158,7 @@ export const COTTON_TREATMENT_LIBRARY: TreatmentProtocol[] = [
 ];
 
 export default function TreatmentsPage() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const trtT = t.treatments;
   useDocumentTitle(trtT.title);
 
@@ -166,11 +167,16 @@ export default function TreatmentsPage() {
   const [selectedProtocol, setSelectedProtocol] = useState<TreatmentProtocol | null>(null);
 
   const filtered = COTTON_TREATMENT_LIBRARY.filter((titem) => {
+    const localizedDesc = getLocalizedTreatmentDescription(titem.id, language) || titem.description;
     const matchesSearch =
       titem.name.toLowerCase().includes(search.toLowerCase()) ||
       titem.active_ingredient.toLowerCase().includes(search.toLowerCase()) ||
+      localizedDesc.toLowerCase().includes(search.toLowerCase()) ||
       titem.description.toLowerCase().includes(search.toLowerCase()) ||
-      titem.target_diseases.some((d) => d.toLowerCase().includes(search.toLowerCase()));
+      titem.target_diseases.some((d) =>
+        d.toLowerCase().includes(search.toLowerCase()) ||
+        getLocalizedDiseaseName(d, language).toLowerCase().includes(search.toLowerCase())
+      );
     const matchesTab = activeTab === 'all' || titem.category === activeTab;
     return matchesSearch && matchesTab;
   });
@@ -257,7 +263,9 @@ export default function TreatmentsPage() {
                   <span className="text-[11px] font-bold text-primary-800 dark:text-primary-400">{trtT.phi}: {treatment.pre_harvest_interval_days} {t.common.days}</span>
                 </div>
 
-                <p className="text-xs text-earth-700 dark:text-slate-300 leading-relaxed line-clamp-2">{treatment.description}</p>
+                <p className="text-xs text-earth-700 dark:text-slate-300 leading-relaxed line-clamp-2">
+                  {getLocalizedTreatmentDescription(treatment.id, language) || treatment.description}
+                </p>
 
                 <div className="p-2.5 bg-earth-50 dark:bg-slate-800/80 rounded-lg space-y-1 text-[11px] border border-earth-200/80 dark:border-slate-700">
                   <div>
@@ -273,7 +281,7 @@ export default function TreatmentsPage() {
                 <div className="flex flex-wrap gap-1">
                   {treatment.target_diseases.map((d, idx) => (
                     <span key={idx} className="px-2 py-0.5 text-[10px] bg-primary-50 dark:bg-primary-950/40 text-primary-900 dark:text-primary-300 rounded font-medium border border-primary-200 dark:border-primary-800">
-                      {d}
+                      {getLocalizedDiseaseName(d, language)}
                     </span>
                   ))}
                 </div>
@@ -304,6 +312,12 @@ export default function TreatmentsPage() {
                 <span className="text-[11px] text-earth-600">{trtT.category}: {selectedProtocol.category.toUpperCase()}</span>
               </div>
               {getCategoryBadge(selectedProtocol.category)}
+            </div>
+
+            <div>
+              <p className="text-earth-700 leading-relaxed text-xs">
+                {getLocalizedTreatmentDescription(selectedProtocol.id, language) || selectedProtocol.description}
+              </p>
             </div>
 
             <div className="p-3 bg-primary-50/70 rounded-lg border border-primary-200 space-y-2">

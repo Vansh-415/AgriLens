@@ -1,7 +1,16 @@
 import type { PredictionData } from '../../../types/prediction';
 import { getConfidenceTier, isHealthyClass } from '../../../types/prediction';
 import { useLanguage } from '../../../context/LanguageContext';
-import { getLocalizedDiseaseName, getLocalizedDiseaseDescription } from '../../../i18n/localizedData';
+import {
+  getLocalizedDiseaseName,
+  getLocalizedDiseaseDescription,
+  getLocalizedThreatLevel,
+  getLocalizedSprayInterval,
+  formatLocalizedDosageSummary,
+  getLocalizedWeatherRule,
+  getLocalizedBioRemedy,
+  getLocalizedEmergencyAction
+} from '../../../i18n/localizedData';
 
 interface DiagnosticPdfReportProps {
   prediction: PredictionData;
@@ -41,6 +50,11 @@ export function DiagnosticPdfReport({
   const localizedDescription = isHealthy
     ? getLocalizedDiseaseDescription('healthy_leaf', language)
     : (getLocalizedDiseaseDescription(diseaseRaw, language) || adv.description);
+
+  const bio = getLocalizedBioRemedy(isHealthy, adv.biological_organic.remedy, language);
+  const weatherRule = getLocalizedWeatherRule(isHealthy, language);
+  const emergencyAction = getLocalizedEmergencyAction(isHealthy, chem.product_name, language);
+  const dosageSummary = formatLocalizedDosageSummary(chem.product_name, chem.total_water_litres, landAcres, isHealthy, language);
 
   return (
     <div
@@ -104,13 +118,13 @@ export function DiagnosticPdfReport({
               : 'bg-amber-100 text-amber-900 border border-amber-400'
           }`}>
             {confTier === 'high'
-              ? `High Confidence: ${prediction.confidence_pct}`
+              ? `${t.common.highConfidence}: ${prediction.confidence_pct}`
               : confTier === 'moderate'
-              ? `Moderate Confidence: ${prediction.confidence_pct}`
-              : `Uncertain: ${prediction.confidence_pct}`}
+              ? `${t.common.moderateConfidence}: ${prediction.confidence_pct}`
+              : `${t.common.uncertain}: ${prediction.confidence_pct}`}
           </span>
           <p className="text-[11px] text-earth-600 font-semibold">
-            {pdfT.threatRating}: <span className="text-amber-800 font-bold">{adv.severity}</span>
+            {pdfT.threatRating}: <span className="text-amber-800 font-bold">{getLocalizedThreatLevel(adv.severity, language)}</span>
           </p>
         </div>
       </div>
@@ -119,7 +133,7 @@ export function DiagnosticPdfReport({
       {isUncertain && (
         <div className="space-y-2 p-3 bg-earth-50 rounded-lg border border-earth-200">
           <h3 className="text-[11px] font-bold uppercase tracking-wider text-earth-800">
-            Top Candidate Pathologies (Sorted by Probability)
+            {t.detect.topCandidates} ({t.detect.sortedByProbability})
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
             {topCandidates.map(([cname, prob]) => (
@@ -145,15 +159,15 @@ export function DiagnosticPdfReport({
         <strong className="text-amber-900 font-bold block uppercase tracking-wider text-[10px]">
           🚨 {pdfT.emergencyContainment}:
         </strong>
-        <p className="text-amber-950 font-medium leading-relaxed">{adv.emergency_action}</p>
+        <p className="text-amber-950 font-medium leading-relaxed">{emergencyAction}</p>
       </div>
 
       {/* Acreage-Calculated Chemical Dosage Protocol Table (Hidden if Uncertain) */}
       {isUncertain ? (
         <div className="p-4 bg-earth-50 border border-earth-300 rounded-lg text-center text-xs text-earth-700 space-y-1">
-          <p className="font-bold text-earth-900">Chemical Dosage Protocol Withheld</p>
+          <p className="font-bold text-earth-900">{t.detect.hiddenTreatmentNote}</p>
           <p className="text-[11px] text-earth-600">
-            Exact chemical dosages are not calculated when confidence is below 65% to prevent inappropriate treatment application.
+            {t.detect.notRecommendedUncertain}
           </p>
         </div>
       ) : (
@@ -179,22 +193,22 @@ export function DiagnosticPdfReport({
               <tr>
                 <td className="p-2 font-bold bg-earth-50 border-r border-earth-200">{pdfT.recProduct}</td>
                 <td className="p-2 font-bold text-emerald-950 border-r border-earth-200">{chem.product_name}</td>
-                <td className="p-2 font-bold text-primary-800">{chem.dosage_summary}</td>
+                <td className="p-2 font-bold text-primary-800">{dosageSummary}</td>
               </tr>
               <tr>
                 <td className="p-2 font-bold bg-earth-50 border-r border-earth-200">{pdfT.activeFormulation}</td>
                 <td className="p-2 border-r border-earth-200">{chem.active_ingredient}</td>
-                <td className="p-2 text-earth-700">Rate: {chem.dosage_per_acre}</td>
+                <td className="p-2 text-earth-700">{t.treatments.ratePerAcre}: {chem.dosage_per_acre}</td>
               </tr>
               <tr>
                 <td className="p-2 font-bold bg-earth-50 border-r border-earth-200">{pdfT.totalWater}</td>
-                <td className="p-2 border-r border-earth-200">{chem.water_per_acre_litres} L / acre</td>
+                <td className="p-2 border-r border-earth-200">{chem.water_per_acre_litres} L / {t.common.acres.toLowerCase()}</td>
                 <td className="p-2 font-extrabold text-emerald-900 bg-emerald-50">{chem.total_water_litres} Litres Total</td>
               </tr>
               <tr>
                 <td className="p-2 font-bold bg-earth-50 border-r border-earth-200">{pdfT.applicationSchedule}</td>
-                <td className="p-2 border-r border-earth-200">Repeat every {chem.application_interval_days} days</td>
-                <td className="p-2 font-bold text-amber-900 bg-amber-50">{pdfT.phiWaiting}: {chem.pre_harvest_interval_days} Days</td>
+                <td className="p-2 border-r border-earth-200">{getLocalizedSprayInterval(chem.application_interval_days, language)}</td>
+                <td className="p-2 font-bold text-amber-900 bg-amber-50">{pdfT.phiWaiting}: {chem.pre_harvest_interval_days} {t.common.days}</td>
               </tr>
             </tbody>
           </table>
@@ -207,15 +221,15 @@ export function DiagnosticPdfReport({
           <h4 className="font-bold text-emerald-950 uppercase tracking-wider text-[10px]">
             🌿 {pdfT.bioAlternative}
           </h4>
-          <strong className="text-emerald-900 block font-bold">{adv.biological_organic.remedy}</strong>
-          <p className="text-emerald-800 text-[11px]">{adv.biological_organic.description}</p>
+          <strong className="text-emerald-900 block font-bold">{bio.remedy}</strong>
+          <p className="text-emerald-800 text-[11px]">{bio.description}</p>
         </div>
 
         <div className="bg-teal-50/70 border border-teal-200 p-3 rounded-md space-y-1">
           <h4 className="font-bold text-teal-950 uppercase tracking-wider text-[10px]">
             ⛅ {pdfT.weatherRule}
           </h4>
-          <p className="text-teal-900 text-[11px] font-medium">{adv.weather_safety_rule}</p>
+          <p className="text-teal-900 text-[11px] font-medium">{weatherRule}</p>
         </div>
       </div>
 

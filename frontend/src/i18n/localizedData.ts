@@ -690,10 +690,62 @@ export function getLocalizedDiseaseProfile(diseaseIdOrName: string | undefined |
   return found || list[0];
 }
 
+const SECONDARY_TAGS: Record<string, Record<Language, string>> = {
+  whitefly: {
+    en: 'Whiteflies (Bemisia tabaci)',
+    hi: 'सफेद मक्खी (Whiteflies / Bemisia tabaci)',
+    mr: 'पांढरी माशी (Whiteflies / Bemisia tabaci)'
+  },
+  aphid: {
+    en: 'Aphids',
+    hi: 'माहू / एफिड्स (Aphids)',
+    mr: 'मावा (Aphids)'
+  },
+  thrip: {
+    en: 'Thrips',
+    hi: 'थ्रिप्स (Thrips)',
+    mr: 'फुलकिडे / थ्रिप्स (Thrips)'
+  },
+  jassids_thrips: {
+    en: 'Jassids & Thrips',
+    hi: 'जस्सिड्स और थ्रिप्स (Jassids & Thrips)',
+    mr: 'तुडतुडे आणि फुलकिडे (Jassids & Thrips)'
+  },
+  boll_rot: {
+    en: 'Boll Rot Complex',
+    hi: 'डोडी सड़न रोग (Boll Rot Complex)',
+    mr: 'बोंड सड रोग (Boll Rot Complex)'
+  },
+  mg_deficiency: {
+    en: 'Magnesium Deficiency',
+    hi: 'मैग्नीशियम की कमी (Mg Deficiency)',
+    mr: 'मॅग्नेशियम कमतरता (Mg Deficiency)'
+  },
+  soil_health: {
+    en: 'Soil Health & Immunity Support',
+    hi: 'मृदा स्वास्थ्य व रोग प्रतिरोधक क्षमता सुधार',
+    mr: 'जमीन आरोग्य व पीक प्रतिकारशक्ती संवर्धन'
+  }
+};
+
 /**
- * Returns the localized display name for a disease.
+ * Returns the localized display name for a disease or pest tag.
  */
 export function getLocalizedDiseaseName(diseaseIdOrName: string | undefined | null, lang: Language): string {
+  if (!diseaseIdOrName) {
+    const list = getLocalizedDiseases(lang);
+    const healthy = list.find(d => d.id === 'healthy_leaf');
+    return healthy ? healthy.name : 'Healthy Leaf';
+  }
+  const clean = diseaseIdOrName.toLowerCase().trim();
+  if (clean.includes('whitefl') || clean.includes('bemisia')) return SECONDARY_TAGS.whitefly[lang] || SECONDARY_TAGS.whitefly.en;
+  if (clean.includes('aphid')) return SECONDARY_TAGS.aphid[lang] || SECONDARY_TAGS.aphid.en;
+  if (clean.includes('thrip') && clean.includes('jassid')) return SECONDARY_TAGS.jassids_thrips[lang] || SECONDARY_TAGS.jassids_thrips.en;
+  if (clean.includes('thrip')) return SECONDARY_TAGS.thrip[lang] || SECONDARY_TAGS.thrip.en;
+  if (clean.includes('boll') && clean.includes('rot')) return SECONDARY_TAGS.boll_rot[lang] || SECONDARY_TAGS.boll_rot.en;
+  if (clean.includes('magnesium') && clean.includes('defic')) return SECONDARY_TAGS.mg_deficiency[lang] || SECONDARY_TAGS.mg_deficiency.en;
+  if (clean.includes('soil') || clean.includes('immunity')) return SECONDARY_TAGS.soil_health[lang] || SECONDARY_TAGS.soil_health.en;
+
   const profile = getLocalizedDiseaseProfile(diseaseIdOrName, lang);
   return profile.name;
 }
@@ -704,4 +756,163 @@ export function getLocalizedDiseaseName(diseaseIdOrName: string | undefined | nu
 export function getLocalizedDiseaseDescription(diseaseIdOrName: string | undefined | null, lang: Language): string {
   const profile = getLocalizedDiseaseProfile(diseaseIdOrName, lang);
   return profile.description;
+}
+
+export const TREATMENT_DESCRIPTIONS: Record<string, Record<Language, string>> = {
+  blitox_strepto: {
+    en: 'Broad-spectrum bactericide and protective copper fungicide designed to eliminate vascular Xanthomonas bacteria.',
+    hi: 'व्यापक स्पेक्ट्रम जीवाणुनाशक और सुरक्षात्मक कॉपर कवकनाशी जो संवहनी ज़ैंथोमोनस जीवाणु को नष्ट करने हेतु तैयार किया गया है।',
+    mr: 'जिवाणूनाशक आणि संरक्षणात्मक तांबेयुक्त बुरशीनाशक जे झँथोमोनस जिवाणूंचा संसर्ग नष्ट करण्यासाठी वापरले जाते.'
+  },
+  acetamiprid_diafenthiuron: {
+    en: 'Systemic insecticide and miticide vector-suppressor that halts sap transmission of Begomoviruses.',
+    hi: 'प्रणालीगत कीटनाशक और रस-चूसक कीट नियंत्रक जो बेगोमोवायरस के प्रसार और सफेद मक्खी को रोकता है।',
+    mr: 'आंतरप्रवाही कीटकनाशक जे पांढऱ्या माशीचे नियंत्रण करून पर्णमोड (चुरडा-मुरडा) विषाणूचा प्रसार थांबवते.'
+  },
+  flonicamid_thiamethoxam: {
+    en: 'Selective feeding blocker that causes immediate feeding cessation in jassid nymphs while preserving beneficial ladybird beetles.',
+    hi: 'चयनात्मक कीटनाशक जो जस्सिड्स (हरा तेला) के रस चूसने पर तुरंत रोक लगाता है और मित्र कीटों की रक्षा करता है।',
+    mr: 'निवडक कीटकनाशक जे तुडतुड्यांना रस शोषण्यापासून तत्काळ रोखते आणि मित्रकीटकांचे रक्षण करते.'
+  },
+  mgso4_npk: {
+    en: 'Foliar nutritional corrective that replenishes magnesium reserves and restores chlorophyll synthesis.',
+    hi: 'पोषक तत्व छिड़काव जो मैग्नीशियम की कमी को पूरा करता है और पत्तियों में हरा क्लोरोफिल वापस लाता है।',
+    mr: 'पानांवरील अन्नद्रव्य फवारणी जी मॅग्नेशियमची कमतरता भरून काढून पानांमधील हरितद्रव्य पुनरुज्जीवित करते.'
+  },
+  humic_seaweed: {
+    en: 'Natural biostimulant rich in plant auxins, cytokinins, and organic amino acids that reverses herbicide-induced cell damage.',
+    hi: 'प्राकृतिक बायो-स्टिमुलेंट जो पादप हार्मोन और अमीनो एसिड से भरपूर है और खरपतवारनाशक से हुई क्षति को ठीक करता है।',
+    mr: 'नैसर्गिक बायो-स्टिम्युलेटर जे वनस्पती संप्रेरकांनी समृद्ध असून तणनाशकाच्या धक्क्यातून पिकाला पूर्ववत करते.'
+  },
+  nske_neem: {
+    en: 'Eco-friendly botanical repellant and antifeedant that disrupts insect oviposition and bacterial adherence.',
+    hi: 'पर्यावरण अनुकूल वानस्पतिक नीम अर्क जो कीटों को दूर रखता है और अंडे देने व जीवाणु संक्रमण को रोकता है।',
+    mr: 'पर्यावरणपूरक वनस्पतीजन्य निंबोळी अर्क जो कीटकांना दूर ठेवतो आणि अंडी घालण्यापासून रोखतो.'
+  },
+  yellow_sticky_verticillium: {
+    en: 'Integrated bio-defense protocol combining physical vector trapping with entomopathogenic spore parasitism.',
+    hi: 'एकीकृत जैविक सुरक्षा जिसमें पीले चिपचिपे जाल और मित्र फफूंद से सफेद मक्खी व रस-चूसक कीटों का नियंत्रण होता है।',
+    mr: 'एकात्मिक जैविक कीड नियंत्रण ज्यामध्ये पिवळे चिकट सापळे आणि मित्र बुरशीच्या साहाय्याने कीड नियंत्रण केले जाते.'
+  },
+  azotobacter_psb: {
+    en: 'Beneficial rhizobacteria that fix atmospheric nitrogen and solubilize bound soil phosphorus for enhanced root vigor.',
+    hi: 'लाभकारी जीवाणु खाद जो वायुमंडलीय नाइट्रोजन को स्थिर करती है और मिट्टी के फास्फोरस को घोलकर जड़ों को मजबूत बनाती है।',
+    mr: 'उपयुक्त जिवाणू खत जे हवेतील नत्र स्थिर करते आणि जमिनीतील स्फुरद विरघळवून मुळांची वाढ मजबूत करते.'
+  }
+};
+
+export function getLocalizedTreatmentDescription(treatmentId: string, lang: Language): string {
+  const t = TREATMENT_DESCRIPTIONS[treatmentId];
+  if (!t) return '';
+  return t[lang] || t.en;
+}
+
+export function getLocalizedThreatLevel(severity: string | undefined | null, lang: Language): string {
+  const s = (severity || '').toLowerCase();
+  if (lang === 'hi') {
+    if (s.includes('crit')) return 'अत्यधिक गंभीर (CRITICAL)';
+    if (s.includes('high')) return 'उच्च (HIGH)';
+    if (s.includes('mod')) return 'मध्यम (MODERATE)';
+    if (s.includes('low')) return 'निम्न (LOW)';
+    return 'कोई नहीं (NONE)';
+  }
+  if (lang === 'mr') {
+    if (s.includes('crit')) return 'अतिधोकादायक (CRITICAL)';
+    if (s.includes('high')) return 'जास्त (HIGH)';
+    if (s.includes('mod')) return 'मध्यम (MODERATE)';
+    if (s.includes('low')) return 'कमी (LOW)';
+    return 'काहीही नाही (NONE)';
+  }
+  return severity ? severity.toUpperCase() : 'NONE';
+}
+
+export function getLocalizedSprayInterval(intervalDays: number, lang: Language): string {
+  if (lang === 'hi') return `प्रत्येक ${intervalDays} दिनों में दोहराएं`;
+  if (lang === 'mr') return `दर ${intervalDays} दिवसांनी पुन्हा फवारणी करा`;
+  return `Repeat every ${intervalDays} days`;
+}
+
+export function formatLocalizedDosageSummary(
+  productName: string,
+  waterLitres: number,
+  acres: number,
+  isHealthy: boolean,
+  lang: Language
+): string {
+  if (isHealthy) {
+    if (lang === 'hi') return 'स्वस्थ फसल के लिए किसी रासायनिक छिड़काव की आवश्यकता नहीं है।';
+    if (lang === 'mr') return 'निरोगी पिकासाठी कोणत्याही रासायनिक फवारणीची आवश्यकता नाही.';
+    return 'No chemical dosage required for healthy canopy.';
+  }
+  if (lang === 'hi') {
+    return `${acres} एकड़ के लिए ${waterLitres}L पानी में ${productName} मिलाएं।`;
+  }
+  if (lang === 'mr') {
+    return `${acres} एकरासाठी ${waterLitres}L पाण्यात ${productName} मिसळा.`;
+  }
+  return `Mix ${productName} in ${waterLitres}L water for ${acres} acre${acres > 1 ? 's' : ''}.`;
+}
+
+export function getLocalizedWeatherRule(isHealthy: boolean, lang: Language): string {
+  if (isHealthy) {
+    if (lang === 'hi') return 'अनुकूल मौसम व खेत की स्थिति। सामान्य फसल देखभाल जारी रखें।';
+    if (lang === 'mr') return 'अनुकूल हवामान व शेतातील परिस्थिती. नियमित पीक व्यवस्थापन सुरू ठेवा.';
+    return 'Favorable field conditions. Continue standard crop care.';
+  }
+  if (lang === 'hi') {
+    return 'यदि तेज हवा (>12 किमी/घंटा) हो या 4 घंटे के भीतर बारिश की संभावना हो तो छिड़काव न करें।';
+  }
+  if (lang === 'mr') {
+    return 'जोरदार वारा (>१२ किमी/तास) असल्यास किंवा ४ तासांत पावसाची शक्यता असल्यास फवारणी करू नका.';
+  }
+  return 'Do not spray if high wind (>12 km/h) or rainfall is expected within 4 hours.';
+}
+
+export function getLocalizedBioRemedy(isHealthy: boolean, rawRemedy: string, lang: Language): { remedy: string; description: string } {
+  if (isHealthy) {
+    if (lang === 'hi') {
+      return {
+        remedy: 'नियमित जैविक पोषक छिड़काव',
+        description: 'मिट्टी में जैविक खाद बनाए रखें और मित्र कीटों का संरक्षण करें।'
+      };
+    }
+    if (lang === 'mr') {
+      return {
+        remedy: 'नियमित सेंद्रिय पोषण फवारणी',
+        description: 'जमिनीतील सेंद्रिय कर्ब राखा आणि मित्रकीटकांचे संवर्धन करा.'
+      };
+    }
+    return {
+      remedy: 'Routine organic foliar nourishment',
+      description: 'Maintain soil organic matter and beneficial insect habitats.'
+    };
+  }
+
+  if (lang === 'hi') {
+    return {
+      remedy: rawRemedy || 'नीम तेल (NSKE 5%) या स्यूडोमोनस',
+      description: 'पर्यावरण के अनुकूल रोग नियंत्रण के लिए प्रमाणित जैविक विकल्प।'
+    };
+  }
+  if (lang === 'mr') {
+    return {
+      remedy: rawRemedy || 'निंबोळी अर्क (NSKE ५%) किंवा सुडोमोनस',
+      description: 'पर्यावरणपूरक रोग नियंत्रणासाठी प्रमाणित सेंद्रिय/जैविक पर्याय.'
+    };
+  }
+  return {
+    remedy: rawRemedy || 'Certified Bio-Control Formulation',
+    description: 'Certified bio-organic alternative for eco-friendly disease control.'
+  };
+}
+
+export function getLocalizedEmergencyAction(isHealthy: boolean, chemicalProduct: string, lang: Language): string {
+  if (isHealthy) {
+    if (lang === 'hi') return 'फसल में कोई रोग नहीं मिला। सामान्य फसल देखभाल और कीट निरीक्षण जारी रखें।';
+    if (lang === 'mr') return 'पिकात कोणताही रोग आढळला नाही. नियमित पाहणी व खत व्यवस्थापन सुरू ठेवा.';
+    return 'No disease symptoms detected. Continue routine pest monitoring and standard agronomic practices.';
+  }
+  if (lang === 'hi') return `तत्काल जरूरी कदम: अगले 24-48 घंटों के भीतर ${chemicalProduct} का छिड़काव करें।`;
+  if (lang === 'mr') return `तातडीची कारवाई: पुढील २४-४८ तासांत ${chemicalProduct} ची फवारणी करा.`;
+  return `Immediate Action Required: Apply ${chemicalProduct} within next 24-48 hours.`;
 }
