@@ -12,12 +12,12 @@ export function LanguageSwitcher() {
   ];
 
   return (
-    <div className="flex items-center gap-1 bg-earth-100 dark:bg-slate-800 p-1 rounded-xl border border-earth-200 dark:border-slate-700">
-      <Globe className="w-4 h-4 text-emerald-600 dark:text-emerald-400 ml-1.5 flex-shrink-0" />
+    <div className="flex items-center gap-1 bg-earth-100 dark:bg-slate-800 px-2 py-0.5 min-h-[44px] rounded-xl border border-earth-200 dark:border-slate-700">
+      <Globe className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
       <select
         value={language}
         onChange={(e) => setLanguage(e.target.value as Language)}
-        className="bg-transparent text-xs font-extrabold text-earth-900 dark:text-white px-1.5 py-1 focus:outline-none cursor-pointer"
+        className="bg-transparent text-xs font-extrabold text-earth-900 dark:text-white px-1 py-1.5 focus:outline-none cursor-pointer min-h-[38px]"
         aria-label="Select platform language"
       >
         {options.map((opt) => (
