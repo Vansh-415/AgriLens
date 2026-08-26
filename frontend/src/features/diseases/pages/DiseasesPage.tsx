@@ -78,7 +78,7 @@ export default function DiseasesPage() {
         }
       />
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {filteredDiseases.map((disease) => (
           <Card
             key={disease.id}
@@ -151,7 +151,7 @@ export default function DiseasesPage() {
               {getSeverityBadge(selectedDisease.severity)}
             </div>
 
-            <div className="grid grid-cols-2 gap-3 p-3 bg-primary-50/60 rounded-lg border border-primary-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-primary-50/60 rounded-lg border border-primary-200">
               <div>
                 <span className="text-earth-500 block text-[11px]">{disT.etl}:</span>
                 <strong className="text-earth-900">{selectedDisease.economic_threshold_level}</strong>

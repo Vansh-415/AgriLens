@@ -346,7 +346,7 @@ export default function AssistantPage() {
         title={a.title}
         description={a.subtitle}
         actions={
-          <div className="flex items-center gap-2 bg-white dark:bg-earth-800 p-2 rounded-2xl border border-earth-200 dark:border-earth-700 shadow-xs">
+          <div className="flex flex-wrap items-center gap-2 bg-white dark:bg-earth-800 p-2 rounded-2xl border border-earth-200 dark:border-earth-700 shadow-xs">
             <span className="text-xs font-bold text-earth-700 dark:text-earth-200 flex items-center gap-1.5 pl-1">
               <Sliders className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               {t.common.landAcres}:
@@ -358,16 +358,16 @@ export default function AssistantPage() {
               step="0.5"
               value={landAcres}
               onChange={(e) => setLandAcres(Math.max(0.1, parseFloat(e.target.value) || 1.0))}
-              className="w-16 px-2 py-1 text-center font-extrabold text-xs bg-earth-50 dark:bg-earth-900 border border-earth-300 dark:border-earth-700 rounded-lg text-earth-900 dark:text-white"
+              className="w-16 px-2 py-1.5 text-center font-extrabold text-xs bg-earth-50 dark:bg-earth-900 border border-earth-300 dark:border-earth-700 rounded-lg text-earth-900 dark:text-white min-h-[36px]"
             />
-            <div className="flex gap-1">
+            <div className="flex flex-wrap gap-1">
               {[0.5, 1.0, 2.5, 5.0].map((preset) => (
                 <button
                   key={preset}
                   onClick={() => setLandAcres(preset)}
-                  className={`px-2 py-1 text-[11px] rounded-lg transition-colors font-bold ${
+                  className={`px-2.5 py-1 text-[11px] rounded-lg transition-colors font-bold min-h-[36px] cursor-pointer ${
                     landAcres === preset
-                      ? 'bg-emerald-600 text-white'
+                      ? 'bg-emerald-600 text-white shadow-xs'
                       : 'bg-earth-100 dark:bg-earth-700 text-earth-700 dark:text-earth-300 hover:bg-earth-200 dark:hover:bg-earth-600'
                   }`}
                 >

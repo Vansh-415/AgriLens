@@ -39,12 +39,12 @@ export default function CropsPage() {
         {filtered.map((crop) => (
           <Card key={crop.id} className="border-earth-200 shadow-sm">
             <CardHeader>
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-2.5">
                 <div>
                   <CardTitle className="text-xl font-extrabold text-earth-950 dark:text-white">{crop.name}</CardTitle>
                   <p className="text-xs italic text-primary-700 dark:text-primary-400 font-medium">{crop.scientificName}</p>
                 </div>
-                <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold text-xs rounded-full border border-emerald-300 dark:border-emerald-800">
+                <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold text-xs rounded-full border border-emerald-300 dark:border-emerald-800 self-start">
                   {crop.season}
                 </span>
               </div>
@@ -52,7 +52,7 @@ export default function CropsPage() {
             <CardContent className="space-y-4">
               <p className="text-xs text-earth-700 dark:text-slate-300 leading-relaxed">{crop.description}</p>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 bg-earth-50 dark:bg-slate-800/80 rounded-xl border border-earth-200 dark:border-slate-700 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 p-3 bg-earth-50 dark:bg-slate-800/80 rounded-xl border border-earth-200 dark:border-slate-700 text-xs">
                 <div>
                   <span className="text-earth-500 dark:text-slate-400 block text-[11px] font-medium">{crpT.growingPeriod}:</span>
                   <strong className="text-earth-900 dark:text-white font-bold">{crop.durationDays}</strong>

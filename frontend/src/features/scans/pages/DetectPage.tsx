@@ -207,8 +207,8 @@ export default function DetectPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/15">
-              <label className="text-xs font-semibold text-emerald-100">{t.common.landAcres}:</label>
+            <div className="flex flex-wrap items-center gap-2.5 bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/15">
+              <label className="text-xs font-semibold text-emerald-100 whitespace-nowrap">{t.common.landAcres}:</label>
               <input
                 type="number"
                 min="0.1"
@@ -216,17 +216,18 @@ export default function DetectPage() {
                 step="0.1"
                 value={landAcres}
                 onChange={(e) => setLandAcres(Math.max(0.1, parseFloat(e.target.value) || 1.0))}
-                className="w-20 px-2 py-1 bg-white text-earth-900 font-bold rounded text-center text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                className="w-20 px-2 py-1.5 bg-white text-earth-900 font-bold rounded-lg text-center text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 min-h-[36px]"
               />
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1.5">
                 {[0.5, 1.0, 2.5, 5.0].map((preset) => (
                   <button
                     key={preset}
                     onClick={() => setLandAcres(preset)}
-                    className={`px-2 py-1 text-xs rounded transition-colors ${landAcres === preset
-                      ? 'bg-emerald-500 text-white font-bold'
-                      : 'bg-white/20 text-emerald-100 hover:bg-white/30'
-                      }`}
+                    className={`px-2.5 py-1.5 text-xs rounded-lg transition-colors font-bold min-h-[36px] cursor-pointer ${
+                      landAcres === preset
+                        ? 'bg-emerald-500 text-white shadow-xs'
+                        : 'bg-white/20 text-emerald-100 hover:bg-white/30'
+                    }`}
                   >
                     {preset}A
                   </button>

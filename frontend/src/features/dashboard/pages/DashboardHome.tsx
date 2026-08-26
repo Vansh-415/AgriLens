@@ -86,14 +86,14 @@ export default function DashboardHome() {
         title={`${t.common.welcomeBack}, ${user?.full_name?.split(' ')[0] || t.common.farmer}`}
         description={t.dashboard.description}
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Link to="/detect">
-              <Button size="sm" className="bg-primary-600 hover:bg-primary-700 text-white font-bold text-xs">
+              <Button size="sm" className="bg-primary-600 hover:bg-primary-700 text-white font-bold text-xs min-h-[38px]">
                 <Search className="w-3.5 h-3.5 mr-1.5" /> {t.common.runDiagnosis}
               </Button>
             </Link>
             <Link to="/assistant">
-              <Button size="sm" variant="outline" className="border-earth-300 text-earth-800 text-xs font-bold">
+              <Button size="sm" variant="outline" className="border-earth-300 text-earth-800 text-xs font-bold min-h-[38px]">
                 <Bot className="w-3.5 h-3.5 mr-1.5 text-primary-600" /> {t.nav.assistant}
               </Button>
             </Link>
@@ -102,7 +102,7 @@ export default function DashboardHome() {
       />
 
       {/* Core Pathology Scan Overview Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {loading ? (
           <>
             <Skeleton className="h-24 w-full" />
@@ -120,13 +120,13 @@ export default function DashboardHome() {
         )}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-7">
-        <Card className="md:col-span-4 border-earth-200">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-7">
+        <Card className="lg:col-span-4 border-earth-200">
           <CardHeader>
             <CardTitle className="text-base font-bold text-earth-900">{t.dashboard.weeklyScanVolume}</CardTitle>
           </CardHeader>
-          <CardContent className="pl-0">
-            <div className="h-[300px] w-full">
+          <CardContent className="px-2 sm:px-6 pl-0">
+            <div className="h-[260px] sm:h-[300px] w-full overflow-hidden">
               {totalScans === 0 ? (
                 <EmptyState
                   icon={Activity}
@@ -155,7 +155,7 @@ export default function DashboardHome() {
           </CardContent>
         </Card>
 
-        <Card className="md:col-span-3 border-earth-200">
+        <Card className="lg:col-span-3 border-earth-200">
           <CardHeader>
             <CardTitle className="text-base font-bold text-earth-900">{t.common.recentScans}</CardTitle>
           </CardHeader>

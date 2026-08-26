@@ -219,7 +219,7 @@ export default function TreatmentsPage() {
       />
 
       {/* Filter Tabs */}
-      <div className="flex border-b border-earth-200 gap-6 bg-white dark:bg-slate-800 p-2 rounded-xl border">
+      <div className="flex border-b border-earth-200 gap-1.5 sm:gap-4 bg-white dark:bg-slate-800 p-1.5 sm:p-2 rounded-xl border overflow-x-auto no-scrollbar flex-nowrap sm:flex-wrap">
         {[
           { key: 'all', label: trtT.allProtocols },
           { key: 'chemical', label: trtT.chemicalInterventions },
@@ -229,10 +229,10 @@ export default function TreatmentsPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key as any)}
-            className={`pb-2.5 px-3 text-xs font-bold transition-colors relative ${
+            className={`py-2 px-3 min-h-[40px] text-xs font-bold transition-colors whitespace-nowrap rounded-lg flex items-center cursor-pointer ${
               activeTab === tab.key
-                ? 'text-primary-800 dark:text-primary-400 border-b-2 border-primary-600 font-extrabold'
-                : 'text-earth-600 dark:text-slate-400 hover:text-earth-900'
+                ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-800 dark:text-primary-400 font-extrabold border border-primary-300 dark:border-primary-800'
+                : 'text-earth-600 dark:text-slate-400 hover:text-earth-900 hover:bg-earth-100'
             }`}
           >
             {tab.label}
@@ -240,7 +240,7 @@ export default function TreatmentsPage() {
         ))}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {filtered.map((treatment) => (
           <Card
             key={treatment.id}
@@ -324,7 +324,7 @@ export default function TreatmentsPage() {
               <h4 className="font-bold text-primary-950 flex items-center gap-1.5">
                 <FlaskConical className="w-4 h-4 text-primary-700" /> {trtT.dosageRules}
               </h4>
-              <div className="grid grid-cols-2 gap-2 text-earth-900">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-earth-900">
                 <div>
                   <span className="text-earth-500 block text-[11px]">{trtT.ratePerAcre}:</span>
                   <strong>{selectedProtocol.dosage_per_acre}</strong>

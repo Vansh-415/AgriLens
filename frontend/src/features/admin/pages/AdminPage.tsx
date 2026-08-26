@@ -142,13 +142,13 @@ export default function AdminPage() {
       />
 
       {/* Tabs */}
-      <div className="flex border-b border-earth-200 gap-6">
+      <div className="flex border-b border-earth-200 gap-2 sm:gap-6 overflow-x-auto no-scrollbar flex-nowrap pb-1">
         {(['crops', 'diseases', 'treatments'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-3 text-sm font-semibold capitalize transition-colors ${
-              activeTab === tab ? 'text-primary-700 border-b-2 border-primary-600' : 'text-earth-500 hover:text-earth-900'
+            className={`pb-2.5 px-2 text-xs sm:text-sm font-semibold capitalize whitespace-nowrap transition-colors min-h-[40px] flex items-center cursor-pointer ${
+              activeTab === tab ? 'text-primary-700 border-b-2 border-primary-600 font-bold' : 'text-earth-500 hover:text-earth-900'
             }`}
           >
             {tab} {admT.management}
@@ -157,7 +157,7 @@ export default function AdminPage() {
       </div>
 
       <Card>
-        <CardContent className="p-0">
+        <CardContent className="p-0 overflow-x-auto">
           {loading ? (
             <div className="p-6 space-y-4">
               <Skeleton className="h-10 w-full" />

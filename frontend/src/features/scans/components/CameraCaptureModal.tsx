@@ -213,14 +213,14 @@ export function CameraCaptureModal({ isOpen, onClose, onCapture }: CameraCapture
                 onClick={toggleFacingMode}
                 disabled={isLoading}
                 title={d.switchCamera}
-                className="p-2 rounded-xl bg-earth-800 hover:bg-earth-700 text-earth-200 hover:text-white transition-colors border border-earth-700 disabled:opacity-50"
+                className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-earth-800 hover:bg-earth-700 text-earth-200 hover:text-white transition-colors border border-earth-700 disabled:opacity-50 cursor-pointer"
               >
                 <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
             )}
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-earth-800 hover:bg-earth-700 text-earth-300 hover:text-white transition-colors border border-earth-700"
+              className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-earth-800 hover:bg-earth-700 text-earth-300 hover:text-white transition-colors border border-earth-700 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -228,7 +228,7 @@ export function CameraCaptureModal({ isOpen, onClose, onCapture }: CameraCapture
         </div>
 
         {/* Camera Viewfinder Area */}
-        <div className="relative flex-1 bg-black min-h-[320px] sm:min-h-[420px] flex items-center justify-center overflow-hidden select-none">
+        <div className="relative flex-1 bg-black min-h-[300px] sm:min-h-[420px] aspect-[3/4] sm:aspect-video flex items-center justify-center overflow-hidden select-none">
           {isLoading && !cameraError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-earth-950 z-20">
               <div className="w-12 h-12 rounded-full border-3 border-emerald-500 border-t-transparent animate-spin" />
