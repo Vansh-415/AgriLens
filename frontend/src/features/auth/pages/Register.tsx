@@ -10,11 +10,12 @@ import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { AgriLensLogo } from '../../../components/ui/AgriLensLogo';
+import { formatApiError } from '../../../utils/apiErrors';
 
 const registerSchema = z.object({
   full_name: z.string().min(2, "Full name is required"),
   email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string()
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords do not match",
@@ -47,7 +48,7 @@ export function Register() {
         password: data.password
       });
     } catch (err: any) {
-      setServerError(err.response?.data?.message || err.response?.data?.detail || 'An error occurred during registration');
+      setServerError(formatApiError(err, 'An error occurred during registration'));
     }
   };
 

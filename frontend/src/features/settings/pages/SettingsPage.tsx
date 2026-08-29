@@ -1,5 +1,6 @@
 import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '../../../context/LanguageContext';
 import { LanguageSwitcher } from '../../../components/ui/LanguageSwitcher';
 import { PageHeader } from '../../../components/ui/PageHeader';
@@ -8,7 +9,7 @@ import { Badge } from '../../../components/ui/Badge';
 import { Button } from '../../../components/ui/Button';
 import { useOnlineStatus } from '../../../hooks/useOnlineStatus';
 import { useToast } from '../../../hooks/useToast';
-import { Moon, Sun, Monitor, Wifi, Globe, Smartphone, Download } from 'lucide-react';
+import { Moon, Sun, Monitor, Wifi, Globe, Smartphone, Download, GraduationCap, ArrowRight } from 'lucide-react';
 
 export default function SettingsPage() {
   const { t } = useLanguage();
@@ -165,6 +166,29 @@ export default function SettingsPage() {
                 </div>
               </div>
               <Badge variant="success">{stgT.pwaActive}</Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Academic Transparency & Data Sources Card */}
+        <Card className="border-earth-200 bg-gradient-to-r from-emerald-50/50 via-teal-50/30 to-white shadow-xs">
+          <CardHeader>
+            <CardTitle className="text-base font-bold text-earth-900 flex items-center gap-2">
+              <GraduationCap className="w-5 h-5 text-emerald-700" /> Academic Project & Data Sources
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-xs text-earth-600 leading-relaxed font-normal">
+              AgriLens is built as an academic engineering project. View government registries (CIBRC), ICAR-CICR crop protection advisories, and peer-reviewed scientific literature citations supporting all disease diagnostics and chemical dosage calculations.
+            </p>
+            <div className="pt-1">
+              <Link
+                to="/references"
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer"
+              >
+                <span>View Data Sources & References</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </CardContent>
         </Card>

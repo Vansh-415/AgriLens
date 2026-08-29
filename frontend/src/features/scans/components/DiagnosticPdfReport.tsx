@@ -4,12 +4,14 @@ import { useLanguage } from '../../../context/LanguageContext';
 import {
   getLocalizedDiseaseName,
   getLocalizedDiseaseDescription,
+  getLocalizedDiseaseSubtitle,
   getLocalizedThreatLevel,
   getLocalizedSprayInterval,
   formatLocalizedDosageSummary,
   getLocalizedWeatherRule,
   getLocalizedBioRemedy,
-  getLocalizedEmergencyAction
+  getLocalizedEmergencyAction,
+  formatAcreUnit
 } from '../../../i18n/localizedData';
 
 interface DiagnosticPdfReportProps {
@@ -47,13 +49,14 @@ export function DiagnosticPdfReport({
   const localizedDiseaseName = isHealthy
     ? getLocalizedDiseaseName('healthy_leaf', language)
     : getLocalizedDiseaseName(diseaseRaw, language);
+  const localizedSubtitle = getLocalizedDiseaseSubtitle(diseaseRaw, language);
   const localizedDescription = isHealthy
     ? getLocalizedDiseaseDescription('healthy_leaf', language)
     : (getLocalizedDiseaseDescription(diseaseRaw, language) || adv.description);
 
   const bio = getLocalizedBioRemedy(isHealthy, adv.biological_organic.remedy, language);
   const weatherRule = getLocalizedWeatherRule(isHealthy, language);
-  const emergencyAction = getLocalizedEmergencyAction(isHealthy, chem.product_name, language);
+  const emergencyAction = getLocalizedEmergencyAction(isHealthy, chem.product_name, language, diseaseRaw);
   const dosageSummary = formatLocalizedDosageSummary(chem.product_name, chem.total_water_litres, landAcres, isHealthy, language);
 
   return (
@@ -83,7 +86,7 @@ export function DiagnosticPdfReport({
           </div>
           <p className="pt-1">{pdfT.date}: <strong>{scanDate}</strong></p>
           <p>{pdfT.targetCrop}</p>
-          <p>{pdfT.landSize}: <strong className="text-emerald-800">{landAcres} {t.common.acres}</strong></p>
+          <p>{pdfT.landSize}: <strong className="text-emerald-800">{landAcres} {formatAcreUnit(landAcres, language)}</strong></p>
         </div>
       </div>
 
@@ -106,7 +109,7 @@ export function DiagnosticPdfReport({
             {isUncertain ? 'Top Candidate Diagnosis' : pdfT.primaryPathology}
           </span>
           <h2 className="text-base font-extrabold text-earth-950">{localizedDiseaseName}</h2>
-          <p className="text-[11px] italic text-emerald-800 font-medium">{adv.scientific_name}</p>
+          <p className="text-[11px] italic text-emerald-800 font-medium">{localizedSubtitle || adv.scientific_name}</p>
         </div>
 
         <div className="text-right space-y-1">
@@ -174,7 +177,7 @@ export function DiagnosticPdfReport({
         <div className="space-y-2">
           <div className="flex justify-between items-center border-b border-emerald-700 pb-1">
             <h3 className="text-[11px] font-bold uppercase tracking-wider text-emerald-950">
-              {pdfT.prescriptionTitle} ({landAcres} {t.common.acres})
+              {pdfT.prescriptionTitle} ({landAcres} {formatAcreUnit(landAcres, language)})
             </h3>
             <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
               {pdfT.totalWater}: {chem.total_water_litres} Litres
@@ -186,7 +189,7 @@ export function DiagnosticPdfReport({
               <tr className="bg-earth-100 text-earth-900 font-bold border-b border-earth-300">
                 <th className="p-2 border-r border-earth-300 w-1/3">{pdfT.specification}</th>
                 <th className="p-2 border-r border-earth-300 w-1/3">{pdfT.prescription}</th>
-                <th className="p-2 w-1/3">{pdfT.fieldCalculation} ({landAcres} {t.common.acres})</th>
+                <th className="p-2 w-1/3">{pdfT.fieldCalculation} ({landAcres} {formatAcreUnit(landAcres, language)})</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-earth-200 text-earth-900">
@@ -202,7 +205,7 @@ export function DiagnosticPdfReport({
               </tr>
               <tr>
                 <td className="p-2 font-bold bg-earth-50 border-r border-earth-200">{pdfT.totalWater}</td>
-                <td className="p-2 border-r border-earth-200">{chem.water_per_acre_litres} L / {t.common.acres.toLowerCase()}</td>
+                <td className="p-2 border-r border-earth-200">{chem.water_per_acre_litres} L / {language === 'en' ? 'acre' : formatAcreUnit(1, language)}</td>
                 <td className="p-2 font-extrabold text-emerald-900 bg-emerald-50">{chem.total_water_litres} Litres Total</td>
               </tr>
               <tr>
@@ -246,23 +249,18 @@ export function DiagnosticPdfReport({
       </div>
 
       {/* AI Advisory Disclaimer */}
-      <div className="bg-earth-50 border border-earth-200 p-2.5 rounded text-[10px] text-earth-600 flex items-center gap-1.5">
+      <div className="bg-earth-50 border border-earth-200 p-2.5 rounded text-[10px] text-earth-600 flex items-start gap-1.5">
         <span className="font-bold text-earth-700 flex-shrink-0">⚠️ Note:</span>
-        <p className="leading-snug">{t.common.aiDisclaimer}</p>
+        <div className="leading-snug space-y-0.5">
+          <p>{t.common.aiDisclaimer}</p>
+          <p className="text-earth-500 italic">{t.common.leafScopeDisclaimer}</p>
+        </div>
       </div>
 
       {/* Footer & Academic Disclaimer */}
-      <div className="border-t border-earth-300 pt-3 flex justify-between items-end text-[10px] text-earth-500">
-        <div>
-          <p className="font-bold text-earth-800">{pdfT.footerNote}</p>
-          <p className="text-[9px] text-earth-400 italic">Academic Advisory System • Final Year Project</p>
-        </div>
-        <div className="text-right border-l border-earth-300 pl-3">
-          <div className="w-24 border-b border-earth-400 pb-0.5 text-[9px] text-earth-400 italic">
-            Advisory Reference
-          </div>
-          <p className="font-bold text-earth-800 uppercase tracking-widest text-[9px]">{pdfT.officerSignoff}</p>
-        </div>
+      <div className="border-t border-earth-300 pt-3 text-[10px] text-earth-500">
+        <p className="font-bold text-earth-800">{pdfT.footerNote}</p>
+        <p className="text-[9px] text-earth-400 italic">Academic Advisory System • Final Year Project</p>
       </div>
     </div>
   );

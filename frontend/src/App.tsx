@@ -24,6 +24,7 @@ const AssistantPage = lazy(() => import('./features/chatbot/pages/AssistantPage'
 const ProfilePage = lazy(() => import('./features/profile/pages/ProfilePage'));
 const SettingsPage = lazy(() => import('./features/settings/pages/SettingsPage'));
 const AdminPage = lazy(() => import('./features/admin/pages/AdminPage'));
+const ReferencesPage = lazy(() => import('./pages/ReferencesPage'));
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
                 <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
                 <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
                 <Route path="/forgot-password" element={<PageTransition><ForgotPassword /></PageTransition>} />
+                <Route path="/references" element={<PageTransition><ReferencesPage /></PageTransition>} />
 
                 {/* Protected Routes inside App Shell */}
                 <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>

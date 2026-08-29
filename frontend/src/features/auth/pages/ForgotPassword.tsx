@@ -10,6 +10,7 @@ import { Input } from '../../../components/ui/Input';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { AgriLensLogo } from '../../../components/ui/AgriLensLogo';
 import { authService } from '../../../services/authService';
+import { formatApiError } from '../../../utils/apiErrors';
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -22,6 +23,7 @@ export function ForgotPassword() {
   useLockLightTheme();
 
   const [success, setSuccess] = React.useState(false);
+  const [serverError, setServerError] = React.useState('');
   
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ForgotPasswordValues>({
     resolver: zodResolver(forgotPasswordSchema)
@@ -29,10 +31,11 @@ export function ForgotPassword() {
 
   const onSubmit = async (data: ForgotPasswordValues) => {
     try {
+      setServerError('');
       await authService.forgotPassword(data.email);
       setSuccess(true);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      setServerError(formatApiError(err, 'Failed to process password reset request'));
     }
   };
 
@@ -83,6 +86,12 @@ export function ForgotPassword() {
                   {...register('email')}
                 />
                 
+                {serverError && (
+                  <div className="p-3 text-xs sm:text-sm text-[#b91c1c] bg-[#fee2e2] border border-[#fca5a5] rounded-xl font-medium">
+                    {serverError}
+                  </div>
+                )}
+
                 <Button
                   type="submit"
                   className="w-full bg-[#16a34a] hover:bg-[#15803d] text-white font-extrabold rounded-full py-3.5 shadow-md shadow-[#16a34a]/20 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer min-h-[44px]"

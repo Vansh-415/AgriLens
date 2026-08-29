@@ -9,7 +9,13 @@ import { useToast } from '../../../hooks/useToast';
 import { scansService } from '../../../services/scansService';
 import type { PredictionData } from '../../../types/prediction';
 import { getConfidenceTier, isHealthyClass } from '../../../types/prediction';
-import { getLocalizedDiseaseName, getLocalizedDiseaseDescription } from '../../../i18n/localizedData';
+import {
+  getLocalizedDiseaseName,
+  getLocalizedDiseaseDescription,
+  getLocalizedDiseaseSubtitle,
+  getLocalizedEmergencyAction,
+  formatAcreUnit
+} from '../../../i18n/localizedData';
 import { DiagnosticPdfReport } from '../components/DiagnosticPdfReport';
 import { CameraCaptureModal } from '../components/CameraCaptureModal';
 import { printReportElement } from '../../../utils/printReport';
@@ -158,9 +164,18 @@ export default function DetectPage() {
     if (!prediction) return;
 
     const adv = prediction.personalized_advisory;
+    const localizedDisName = isHealthyClass(prediction.predicted_class)
+      ? getLocalizedDiseaseName('healthy_leaf', language)
+      : getLocalizedDiseaseName(prediction.predicted_class, language);
+    const emergencyActionText = getLocalizedEmergencyAction(
+      isHealthyClass(prediction.predicted_class),
+      adv.calculated_dosage.product_name,
+      language,
+      prediction.predicted_class
+    );
     const textToSpeak = `
-      ${adv.disease_name}. ${adv.severity}.
-      ${adv.emergency_action}.
+      ${localizedDisName}. ${adv.severity}.
+      ${emergencyActionText}.
       ${adv.calculated_dosage.product_name}. ${adv.calculated_dosage.dosage_summary}.
     `;
 
@@ -248,6 +263,12 @@ export default function DetectPage() {
                   <Leaf className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   {d.uploadTitle}
                 </h3>
+
+                {/* Single Cotton Leaf Guidance Callout */}
+                <div className="mb-3.5 p-3 bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 rounded-xl text-xs text-emerald-900 dark:text-emerald-300 leading-relaxed font-medium flex items-start gap-2.5">
+                  <Info className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
+                  <span>{d.uploadGuidance}</span>
+                </div>
 
                 {!preview ? (
                   <div className="space-y-4">
@@ -523,9 +544,12 @@ export default function DetectPage() {
                         </div>
 
                         {/* AI Disclaimer Footnote */}
-                        <div className="flex items-center gap-2 text-[11px] text-earth-500 bg-earth-50 px-3 py-2 rounded-lg border border-earth-200/70">
-                          <Info className="w-3.5 h-3.5 flex-shrink-0 text-earth-400" />
-                          <span className="leading-snug">{t.common.aiDisclaimer}</span>
+                        <div className="flex items-start gap-2 text-[11px] text-earth-500 bg-earth-50 dark:bg-earth-800/50 px-3 py-2 rounded-lg border border-earth-200/70 dark:border-earth-700">
+                          <Info className="w-3.5 h-3.5 flex-shrink-0 text-earth-400 mt-0.5" />
+                          <div className="leading-snug space-y-0.5">
+                            <p>{t.common.aiDisclaimer}</p>
+                            <p className="text-earth-600 dark:text-earth-400 font-medium">{t.common.leafScopeDisclaimer}</p>
+                          </div>
                         </div>
 
                         {/* Hidden Treatment Note */}
@@ -617,7 +641,7 @@ export default function DetectPage() {
                             </span>
                           </div>
                           <p className="text-xs text-emerald-100 italic mt-0.5">
-                            {prediction.personalized_advisory.scientific_name}
+                            {getLocalizedDiseaseSubtitle(prediction.predicted_class, language)}
                           </p>
                         </div>
 
@@ -709,9 +733,12 @@ export default function DetectPage() {
                   </Card>
 
                   {/* AI Disclaimer Footnote */}
-                  <div className="flex items-center gap-2 text-[11px] text-earth-500 px-1 py-0.5">
-                    <Info className="w-3.5 h-3.5 flex-shrink-0 text-earth-400" />
-                    <span className="leading-snug">{t.common.aiDisclaimer}</span>
+                  <div className="flex items-start gap-2 text-[11px] text-earth-500 px-1 py-0.5">
+                    <Info className="w-3.5 h-3.5 flex-shrink-0 text-earth-400 mt-0.5" />
+                    <div className="leading-snug space-y-0.5">
+                      <p>{t.common.aiDisclaimer}</p>
+                      <p className="text-earth-600 dark:text-earth-400 font-medium">{t.common.leafScopeDisclaimer}</p>
+                    </div>
                   </div>
 
                   {/* Emergency Action */}
@@ -721,7 +748,7 @@ export default function DetectPage() {
                       {d.emergencyTitle}
                     </div>
                     <p className="text-xs text-amber-900 font-medium leading-relaxed">
-                      {prediction.personalized_advisory.emergency_action}
+                      {getLocalizedEmergencyAction(isHealthyClass(prediction.predicted_class), prediction.personalized_advisory.calculated_dosage.product_name, language, prediction.predicted_class)}
                     </p>
                   </div>
 
@@ -774,7 +801,7 @@ export default function DetectPage() {
                                 </h4>
                               </div>
                               <span className="px-2.5 py-1 bg-primary-600 text-white font-bold text-xs rounded-md">
-                                {landAcres} {t.common.acres}
+                                {landAcres} {formatAcreUnit(landAcres, language)}
                               </span>
                             </div>
 

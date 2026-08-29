@@ -275,7 +275,7 @@ export function generateAgronomistResponse(
 
       case 'bacterial_blight': {
         const copper = Math.round(landAcres * 500);
-        const strepto = Math.round(landAcres * 6);
+        const strepto = Math.round(landAcres * 20);
         return {
           text: `🌿 कापूस जिवाणूजन्य करपा (Bacterial Blight / Angular Leaf Spot) उपाय:
 
@@ -337,7 +337,7 @@ export function generateAgronomistResponse(
       }
 
       case 'sucking_pests': {
-        const flonicamid = Math.round(landAcres * 60);
+        const flonicamid = Math.round(landAcres * 80);
         const thiamethoxam = Math.round(landAcres * 40);
         return {
           text: `🌿 रसशोषक कीटक (तुडतुडे, मावा, थ्रिप्स) नियंत्रण:
@@ -418,7 +418,7 @@ export function generateAgronomistResponse(
 
       case 'bacterial_blight': {
         const copper = Math.round(landAcres * 500);
-        const strepto = Math.round(landAcres * 6);
+        const strepto = Math.round(landAcres * 20);
         return {
           text: `🌿 कपास जीवाणु जनित धब्बा रोग (Bacterial Blight / Angular Leaf Spot):
 
@@ -480,7 +480,7 @@ export function generateAgronomistResponse(
       }
 
       case 'sucking_pests': {
-        const flonicamid = Math.round(landAcres * 60);
+        const flonicamid = Math.round(landAcres * 80);
         const thiamethoxam = Math.round(landAcres * 40);
         return {
           text: `🌿 रस चूसक कीट (हरा तेला, चेपा, थ्रिप्स) नियंत्रण:
@@ -560,7 +560,7 @@ export function generateAgronomistResponse(
 
     case 'bacterial_blight': {
       const copper = Math.round(landAcres * 500);
-      const strepto = Math.round(landAcres * 6);
+      const strepto = Math.round(landAcres * 20);
       return {
         text: `🌿 Bacterial Blight / Angular Leaf Spot Management:
 
@@ -609,7 +609,7 @@ export function generateAgronomistResponse(
       const emamectin = Math.round(landAcres * 100);
       const profenofos = Math.round(landAcres * 400);
       return {
-        text: `🌿 Pink Bollworm (Pectinophora gossypiella) IPM Strategy:
+        text: `🌿 Pink Bollworm (Pectinophora gossypiella) IPM Strategy (General Advisory Note: Not covered by leaf photo AI diagnosis):
 
 • Pheromone Traps: Install 5-8 traps/acre (ETL: 8 moths/trap/night for 3 consecutive days).
 • Curative Spray Options:
@@ -622,7 +622,7 @@ export function generateAgronomistResponse(
     }
 
     case 'sucking_pests': {
-      const flonicamid = Math.round(landAcres * 60);
+      const flonicamid = Math.round(landAcres * 80);
       const thiamethoxam = Math.round(landAcres * 40);
       return {
         text: `🌿 Sucking Pests (Jassids, Aphids, Thrips) Management:
@@ -632,7 +632,7 @@ export function generateAgronomistResponse(
   - OR Thiamethoxam 25% WG: ${thiamethoxam}g
 • Water Volume: Dilute in ${waterVol} Litres water.
 • Bio-Organic Alternative: Spray Neem Oil (10,000 PPM) at 5ml per litre of water.`,
-        suggestedActions: ['Leaf Curl Virus Spray', 'Bacterial Blight Solution', 'Pink Bollworm Control']
+        suggestedActions: ['Leaf Curl Virus Spray', 'Bacterial Blight Solution', 'Leaf Hopper Jassids Control']
       };
     }
 
@@ -656,7 +656,7 @@ export function generateAgronomistResponse(
 • Temperature: Optimal range is 25°C–35°C; avoid high-noon heat.
 • Rainfastness: Ensure a clear rain-free window of at least 2–3 hours post-application.
 • Adjuvants: Mix a non-ionic silicone spreader/sticker during monsoon spraying.`,
-        suggestedActions: ['Leaf Curl Virus Chemical Spray', 'Bacterial Blight Solution', 'Pink Bollworm Control']
+        suggestedActions: ['Leaf Curl Virus Chemical Spray', 'Bacterial Blight Solution', 'Leaf Hopper Jassids Control']
       };
     }
 
@@ -671,7 +671,7 @@ Try selecting any topic below:`,
           'Curative spray for Leaf Curl Virus',
           'Bacterial Blight dosage & water volume',
           'Physiological Leaf Redding solution',
-          'Pink Bollworm IPM strategy'
+          'Leaf Hopper Jassids & sucking pests IPM'
         ]
       };
     }

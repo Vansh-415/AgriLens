@@ -12,6 +12,7 @@ import { useToast } from '../../../hooks/useToast';
 import { cropsService } from '../../../services/cropsService';
 import { diseasesService } from '../../../services/diseasesService';
 import { treatmentsService } from '../../../services/treatmentsService';
+import { formatApiError } from '../../../utils/apiErrors';
 import { Plus, Trash2 } from 'lucide-react';
 
 interface CropOption {
@@ -61,7 +62,7 @@ export default function AdminPage() {
         setDataList(res.data || []);
       }
     } catch (err: any) {
-      toast.error('Failed to load admin records', err.response?.data?.message || 'Server error');
+      toast.error('Failed to load admin records', formatApiError(err, 'Server error'));
     } finally {
       setLoading(false);
     }
@@ -109,7 +110,7 @@ export default function AdminPage() {
       });
       loadData();
     } catch (err: any) {
-      toast.error('Creation Failed', err.response?.data?.message || 'Server error');
+      toast.error('Creation Failed', formatApiError(err, 'Server error'));
     }
   };
 
@@ -124,7 +125,7 @@ export default function AdminPage() {
       setDeleteId(null);
       loadData();
     } catch (err: any) {
-      toast.error('Delete Failed', err.response?.data?.message || 'Server error');
+      toast.error('Delete Failed', formatApiError(err, 'Server error'));
     }
   };
 

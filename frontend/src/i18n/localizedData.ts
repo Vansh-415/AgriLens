@@ -19,13 +19,71 @@ export interface DiseaseProfile {
   preventive_measures: string[];
 }
 
+export const LOCALIZED_DISEASE_SUBTITLES: Record<string, Record<Language, string>> = {
+  bacterial_blight: {
+    en: 'Xanthomonas citri pv. malvacearum',
+    hi: 'जैंथोमोनास सिट्री पीवी मालवेसिएरम (जीवाणु संक्रमण)',
+    mr: 'झँथोमोनस सिट्री पीव्ही मालव्हेसिएरम (जिवाणू संसर्ग)'
+  },
+  curl_virus: {
+    en: 'Cotton Leaf Curl Virus (CLCuV) / Begomovirus',
+    hi: 'कपास पत्ती मरोड़िया वायरस (CLCuV) / बेगोमोवायरस',
+    mr: 'कापूस पाने आकसणारा विषाणू (CLCuV) / बेगोमोव्हायरस'
+  },
+  leaf_hopper_jassids: {
+    en: 'Amrasca biguttula biguttula (Jassids)',
+    hi: 'अमरास्का बिगट्टुला बिगट्टुला (हरा तेला / जस्सिड्स)',
+    mr: 'अमरास्का बिगट्टुला बिगट्टुला (तुडतुडे / जॅसिड्स)'
+  },
+  leaf_redding: {
+    en: 'Physiological Red Leaf / Magnesium Deficiency',
+    hi: 'शारीरिक लाल पत्ती / मैग्नीशियम की कमी (लालया)',
+    mr: 'शारीरिक लाल पाने / मॅग्नेशियमची कमतरता (लालया)'
+  },
+  herbicide_growth_damage: {
+    en: 'Phytotoxicity / Chemical Drift Injury',
+    hi: 'रासायनिक खरपतवारनाशी प्रभाव / फाइटोटॉक्सिसिटी',
+    mr: 'तणनाशक रासायनिक इजा / फायटोटॉक्सिसिटी'
+  },
+  leaf_variegation: {
+    en: 'Chimerical / Genetic Variegation Disorder',
+    hi: 'आनुवंशिक बहुरूपता / वेरिगेशन विकार',
+    mr: 'अनुवांशिक रंगहीनता / व्हेरिगेशन विकार'
+  },
+  healthy_leaf: {
+    en: 'Normal Foliage / Healthy Canopy',
+    hi: 'सामान्य स्वस्थ पत्तियां / निरोगी फसल',
+    mr: 'सामान्य निरोगी पाने / निरोगी पीक'
+  }
+};
+
+export function getLocalizedDiseaseSubtitle(diseaseIdOrName?: string | null, lang: Language = 'en'): string {
+  const normId = normalizeDiseaseId(diseaseIdOrName);
+  const entry = LOCALIZED_DISEASE_SUBTITLES[normId];
+  if (!entry) return '';
+  return entry[lang] || entry.en;
+}
+
+export function formatAcreUnit(acres: number, lang: Language): string {
+  if (lang === 'en') {
+    return Number(acres) === 1 ? 'Acre' : 'Acres';
+  }
+  if (lang === 'hi') {
+    return 'एकड़';
+  }
+  if (lang === 'mr') {
+    return 'एकर';
+  }
+  return Number(acres) === 1 ? 'Acre' : 'Acres';
+}
+
 export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
   if (lang === 'hi') {
     return [
       {
         id: 'bacterial_blight',
         name: 'जीवाणु जनित धब्बा रोग (Bacterial Blight)',
-        scientific_name: 'Xanthomonas citri pv. malvacearum',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.bacterial_blight.hi,
         causal_agent: 'जीवाणु (संवहनी प्रणाली प्रसार)',
         severity: 'critical',
         disease_index_score: '85/100 (गंभीर फसल खतरा)',
@@ -39,7 +97,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
           'पत्तियों का समय से पहले गिरना और बोंड (डोडी) सड़न'
         ],
         recommended_treatments: {
-          chemical: 'कॉपर ऑक्सीक्लोराइड 50% WP (500 ग्राम/एकड़) + स्ट्रेप्टोसाइक्लिन (6 ग्राम/एकड़)',
+          chemical: 'कॉपर ऑक्सीक्लोराइड 50% WP (500 ग्राम/एकड़) + स्ट्रेप्टोसाइक्लिन (20 ग्राम/एकड़)',
           dosage: '200 लीटर साफ पानी प्रति एकड़ में घोलें',
           organic: 'नीम तेल (NSKE 5%) या स्यूडोमोनस फ्लोरोसेंस (10 ग्राम/लीटर)'
         },
@@ -52,7 +110,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'curl_virus',
         name: 'कपास पत्ती मरोड़िया वायरस (Leaf Curl Virus)',
-        scientific_name: 'Begomovirus / Whitefly Vector Complex',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.curl_virus.hi,
         causal_agent: 'विषाणु (सफेद मक्खी बेमिसिया टैबासी द्वारा प्रसारित)',
         severity: 'critical',
         disease_index_score: '92/100 (उच्च आर्थिक नुकसान खतरा)',
@@ -79,7 +137,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_hopper_jassids',
         name: 'हरा तेला / जस्सिड्स (Leaf Hopper Jassids)',
-        scientific_name: 'Amrasca biguttula biguttula',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.leaf_hopper_jassids.hi,
         causal_agent: 'रस चूसक कीट शिशु एवं वयस्क',
         severity: 'high',
         disease_index_score: '74/100 (उच्च कीट तनाव)',
@@ -93,7 +151,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
           'पत्ती के किनारों का लाल-भूरा होकर सूखना (हॉपरबर्न)'
         ],
         recommended_treatments: {
-          chemical: 'फ्लोनिकामिड 50% WG (60 ग्राम/एकड़) या थियामेथॉक्सम 25% WG (40 ग्राम/एकड़)',
+          chemical: 'फ्लोनिकामिड 50% WG (80 ग्राम/एकड़) या थियामेथॉक्सम 25% WG (40 ग्राम/एकड़)',
           dosage: '200 लीटर पानी प्रति एकड़ में छिड़कें',
           organic: 'नीम तेल 5% (5 मिली/लीटर) छिड़कें'
         },
@@ -106,7 +164,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_redding',
         name: 'पत्ती लाल होना (Physiological Leaf Redding)',
-        scientific_name: 'Physiological / Magnesium Deficiency Stress',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.leaf_redding.hi,
         causal_agent: 'मैग्नीशियम (Mg) की कमी + ठंडी रातों का तनाव',
         severity: 'moderate',
         disease_index_score: '48/100 (शारीरिक तनाव)',
@@ -133,7 +191,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'herbicide_growth_damage',
         name: 'खरपतवारनाशक क्षति (Herbicide Phytotoxicity)',
-        scientific_name: 'Herbicide Drift / Phytotoxicity',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.herbicide_growth_damage.hi,
         causal_agent: 'रसायन बहकाव (2,4-D / ग्लाइफोसेट)',
         severity: 'high',
         disease_index_score: '68/100 (रासायनिक क्षति)',
@@ -160,7 +218,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_variegation',
         name: 'पत्ती चितकबरापन (Leaf Variegation)',
-        scientific_name: 'Genetic / Chimera Variegation',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.leaf_variegation.hi,
         causal_agent: 'आनुवंशिक मोज़ेक या क्लोरोफिल उत्परिवर्तन',
         severity: 'low',
         disease_index_score: '18/100 (कम क्षति)',
@@ -186,7 +244,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'healthy_leaf',
         name: 'स्वस्थ कपास फसल (Healthy Canopy)',
-        scientific_name: 'Gossypium hirsutum (Normal Physiology)',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.healthy_leaf.hi,
         causal_agent: 'कोई नहीं (उत्कृष्ट स्वास्थ्य)',
         severity: 'low',
         disease_index_score: '0/100 (उत्कृष्ट फसल स्वास्थ्य)',
@@ -218,7 +276,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'bacterial_blight',
         name: 'जिवाणूजन्य करपा (Bacterial Blight)',
-        scientific_name: 'Xanthomonas citri pv. malvacearum',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.bacterial_blight.mr,
         causal_agent: 'जिवाणू (वाहिनी प्रणाली प्रसार)',
         severity: 'critical',
         disease_index_score: '८५/१०० (अतिधोकादायक)',
@@ -232,7 +290,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
           'वेळेपूर्वी पानगळ आणि बोंड सडणे'
         ],
         recommended_treatments: {
-          chemical: 'कॉपर ऑक्सिक्लोराइड ५०% WP (५०० ग्रॅम/एकरी) + स्ट्रिप्टोसायक्लिन (६ ग्रॅम/एकरी)',
+          chemical: 'कॉपर ऑक्सिक्लोराइड ५०% WP (५०० ग्रॅम/एकरी) + स्ट्रिप्टोसायक्लिन (२० ग्रॅम/एकरी)',
           dosage: '२०० लिटर स्वच्छ पाण्यात मिसळा',
           organic: 'निंबोळी अर्क (NSKE ५%) किंवा सुडोमोनस फ्लुरोसन्स (१० ग्रॅम/लिटर)'
         },
@@ -245,7 +303,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'curl_virus',
         name: 'कापूस पर्णमोड / चुरडा-मुरडा (Leaf Curl Virus)',
-        scientific_name: 'Begomovirus / Whitefly Vector Complex',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.curl_virus.mr,
         causal_agent: 'विषाणू (पांढरी माशी बेमिसिया टॅबासी द्वारे प्रसार)',
         severity: 'critical',
         disease_index_score: '९२/१०० (उच्च आर्थिक नुकसान)',
@@ -272,7 +330,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_hopper_jassids',
         name: 'तुडतुडे व मावा (Leaf Hopper Jassids)',
-        scientific_name: 'Amrasca biguttula biguttula',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.leaf_hopper_jassids.mr,
         causal_agent: 'रस शोषणारे कीटक',
         severity: 'high',
         disease_index_score: '७४/१०० (उच्च कीटक ताण)',
@@ -286,7 +344,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
           'पानाच्या कडा लाल-भूऱ्या होऊन वाळणे (हॉपरबर्न)'
         ],
         recommended_treatments: {
-          chemical: 'फ्लोनिकामािड ५०% WG (६० ग्रॅम/एकरी) किंवा थायामेथॉक्सम २५% WG (४० ग्रॅम/एकरी)',
+          chemical: 'फ्लोनिकामािड ५०% WG (८० ग्रॅम/एकरी) किंवा थायामेथॉक्सम २५% WG (४० ग्रॅम/एकरी)',
           dosage: '२०० लिटर पाण्यात फवारा',
           organic: 'निंबोळी अर्क ५% (५ मिली/लिटर) फवारा'
         },
@@ -299,7 +357,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_redding',
         name: 'कापूस लाल्या पडणे (Physiological Leaf Redding)',
-        scientific_name: 'Physiological / Magnesium Deficiency Stress',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.leaf_redding.mr,
         causal_agent: 'मॅग्नेशियम (Mg) कमतरता + थंड रात्रींचा ताण',
         severity: 'moderate',
         disease_index_score: '४८/१०० (शारीरिक ताण)',
@@ -326,7 +384,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'herbicide_growth_damage',
         name: 'तणनाशक बाधा (Herbicide Phytotoxicity)',
-        scientific_name: 'Herbicide Drift / Phytotoxicity',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.herbicide_growth_damage.mr,
         causal_agent: 'रसायन वाऱ्यामुळे उडणे (२,४-D / ग्लायफोसेट)',
         severity: 'high',
         disease_index_score: '६८/१०० (रासायनिक हानी)',
@@ -353,7 +411,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'leaf_variegation',
         name: 'पानांवरील पांढरे डाग (Leaf Variegation)',
-        scientific_name: 'Genetic / Chimera Variegation',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.leaf_variegation.mr,
         causal_agent: 'जनुकीय बदल किंवा क्लोरोफिल कमतरता',
         severity: 'low',
         disease_index_score: '१८/१०० (कमी धोका)',
@@ -379,7 +437,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
       {
         id: 'healthy_leaf',
         name: 'निरोगी कापूस पिक (Healthy Canopy)',
-        scientific_name: 'Gossypium hirsutum (Normal Physiology)',
+        scientific_name: LOCALIZED_DISEASE_SUBTITLES.healthy_leaf.mr,
         causal_agent: 'काहीही नाही (उत्कृष्ट आरोग्य)',
         severity: 'low',
         disease_index_score: '०/१०० (उत्कृष्ट पीक आरोग्य)',
@@ -411,7 +469,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
     {
       id: 'bacterial_blight',
       name: 'Bacterial Blight / Angular Leaf Spot',
-      scientific_name: 'Xanthomonas citri pv. malvacearum',
+      scientific_name: LOCALIZED_DISEASE_SUBTITLES.bacterial_blight.en,
       causal_agent: 'Bacterium (Vascular System Spreading)',
       severity: 'critical',
       disease_index_score: '85/100 (Severe Crop Threat)',
@@ -425,7 +483,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
         'Premature leaf drop and sunken black lesions on bolls'
       ],
       recommended_treatments: {
-        chemical: 'Copper Oxychloride 50% WP (500g/acre) + Streptocycline (6g/acre)',
+        chemical: 'Copper Oxychloride 50% WP (500g/acre) + Streptocycline (20g/acre)',
         dosage: 'Mix in 200 Litres spray water per acre',
         organic: 'Neem Seed Kernel Extract (NSKE 5%) or Pseudomonas fluorescens (10g/L)'
       },
@@ -438,7 +496,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
     {
       id: 'curl_virus',
       name: 'Cotton Leaf Curl Virus (CLCuV)',
-      scientific_name: 'Begomovirus / Whitefly Vector Complex',
+      scientific_name: LOCALIZED_DISEASE_SUBTITLES.curl_virus.en,
       causal_agent: 'Viral Disease (Transmitted by Bemisia tabaci Whiteflies)',
       severity: 'critical',
       disease_index_score: '92/100 (High Economic Loss Vector)',
@@ -465,7 +523,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
     {
       id: 'leaf_hopper_jassids',
       name: 'Leaf Hopper Jassids Damage',
-      scientific_name: 'Amrasca biguttula biguttula',
+      scientific_name: LOCALIZED_DISEASE_SUBTITLES.leaf_hopper_jassids.en,
       causal_agent: 'Sap-Sucking Pest Nymphs & Adults',
       severity: 'high',
       disease_index_score: '74/100 (High Pest Stress)',
@@ -479,7 +537,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
         'Reddish-brown leaf border scorching (hopperburn)'
       ],
       recommended_treatments: {
-        chemical: 'Flonicamid 50% WG (60g/acre) OR Thiamethoxam 25% WG (40g/acre)',
+        chemical: 'Flonicamid 50% WG (80g/acre) OR Thiamethoxam 25% WG (40g/acre)',
         dosage: 'Mix in 200 Litres spray water per acre',
         organic: 'Neem Oil 5% (5ml/L + 1ml liquid soap) OR Beauveria bassiana'
       },
@@ -492,7 +550,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
     {
       id: 'leaf_redding',
       name: 'Physiological Leaf Redding',
-      scientific_name: 'Nutritional / Thermal Stress Disorder',
+      scientific_name: LOCALIZED_DISEASE_SUBTITLES.leaf_redding.en,
       causal_agent: 'Magnesium (Mg) Deficiency + Cold Night Stress',
       severity: 'moderate',
       disease_index_score: '48/100 (Abiotic Physiological Stress)',
@@ -519,7 +577,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
     {
       id: 'herbicide_growth_damage',
       name: 'Herbicide Growth Damage / Phytotoxicity',
-      scientific_name: 'Non-Selective Herbicide Drift Injury',
+      scientific_name: LOCALIZED_DISEASE_SUBTITLES.herbicide_growth_damage.en,
       causal_agent: 'Chemical Drift (2,4-D / Glyphosate / Dicamba)',
       severity: 'high',
       disease_index_score: '68/100 (Chemical Damage Vector)',
@@ -546,7 +604,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
     {
       id: 'leaf_variegation',
       name: 'Leaf Variegation Disorder',
-      scientific_name: 'Chimerical / Genetic Variegation',
+      scientific_name: LOCALIZED_DISEASE_SUBTITLES.leaf_variegation.en,
       causal_agent: 'Genetic Chimera or Minor Chloroplast Mutation',
       severity: 'low',
       disease_index_score: '18/100 (Low Non-Contagious Condition)',
@@ -572,7 +630,7 @@ export function getLocalizedDiseases(lang: Language): DiseaseProfile[] {
     {
       id: 'healthy_leaf',
       name: 'Healthy Cotton Crop Canopy',
-      scientific_name: 'Gossypium hirsutum (Normal Physiology)',
+      scientific_name: LOCALIZED_DISEASE_SUBTITLES.healthy_leaf.en,
       causal_agent: 'None (Optimum Crop Health)',
       severity: 'low',
       disease_index_score: '0/100 (Optimal Crop Health)',
@@ -626,7 +684,7 @@ export function getLocalizedCrops(lang: Language): CropInfo[] {
         idealTemp: '21°C - 35°C',
         waterRequirement: '500 - 800 mm',
         soilType: 'काली कपासी मिट्टी (रेगुर) / जल निकासी वाली दोमट',
-        keyPests: ['सफेद मक्खी (बेगोमोवायरस वाहक)', 'लीफ हॉपर जैसिड्स', 'जीवाणु झुलसा', 'गुलाबी सुंडी'],
+        keyPests: ['सफेद मक्खी (बेगोमोवायरस वाहक)', 'लीफ हॉपर जैसिड्स', 'जीवाणु झुलसा'],
         description: 'कपास भारत की प्रमुख व्यावसायिक रेशा फसल है। अधिकतम पैदावार के लिए उच्च तापमान, मध्यम वर्षा और जल निकासी वाली गहरी काली मिट्टी आदर्श होती है।'
       }
     ];
@@ -642,7 +700,7 @@ export function getLocalizedCrops(lang: Language): CropInfo[] {
         idealTemp: '21°C - 35°C',
         waterRequirement: '500 - 800 mm',
         soilType: 'काळी कापसाची माती (रेगूर) / चांगला निचरा होणारी जमीन',
-        keyPests: ['पांढरी माशी (बेगोमोव्हायरस वाहक)', 'तुडतुडे (जॅसिड्स)', 'जिवाणू करपा', 'बोंड अळी'],
+        keyPests: ['पांढरी माशी (बेगोमोव्हायरस वाहक)', 'तुडतुडे (जॅसिड्स)', 'जिवाणू करपा'],
         description: 'कापूस हे भारतातील प्रमुख व्यावसायिक पीक आहे. भरपूर उत्पादनासाठी उष्ण तापमान, मध्यम पाऊस आणि पाण्याचा चांगला निचरा होणारी काळी माती उत्तम असते.'
       }
     ];
@@ -657,7 +715,7 @@ export function getLocalizedCrops(lang: Language): CropInfo[] {
       idealTemp: '21°C - 35°C',
       waterRequirement: '500 - 800 mm',
       soilType: 'Deep Black Cotton Soil (Regur) / Well-drained Loam',
-      keyPests: ['Whitefly (Begomovirus vector)', 'Leaf Hopper Jassids', 'Bacterial Blight', 'Bollworm'],
+      keyPests: ['Whitefly (Begomovirus vector)', 'Leaf Hopper Jassids', 'Bacterial Blight'],
       description: "Cotton is India's prime commercial fiber crop. High temperature, moderate rainfall, and well-drained deep black soil are ideal for maximum boll yield."
     }
   ];
@@ -906,13 +964,41 @@ export function getLocalizedBioRemedy(isHealthy: boolean, rawRemedy: string, lan
   };
 }
 
-export function getLocalizedEmergencyAction(isHealthy: boolean, chemicalProduct: string, lang: Language): string {
+export function getLocalizedEmergencyAction(isHealthy: boolean, chemicalProduct: string, lang: Language, diseaseId?: string): string {
   if (isHealthy) {
     if (lang === 'hi') return 'फसल में कोई रोग नहीं मिला। सामान्य फसल देखभाल और कीट निरीक्षण जारी रखें।';
     if (lang === 'mr') return 'पिकात कोणताही रोग आढळला नाही. नियमित पाहणी व खत व्यवस्थापन सुरू ठेवा.';
     return 'No disease symptoms detected. Continue routine pest monitoring and standard agronomic practices.';
   }
-  if (lang === 'hi') return `तत्काल जरूरी कदम: अगले 24-48 घंटों के भीतर ${chemicalProduct} का छिड़काव करें।`;
-  if (lang === 'mr') return `तातडीची कारवाई: पुढील २४-४८ तासांत ${chemicalProduct} ची फवारणी करा.`;
-  return `Immediate Action Required: Apply ${chemicalProduct} within next 24-48 hours.`;
+  const normId = normalizeDiseaseId(diseaseId);
+  let prodName = chemicalProduct || 'Recommended Chemical Treatment';
+  if (normId === 'leaf_redding') {
+    if (lang === 'hi') prodName = 'मैग्नीशियम सल्फेट + NPK 19:19:19';
+    else if (lang === 'mr') prodName = 'मॅग्नेशियम सल्फेट + १९:१९:१९ NPK';
+    else prodName = 'Magnesium Sulphate (MgSO4) + 19:19:19 NPK';
+  } else if (normId === 'bacterial_blight') {
+    if (lang === 'hi') prodName = 'कॉपर ऑक्सीक्लोराइड 50% WP + स्ट्रेप्टोसाइक्लिन';
+    else if (lang === 'mr') prodName = 'कॉपर ऑक्सिक्लोराइड ५०% WP + स्ट्रिप्टोसायक्लिन';
+    else prodName = 'Copper Oxychloride 50% WP + Streptocycline';
+  } else if (normId === 'curl_virus') {
+    if (lang === 'hi') prodName = 'एसिटामिप्रिड 20% SP / डायफेंथियूरॉन 50% WP';
+    else if (lang === 'mr') prodName = 'अ‍ॅसिटामिप्रिड २०% SP / डायफेंथिओरॉन ५०% WP';
+    else prodName = 'Acetamiprid 20% SP / Diafenthiuron 50% WP';
+  } else if (normId === 'leaf_hopper_jassids') {
+    if (lang === 'hi') prodName = 'फ्लोनिकामिड 50% WG / थियामेथॉक्सम 25% WG';
+    else if (lang === 'mr') prodName = 'फ्लोनिकामािड ५०% WG / थायामेथॉक्सम २५% WG';
+    else prodName = 'Flonicamid 50% WG / Thiamethoxam 25% WG';
+  } else if (normId === 'herbicide_growth_damage') {
+    if (lang === 'hi') prodName = 'ह्यूमिक एसिड 12% + चेलेटेड जिंक';
+    else if (lang === 'mr') prodName = 'ह्युमिक अ‍ॅसिड १२% + झिंक';
+    else prodName = 'Humic Acid 12% + Chelated Zinc Bio-Stimulant';
+  } else if (normId === 'leaf_variegation') {
+    if (lang === 'hi') prodName = 'सूक्ष्म पोषक तत्व मिश्रण';
+    else if (lang === 'mr') prodName = 'सूक्ष्म अन्नद्रव्ये फवारणी';
+    else prodName = 'Multi-Micronutrient Foliar Spray';
+  }
+
+  if (lang === 'hi') return `तत्काल जरूरी कदम: अगले 24-48 घंटों के भीतर ${prodName} का पर्ण छिड़काव करें।`;
+  if (lang === 'mr') return `तातडीची कारवाई: पुढील २४-४८ तासांत ${prodName} ची फवारणी करा.`;
+  return `Immediate Action Required: Apply ${prodName} within next 24-48 hours.`;
 }

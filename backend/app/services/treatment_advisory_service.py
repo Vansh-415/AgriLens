@@ -14,7 +14,7 @@ DISEASE_KNOWLEDGE_BASE: Dict[str, Dict[str, Any]] = {
         "chemical_control": {
             "active_ingredient": "Copper Oxychloride 50% WP + Streptomycin Sulphate (9:1)",
             "product_name": "Blitox 50 + Streptocycline",
-            "dosage_per_acre": "500 g Blitox + 6 g Streptocycline",
+            "dosage_per_acre": "500 g Blitox + 20 g Streptocycline",
             "water_per_acre_litres": 200,
             "application_interval_days": 10,
             "pre_harvest_interval_days": 15
@@ -110,7 +110,7 @@ DISEASE_KNOWLEDGE_BASE: Dict[str, Dict[str, Any]] = {
         "chemical_control": {
             "active_ingredient": "Flonicamid 50% WG or Thiamethoxam 25% WG",
             "product_name": "Ulala 50% WG / Cruz 25% WG",
-            "dosage_per_acre": "60 g Flonicamid OR 40 g Thiamethoxam",
+            "dosage_per_acre": "80 g Flonicamid OR 40 g Thiamethoxam",
             "water_per_acre_litres": 200,
             "application_interval_days": 14,
             "pre_harvest_interval_days": 21
@@ -130,7 +130,7 @@ DISEASE_KNOWLEDGE_BASE: Dict[str, Dict[str, Any]] = {
         "scientific_name": "Physiological Red Leaf / Magnesium Deficiency",
         "severity": "Low to Moderate",
         "description": "Leaves turn reddened/purple between veins while veins remain green. Caused by Magnesium deficiency, low night temperatures, or root stress during boll formation.",
-        "emergency_action": "Apply immediate foliar spray of Magnesium Sulphate (MgSO4) combined with Urea to restore chlorophyll synthesis.",
+        "emergency_action": "Apply immediate foliar spray of Magnesium Sulphate (MgSO4) combined with 19:19:19 NPK to restore chlorophyll synthesis.",
         "chemical_control": {
             "active_ingredient": "Magnesium Sulphate (MgSO4 9.5%) + Soluble NPK (19:19:19)",
             "product_name": "MgSO4 Ag-grade + 19:19:19 Water Soluble",
@@ -151,7 +151,7 @@ DISEASE_KNOWLEDGE_BASE: Dict[str, Dict[str, Any]] = {
         "weather_safety_rule": "Cold night temperatures (<15°C) impair magnesium translocation. Apply foliar sprays during sunny mornings."
     },
     "Leaf Variegation": {
-        "scientific_name": "Chimerical / Genetic Variegation / Viral Mosaicking",
+        "scientific_name": "Chimerical / Genetic Variegation Disorder",
         "severity": "Low",
         "description": "Causes distinct yellow/white patches or irregular mosaic patterns on leaves due to genetic chimera or mild viral infection.",
         "emergency_action": "Monitor affected plants. If only isolated leaves display variegation, no immediate emergency treatment is needed.",

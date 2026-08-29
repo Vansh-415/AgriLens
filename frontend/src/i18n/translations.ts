@@ -47,6 +47,7 @@ export interface TranslationDictionary {
     viewDetails: string;
     logout: string;
     aiDisclaimer: string;
+    leafScopeDisclaimer: string;
     highConfidence: string;
     moderateConfidence: string;
     uncertain: string;
@@ -206,6 +207,7 @@ export interface TranslationDictionary {
     featureUnderDev: string;
     featureUnderDevDesc: string;
     clearTryAnother: string;
+    uploadGuidance: string;
   };
   diseases: {
     title: string;
@@ -339,6 +341,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       viewDetails: 'View Details',
       logout: 'Logout',
       aiDisclaimer: 'AI predictions may sometimes be inaccurate. Please verify with an agricultural expert before taking action.',
+      leafScopeDisclaimer: 'This tool is designed to analyze cotton leaf photos specifically. Results for other plant parts or unrelated images should not be relied upon.',
       highConfidence: 'High Confidence',
       moderateConfidence: 'Moderate Confidence',
       uncertain: 'Uncertain',
@@ -498,6 +501,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       featureUnderDev: 'Feature Under Development',
       featureUnderDevDesc: 'AI Leaf Disease Inference pipeline, automated pathology classification, and chemical dosage formulation will be activated in Phase 2.',
       clearTryAnother: 'Clear & Try Another Photo',
+      uploadGuidance: 'Upload a clear, close-up photo of a single cotton LEAF only. Photos of bolls, stems, flowers, or whole plants may produce inaccurate results.',
     },
     diseases: {
       title: 'Cotton Disease Index',
@@ -629,6 +633,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       viewDetails: 'विवरण देखें',
       logout: 'लॉगआउट',
       aiDisclaimer: 'एआई भविष्यवाणियां कभी-कभी गलत हो सकती हैं। कोई भी कदम उठाने से पहले कृपया किसी कृषि विशेषज्ञ से पुष्टि करें।',
+      leafScopeDisclaimer: 'यह टूल विशेष रूप से कपास की पत्तियों के विश्लेषण के लिए बनाया गया है। पौधे के अन्य भागों या अन्य तस्वीरों के परिणामों पर भरोसा न करें।',
       highConfidence: 'उच्च सटीकता',
       moderateConfidence: 'मध्यम सटीकता',
       uncertain: 'अनिश्चित',
@@ -788,6 +793,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       featureUnderDev: 'सुविधा निर्माणाधीन है',
       featureUnderDevDesc: 'एआई पत्ती रोग पहचान और रासायनिक खुराक निर्माण फेज 2 में सक्रिय होगा।',
       clearTryAnother: 'हटाएं और दूसरी फोटो आज़माएं',
+      uploadGuidance: 'केवल एक कपास की पत्ती (LEAF) का स्पष्ट और नजदीकी फोटो अपलोड करें। डोडी, तना, फूल या पूरे पौधे की फोटो से गलत परिणाम आ सकते हैं।',
     },
     diseases: {
       title: 'कपास रोग सूचकांक',
@@ -919,6 +925,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       viewDetails: 'तपशील पहा',
       logout: 'लॉगआउट',
       aiDisclaimer: 'एआय अंदाज काही वेळा चुकीचे असू शकतात. कोणतीही कृती करण्यापूर्वी कृपया कृषी तज्ञांचा सल्ला घ्या.',
+      leafScopeDisclaimer: 'हे साधन विशेषतः कापसाच्या पानांच्या विश्लेषणासाठी बनवले आहे. झाडाचे इतर भाग किंवा इतर चित्रांच्या निष्कर्षांवर अवलंबून राहू नका.',
       highConfidence: 'उच्च अचूकता',
       moderateConfidence: 'मध्यम अचूकता',
       uncertain: 'अनिश्चित',
@@ -1078,6 +1085,7 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       featureUnderDev: 'सुविधा प्रगतीपथावर आहे',
       featureUnderDevDesc: 'एआय पान रोग ओळख आणि औषध प्रमाण सूत्र फेज २ मध्ये सक्रिय केले जाईल.',
       clearTryAnother: 'साफ करा आणि दुसरा फोटो घ्या',
+      uploadGuidance: 'फक्त एका कापसाच्या पानाचा (LEAF) स्पष्ट व जवळून घेतलेला फोटो अपलोड करा. बोंड, खोड, फूल किंवा संपूर्ण झाडाच्या फोटोमुळे चुकीचे निकाल येऊ शकतात.',
     },
     diseases: {
       title: 'कापूस रोग अनुक्रमणिका',

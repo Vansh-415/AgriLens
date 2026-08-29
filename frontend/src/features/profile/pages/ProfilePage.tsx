@@ -34,8 +34,8 @@ export default function ProfilePage() {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPassword || newPassword.length < 6) {
-      toast.error('Validation Error', 'New password must be at least 6 characters.');
+    if (!newPassword || newPassword.length < 8) {
+      toast.error('Validation Error', 'New password must be at least 8 characters.');
       return;
     }
     toast.success('Password Changed', 'Your account password has been updated.');

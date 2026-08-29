@@ -3,6 +3,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { generateAgronomistResponse, cleanTextForSpeech, getBestVoiceForLanguage } from '../services/agriChatService';
 import type { ChatMessage } from '../services/agriChatService';
 import { useLanguage } from '../../../context/LanguageContext';
+import { formatAcreUnit } from '../../../i18n/localizedData';
 import { PageHeader } from '../../../components/ui/PageHeader';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
@@ -321,10 +322,10 @@ export default function AssistantPage() {
     {
       label:
         language === 'hi'
-          ? 'गुलाबी सुंडी (Pink Bollworm) नियंत्रण'
+          ? 'हरा तेला (जस्सिड्स) एवं कीट प्रबंधन'
           : language === 'mr'
-          ? 'गुलाबी बोंडअळी नियंत्रण उपाय'
-          : 'Pink Bollworm IPM Strategy',
+          ? 'तुडतुडे (जॅसिड्स) कीड नियंत्रण उपाय'
+          : 'Leaf Hopper Jassids & Pest IPM',
       icon: Layers,
       color: 'text-rose-600 dark:text-rose-400',
     },
@@ -461,7 +462,7 @@ export default function AssistantPage() {
               <div className="flex items-center gap-2.5">
                 <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse" />
                 <span className="font-extrabold text-xs text-earth-900 dark:text-white uppercase tracking-wider">
-                  Live Consultation ({landAcres} {t.common.acres})
+                  Live Consultation ({landAcres} {formatAcreUnit(landAcres, language)})
                 </span>
               </div>
 

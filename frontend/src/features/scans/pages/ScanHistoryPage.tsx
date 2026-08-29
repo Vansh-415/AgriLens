@@ -14,6 +14,7 @@ import { DiagnosticPdfReport } from '../components/DiagnosticPdfReport';
 import {
   getLocalizedDiseaseName,
   getLocalizedDiseaseProfile,
+  formatAcreUnit,
 } from '../../../i18n/localizedData';
 import { printReportElement } from '../../../utils/printReport';
 import type { PredictionData } from '../../../types/prediction';
@@ -219,7 +220,7 @@ export default function ScanHistoryPage() {
                         </span>
                         <span>•</span>
                         <span className="flex items-center gap-1 font-semibold text-emerald-800">
-                          <MapPin className="w-3.5 h-3.5" /> {acres} {t.common.acres} ({acres * 200}L Water)
+                          <MapPin className="w-3.5 h-3.5" /> {acres} {formatAcreUnit(acres, language)} ({acres * 200}L Water)
                         </span>
                         {(() => {
                           const conf = scan.confidence ?? (scan.confidence_pct ? parseFloat(scan.confidence_pct) / 100 : 0.9);

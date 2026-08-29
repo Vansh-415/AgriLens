@@ -10,6 +10,7 @@ import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Card, CardContent } from '../../../components/ui/Card';
 import { AgriLensLogo } from '../../../components/ui/AgriLensLogo';
+import { formatApiError } from '../../../utils/apiErrors';
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -38,7 +39,7 @@ export function Login() {
       setServerError('');
       await login(data);
     } catch (err: any) {
-      setServerError(err.response?.data?.message || err.response?.data?.detail || 'Invalid email or password');
+      setServerError(formatApiError(err, 'Invalid email or password'));
     }
   };
 

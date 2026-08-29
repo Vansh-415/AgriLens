@@ -90,7 +90,7 @@ const IMPACT_METRICS = [
   {
     icon: Zap,
     title: 'Real-Time',
-    subtitle: 'AI Inference (<120ms)',
+    subtitle: 'Fast AI Diagnosis',
   },
   {
     icon: Bug,
@@ -138,46 +138,46 @@ const STEPS = [
 
 const GALLERY_CARDS = [
   {
-    title: 'Healthy Canopy',
-    badge: 'Healthy',
+    title: 'Healthy Leaf',
+    badge: 'Healthy Canopy',
     badgeColor: 'text-[#15803d] bg-[#dcfce7] border-[#86efac]',
     image: '/images/gallery_healthy.jpg',
-    alt: 'Healthy cotton leaf',
+    alt: 'Healthy cotton leaf canopy',
   },
   {
-    title: 'Fungal Blight',
-    badge: 'Fungal Blight',
-    badgeColor: 'text-[#b91c1c] bg-[#fee2e2] border-[#fca5a5]',
-    image: '/images/gallery_fungal_blight.jpg',
-    alt: 'Fungal blight on cotton leaf',
-  },
-  {
-    title: 'Viral Leaf Curl',
-    badge: 'Viral Leaf Curl',
-    badgeColor: 'text-[#b45309] bg-[#fef3c7] border-[#fcd34d]',
-    image: '/images/gallery_curl_virus.jpg',
-    alt: 'Cotton leaf curl virus',
-  },
-  {
-    title: 'Bacterial Spot',
-    badge: 'Bacterial Spot',
+    title: 'Bacterial Blight',
+    badge: 'Bacterial Blight',
     badgeColor: 'text-[#b91c1c] bg-[#fee2e2] border-[#fca5a5]',
     image: '/images/gallery_bacterial_spot.jpg',
-    alt: 'Bacterial leaf spot lesion',
+    alt: 'Bacterial blight lesions on cotton foliage',
   },
   {
-    title: 'Nutrient Deficiency',
-    badge: 'Nutrient Deficiency',
+    title: 'Cotton Leaf Curl Virus (CLCuV)',
+    badge: 'Leaf Curl Virus',
     badgeColor: 'text-[#b45309] bg-[#fef3c7] border-[#fcd34d]',
-    image: '/images/gallery_nutrient_deficiency.jpg',
-    alt: 'Magnesium nutrient deficiency on cotton foliage',
+    image: '/images/gallery_curl_virus.jpg',
+    alt: 'Cotton leaf curl virus symptoms',
   },
   {
-    title: 'Pest Damage',
-    badge: 'Pest Damage',
+    title: 'Herbicide Growth Damage',
+    badge: 'Phytotoxicity',
+    badgeColor: 'text-[#b45309] bg-[#fef3c7] border-[#fcd34d]',
+    image: '/images/gallery_fungal_blight.jpg',
+    alt: 'Herbicide chemical drift distortion',
+  },
+  {
+    title: 'Leaf Hopper Jassids',
+    badge: 'Sap-Sucking Pest',
     badgeColor: 'text-[#b91c1c] bg-[#fee2e2] border-[#fca5a5]',
     image: '/images/gallery_pest_damage.jpg',
-    alt: 'Pest damage on cotton leaf',
+    alt: 'Leaf hopper jassids pest damage',
+  },
+  {
+    title: 'Physiological Leaf Redding',
+    badge: 'Nutritional Stress',
+    badgeColor: 'text-[#b45309] bg-[#fef3c7] border-[#fcd34d]',
+    image: '/images/gallery_leaf_redding.jpg',
+    alt: 'Physiological leaf redding and magnesium deficiency',
   },
 ];
 
@@ -578,7 +578,7 @@ export function Landing() {
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#dcfce7] flex items-center justify-center text-[#15803d] group-hover:scale-110 transition-transform">
                     <Cpu className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <span className="text-xs sm:text-sm lg:text-base text-[#19100e] font-semibold">&lt;120ms Inference Latency</span>
+                  <span className="text-xs sm:text-sm lg:text-base text-[#19100e] font-semibold">Fast Real-Time AI Inference</span>
                 </li>
                 <li className="flex items-center gap-3 sm:gap-4 group cursor-default">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#dcfce7] flex items-center justify-center text-[#15803d] group-hover:scale-110 transition-transform">
@@ -672,7 +672,7 @@ export function Landing() {
               Ready to Protect Your Yield?
             </h2>
             <p className="text-sm sm:text-lg lg:text-xl text-white/90 max-w-2xl font-light relative z-10 leading-relaxed">
-              Join thousands of farmers using AI to diagnose diseases early and apply precise treatments.
+              Try AI-powered crop diagnostics built for Indian cotton farmers to detect diseases early and calculate precise field dosages.
             </p>
             <Link to="/register" className="relative z-10 pt-2 w-full sm:w-auto">
               <Button size="lg" className="w-full sm:w-auto bg-white text-[#00873a] hover:bg-white/90 font-extrabold text-sm sm:text-base rounded-full px-8 sm:px-10 py-3.5 sm:py-4 shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105 cursor-pointer">
@@ -696,7 +696,13 @@ export function Landing() {
             </p>
           </div>
 
-          <div className="flex items-center gap-4 sm:gap-6 text-xs font-semibold text-[#5c4a42]">
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-4 sm:gap-6 text-xs font-semibold text-[#5c4a42]">
+            <Link
+              to="/references"
+              className="hover:text-[#16a34a] transition-colors cursor-pointer"
+            >
+              Data Sources & References
+            </Link>
             <button
               onClick={() => setPrivacyOpen(true)}
               className="hover:text-[#16a34a] transition-colors cursor-pointer"
