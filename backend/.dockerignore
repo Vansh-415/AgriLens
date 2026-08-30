@@ -1,0 +1,26 @@
+# Python cache & compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Environment files and credentials
+.env
+.env.*
+!.env.example
+
+# Local model binary (downloaded fresh from Hugging Face during Docker build)
+ai_models/cotton/best_model.keras
+
+# Local scratch, logs, and temporary files
+*.log
+scratch/
+test_*.py
+storage/uploads/*
+!storage/uploads/.gitkeep
