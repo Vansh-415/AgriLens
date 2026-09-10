@@ -1,6 +1,11 @@
 import api from './api';
 
 export const scansService = {
+  getCounts: async () => {
+    const response = await api.get('/scans/count');
+    return response.data;
+  },
+
   getAll: async (limit = 50, skip = 0) => {
     const response = await api.get('/scans/', { params: { limit, skip } });
     return response.data;

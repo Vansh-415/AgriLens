@@ -420,8 +420,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       online: '🟢 Online',
       offline: '🔴 Offline Field Mode Active',
       pwaTitle: 'Progressive Web App (PWA)',
-      pwaCacheDesc: 'Service worker & offline cache active',
-      pwaActive: 'Active (Offline Ready)',
+      pwaCacheDesc: 'Installable as a home-screen app',
+      pwaActive: 'PWA Enabled',
     },
     footer: {
       tagline: 'Smart Cotton Disease Detection & Treatment Advisory Platform.',
@@ -712,8 +712,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       online: '🟢 ऑनलाइन',
       offline: '🔴 ऑफलाइन फील्ड मोड सक्रिय',
       pwaTitle: 'प्रोग्रेसिव वेब ऐप (PWA)',
-      pwaCacheDesc: 'सर्विस वर्कर और ऑफलाइन कैश सक्रिय',
-      pwaActive: 'सक्रिय (ऑफलाइन तैयार)',
+      pwaCacheDesc: 'होम-स्क्रीन ऐप के रूप में इंस्टॉल करने योग्य',
+      pwaActive: 'PWA सक्षम',
     },
     footer: {
       tagline: 'कपास फसल रोग पहचान एवं दवा सलाह मंच।',
@@ -1004,8 +1004,8 @@ export const TRANSLATIONS: Record<Language, TranslationDictionary> = {
       online: '🟢 ऑनलाइन',
       offline: '🔴 ऑफलाइन फील्ड मोड सक्रिय',
       pwaTitle: 'प्रोग्रेसिव वेब ॲप (PWA)',
-      pwaCacheDesc: 'सर्व्हिस वर्कर आणि ऑफलाइन कॅश सक्रिय',
-      pwaActive: 'सक्रिय (ऑफलाइन तयार)',
+      pwaCacheDesc: 'होम-स्क्रीन अ‍ॅप म्हणून स्थापित करण्यायोग्य',
+      pwaActive: 'PWA सक्षम',
     },
     footer: {
       tagline: 'स्मार्ट कापूस पीक रोग निदान व औषध सल्ला प्रणाली.',

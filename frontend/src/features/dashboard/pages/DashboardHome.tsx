@@ -42,18 +42,31 @@ export default function DashboardHome() {
   const [loading, setLoading] = useState(true);
   const [cropsCount, setCropsCount] = useState(0);
   const [scans, setScans] = useState<ScanItem[]>([]);
+  const [scanCounts, setScanCounts] = useState<{ total: number; healthy: number; disease_found: number }>({
+    total: 0,
+    healthy: 0,
+    disease_found: 0,
+  });
 
   useEffect(() => {
     let isMounted = true;
     const fetchData = async () => {
       try {
-        const [cropsRes, scansRes] = await Promise.all([
+        const [cropsRes, scansRes, countsRes] = await Promise.all([
           cropsService.getAll().catch(() => ({ data: [] })),
           scansService.getAll().catch(() => ({ data: [] })),
+          scansService.getCounts().catch(() => ({ data: { total: 0, healthy: 0, disease_found: 0 } })),
         ]);
         if (isMounted) {
           setCropsCount(Array.isArray(cropsRes.data) ? cropsRes.data.length : 0);
           setScans(Array.isArray(scansRes.data) ? scansRes.data : []);
+          if (countsRes?.data) {
+            setScanCounts({
+              total: Number(countsRes.data.total) || 0,
+              healthy: Number(countsRes.data.healthy) || 0,
+              disease_found: Number(countsRes.data.disease_found) || 0,
+            });
+          }
         }
       } finally {
         if (isMounted) setLoading(false);
@@ -65,9 +78,9 @@ export default function DashboardHome() {
     };
   }, []);
 
-  const totalScans = scans.length;
-  const healthyCount = scans.filter((s) => s.is_healthy || isHealthyClass(s.predicted_disease) || isHealthyClass(s.disease_id)).length;
-  const diseaseCount = totalScans - healthyCount;
+  const totalScans = scanCounts.total;
+  const healthyCount = scanCounts.healthy;
+  const diseaseCount = scanCounts.disease_found;
 
   // Weekly scan activity data
   const chartData = [

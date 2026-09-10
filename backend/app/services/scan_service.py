@@ -45,3 +45,18 @@ async def create_scan_metadata(user_id: str, data: ScanCreateRequest) -> dict:
     )
     await db[COLLECTION_NAME].insert_one(scan_doc)
     return scan_doc
+
+
+async def get_user_scan_counts(user_id: str) -> dict:
+    db = get_database()
+    total = await db[COLLECTION_NAME].count_documents({"user_id": user_id})
+    healthy = await db[COLLECTION_NAME].count_documents({
+        "user_id": user_id,
+        "disease_id": {"$regex": "^healthy", "$options": "i"}
+    })
+    disease_found = max(0, total - healthy)
+    return {
+        "total": total,
+        "healthy": healthy,
+        "disease_found": disease_found
+    }

@@ -11,6 +11,7 @@ from app.services.scan_service import (
     get_all_scans,
     get_scan_by_id,
     create_scan_metadata,
+    get_user_scan_counts,
 )
 from app.dependencies.auth import get_current_user, require_admin
 from app.utils.exceptions import ForbiddenException
@@ -27,6 +28,15 @@ async def list_scans(
     """Get a list of scans for the current user."""
     scans = await get_user_scans(user_id=current_user["_id"], limit=limit, skip=skip)
     return {"success": True, "data": scans}
+
+
+@router.get("/count", response_model=dict[str, Any])
+async def get_scan_counts(
+    current_user: dict = Depends(get_current_user),
+):
+    """Get total, healthy, and disease scan counts for the current user."""
+    counts = await get_user_scan_counts(user_id=current_user["_id"])
+    return {"success": True, "data": counts}
 
 
 @router.get("/all", response_model=dict[str, Any])
