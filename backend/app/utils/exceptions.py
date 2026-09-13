@@ -63,7 +63,10 @@ async def agrilens_exception_handler(request: Request, exc: AgriLensException) -
     Handle all custom AgriLens exceptions and return a consistent
     JSON error response.
     """
-    logger.error(f"AgriLensException: {exc.message} (status={exc.status_code})")
+    if exc.status_code in (401, 404):
+        logger.warning(f"AgriLensException: {exc.message} (status={exc.status_code})")
+    else:
+        logger.error(f"AgriLensException: {exc.message} (status={exc.status_code})")
     return JSONResponse(
         status_code=exc.status_code,
         content={

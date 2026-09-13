@@ -196,18 +196,16 @@ export default function DashboardHome() {
                   return (
                     <div key={scan.id || scan._id || i} className="flex items-center justify-between p-3 bg-earth-50/60 rounded-xl border border-earth-200/80">
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${
-                          isHealthy ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-                        }`}>
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold ${isHealthy ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                          }`}>
                           <ShieldCheck className="w-4 h-4" />
                         </div>
                         <div className="space-y-0.5">
                           <p className="text-xs font-bold text-earth-900 leading-none">
                             {scanTitle}
                           </p>
-                          <span className={`inline-block px-1.5 py-0.2 text-[10px] font-bold rounded ${
-                            isHealthy ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                          }`}>
+                          <span className={`inline-block px-1.5 py-0.2 text-[10px] font-bold rounded ${isHealthy ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            }`}>
                             {isHealthy ? t.common.healthyCanopy : t.common.pathologyFound}
                           </span>
                         </div>

@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     DEFAULT_ADMIN_EMAIL: str = "admin@agrilens.com"
     DEFAULT_ADMIN_PASSWORD: str = "Admin@123"
 
+    # ----- Multi-Modal Vision API -----
+    GEMINI_API_KEY: str | None = None
+
     # Load from .env file in the backend directory
     model_config = SettingsConfigDict(
         env_file=[
