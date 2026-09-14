@@ -100,9 +100,9 @@ async def predict_with_gemini_vision(image_bytes: bytes) -> Dict[str, Any]:
     prompt = (
         "You are the AgriLens Senior Cotton Plant Pathology Diagnostic Specialist. "
         "Examine the uploaded photo carefully:\n"
-        "1. DOMAIN VALIDATION: First, verify if this image contains a plant, leaf, or crop foliage. "
-        "If the image is a person, selfie, human face, animal, vehicle, electronic device, shoe, document, or non-plant object, "
-        "set is_plant_leaf: false and describe what is detected in detected_subject.\n"
+        "1. DOMAIN VALIDATION: First, verify if this image contains a cotton leaf or plant foliage. "
+        "If the image is not a plant/crop leaf (such as a person, face, animal, vehicle, electronic device, object, document, or random background), "
+        "set is_plant_leaf: false.\n"
         "2. PATHOLOGY CLASSIFICATION: If it IS a crop/cotton leaf, set is_plant_leaf: true and classify it into exactly ONE of these 7 valid cotton classes:\n"
         "   - Bacterial Blight (Angular water-soaked lesions turning dark brown/black with yellow halos)\n"
         "   - Curl Virus (Upward or downward puckering, curling of leaf lamina, thickened green veins)\n"
@@ -114,7 +114,7 @@ async def predict_with_gemini_vision(image_bytes: bytes) -> Dict[str, Any]:
         "CRITICAL INSTRUCTIONS:\n"
         "- Ignore background surfaces (office desk, fingers holding the leaf, table, paper, shadows).\n"
         "- Return confidence between 0.93 and 0.98 based on symptom clarity.\n"
-        "- Respond ONLY in strict JSON format with keys: is_plant_leaf (bool), detected_subject (str), predicted_class (str), confidence (float), symptoms (list), reasoning (str)."
+        "- Respond ONLY in strict JSON format with keys: is_plant_leaf (bool), predicted_class (str), confidence (float), symptoms (list), reasoning (str)."
     )
 
     payload = {
@@ -152,9 +152,8 @@ async def predict_with_gemini_vision(image_bytes: bytes) -> Dict[str, Any]:
 
                 # Check if it's a non-plant/random image
                 is_plant_leaf = parsed.get("is_plant_leaf", True)
-                detected_subject = parsed.get("detected_subject", "non-plant subject")
                 if not is_plant_leaf:
-                    raise ValueError(f"NO_LEAF_DETECTED: The uploaded photo appears to be a {detected_subject}, not a crop leaf. Please upload a clear photo of a cotton plant leaf.")
+                    raise ValueError("NO_LEAF_DETECTED: The uploaded image is not a valid cotton leaf. Please upload a clear photo of a cotton plant leaf.")
 
                 predicted_class = parsed.get("predicted_class", "Healthy Leaf")
                 

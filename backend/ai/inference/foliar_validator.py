@@ -85,7 +85,7 @@ class FoliarQualityValidator:
             return (
                 False,
                 "NO_LEAF_DETECTED",
-                f"No cotton leaf detected in the photo (foliage coverage: {vegetation_ratio * 100:.1f}%). Please ensure a cotton leaf is clearly centered in the camera frame."
+                "The uploaded image is not a valid cotton leaf. Please ensure a cotton leaf is clearly centered in the camera frame."
             )
 
         return True, "OK", "Validation passed successfully."
